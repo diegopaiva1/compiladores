@@ -21,8 +21,7 @@ protected:
   int move(int state, char character);
 
 public:
-  FDA(std::vector<int> states, std::vector<char> alphabet, std::vector<int> acceptStates, int startState) :
-  Automaton(states, alphabet, acceptStates, startState) { }
+  FDA(std::vector<int> acceptStates, int startState) : Automaton(acceptStates, startState) { }
 
   ~FDA() { }
 

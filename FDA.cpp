@@ -12,15 +12,17 @@
 
 void FDA::addTransition(int originState, char character, int destinationState)
 {
-  transitionsMap[Key(originState, character)] = destinationState;
+  transitionsMap[std::make_pair(originState, character)] = destinationState;
 }
 
 int FDA::move(int state, char character)
 {
-  if (transitionsMap.find(Key(state, character)) != transitionsMap.end())
-    return transitionsMap[Key(state, character)];
-  else
-    return -1;
+  std::pair<int, char> key = std::make_pair(state, character);
+
+  if (transitionsMap.find(key) != transitionsMap.end())
+    return transitionsMap[key];
+
+  return -1;
 }
 
 bool FDA::match(std::string word)

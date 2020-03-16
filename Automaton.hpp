@@ -8,49 +8,30 @@
 
 #include <vector>
 #include <string>
+#include <utility>
 
 #ifndef AUTOMATON_H_INCLUDED
 #define AUTOMATON_H_INCLUDED
 
-// TODO: Explanation of intent
-struct Key
+typedef std::pair<int, char> Key;
+
+struct KeyHasher : public std::unary_function<Key, std::size_t>
 {
-  int  state;
-  char character;
-
-  Key(int state, char character)
-  {
-    this->state     = state;
-    this->character = character;
-  }
-
-  bool operator==(const Key &other) const
-  {
-    return (state == other.state && character == other.character);
-  }
-};
-
-struct KeyHasher
-{
-  std::size_t operator()(const Key& k) const
-  {
-    return ((std::hash<int>()(k.state) ^ (std::hash<char>()(k.character) << 1)) >> 1);
-  }
+ std::size_t operator()(const Key& k) const
+ {
+   return std::get<0>(k) ^ std::get<1>(k);
+ }
 };
 
 class Automaton
 {
 protected:
-  std::vector<int>  states;
-  std::vector<char> alphabet;
   std::vector<int>  acceptStates;
   int startState;
 
 public:
-  Automaton(std::vector<int> states, std::vector<char> alphabet, std::vector<int> acceptStates, int startState)
+  Automaton(std::vector<int> acceptStates, int startState)
   {
-    this->states       = states;
-    this->alphabet     = alphabet;
     this->acceptStates = acceptStates;
     this->startState   = startState;
   }
