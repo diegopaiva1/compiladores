@@ -3,7 +3,7 @@
  * @author Diego Paiva
  * @date   11/03/2020
  *
- * An inheritable abstract automaton. It contains the common features for FDAs, NFDAs, etc.
+ * A implementable automaton. It contains the common features for FDAs, NFDAs, etc.
  */
 
 #include <vector>
