@@ -3,7 +3,7 @@
  * @author Diego Paiva
  * @date   11/03/2020
  *
- * <Class description here>
+ * Implementation of a finite deterministic automaton.
  */
 
 #include "Automaton.hpp"
@@ -16,18 +16,41 @@
 class FDA : public Automaton
 {
 protected:
-  std::unordered_map<Key, int, KeyHasher> transitionsMap;
+  std::unordered_map<std::pair<int, char>, int, KeyHasher> transitionsMap;
 
-  int move(int state, char character);
+ /**
+  * @brief Move from a state with a character.
+  *
+  * @param pair The std::pair containing the state and the character.
+  * @return     The state resulting from the transition the state with the character.
+  */
+  int move(std::pair<int, char> pair);
 
 public:
-  FDA(std::vector<int> acceptStates, int startState) : Automaton(acceptStates, startState) { }
+ /**
+  * @brief Construct a new FDA.
+  *
+  * @param fileName The file containing the FDA data.
+  */
+  FDA(std::string fileName);
 
-  ~FDA() { }
+ /**
+  * @brief Default destructor.
+  */
+  ~FDA();
 
-  void addTransition(int originState, char character, int destinationState);
-
+ /**
+  * @copydoc Automaton::match()
+  */
   bool match(std::string word);
+
+ /**
+  * @brief Add a new transition.
+  *
+  * @param pair             The std::pair containing the origin state and the character.
+  * @param destinationState The destination state.
+  */
+  void addTransition(std::pair<int, char> pair, int destinationState);
 };
 
 #endif // FDA_H_INCLUDED
