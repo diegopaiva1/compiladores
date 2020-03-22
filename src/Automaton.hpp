@@ -3,12 +3,11 @@
  * @author Diego Paiva
  * @date   11/03/2020
  *
- * A implementable automaton. It contains the common features for FDAs, NFDAs, etc.
+ * A implementable automaton. It contains the common features for DFAs, NDFAs, etc.
  */
 
 #include <vector>
 #include <string>
-#include <utility>
 
 #ifndef AUTOMATON_H_INCLUDED
 #define AUTOMATON_H_INCLUDED
@@ -17,7 +16,7 @@ struct KeyHasher
 {
  std::size_t operator()(const std::pair<int, char>& k) const
  {
-   return std::get<0>(k) ^ std::get<1>(k);
+   return k.first ^ k.second;
  }
 };
 
@@ -39,6 +38,13 @@ public:
   * @return     True if 'word' matches the language defined by the automaton, false otherwise.
   */
   virtual bool match(std::string word) = 0;
+
+ /**
+  * @brief Get the start state.
+  *
+  * @return ID of the start state.
+  */
+  int getStartState();
 };
 
 #endif // AUTOMATON_H_INCLUDED
