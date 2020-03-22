@@ -1,20 +1,20 @@
 /**
- * @file   FDA.cpp
+ * @file   DFA.cpp
  * @author Diego Paiva
  * @date   11/03/2020
  */
 
-#include "FDA.hpp"
+#include "DFA.hpp"
 
 #include <algorithm>
 #include <fstream>
 
-FDA::~FDA()
+DFA::~DFA()
 {
   // Empty destructor
 }
 
-FDA::FDA(std::string fileName)
+DFA::DFA(std::string fileName)
 {
   std::ifstream file(fileName);
 
@@ -46,28 +46,36 @@ FDA::FDA(std::string fileName)
     acceptStates.push_back(temp);
 }
 
-void FDA::addTransition(std::pair<int, char> pair, int destinationState)
+void DFA::addTransition(std::pair<int, char> pair, int destinationState)
 {
   transitionsMap[pair] = destinationState;
 }
 
-bool FDA::match(std::string word)
+bool DFA::match(std::string word)
 {
   int currentState = startState;
 
   for (char &c : word)
     currentState = move(std::make_pair(currentState, c));
 
-  if (std::find(acceptStates.begin(), acceptStates.end(), currentState) != acceptStates.end())
+  if (hasAcceptState(currentState))
     return true;
 
   return false;
 }
 
-int FDA::move(std::pair<int, char> pair)
+int DFA::move(std::pair<int, char> pair)
 {
   if (transitionsMap.find(pair) != transitionsMap.end())
     return transitionsMap[pair];
 
   return -1;
+}
+
+bool DFA::hasAcceptState(int state)
+{
+  if (std::find(acceptStates.begin(), acceptStates.end(), state) != acceptStates.end())
+    return true;
+
+  return false;
 }
