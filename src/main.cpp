@@ -20,28 +20,49 @@ int main(int argc, char *argv[])
   DFA m1 = DFA(automatonFileName);
 
   std::vector<Token> tokens;
-  std::string lexeme = "";
-  std::stack<int> stack;
-  stack.push(-1);
-  int state = m1.getStartState();
 
-  while (state != -1) {
-    char c = buffer.get();
-    stack.push(state);
-    state = m1.move(std::make_pair(state, c));
+
+
+
+
+  std::string resto = "";
+
+  while (!buffer.eof()) {
+    // Init
+    std::stack<int> stack;
+    std::string lexeme = resto;
+    resto = "";
+    int state = m1.getStartState();
+
+    // Processing
+    while (state != -1) {
+      char c = buffer.get();
+      lexeme += c;
+      stack.push(state);
+      state = m1.move(std::make_pair(state, c));
+    }
+
+    // Emiting
+    while (!m1.hasAcceptState(state) && !stack.empty()) {
+      state = stack.top();
+      stack.pop();
+      resto = lexeme.substr(lexeme.size() - 1, 1) + resto;
+      lexeme = lexeme.substr(0, lexeme.size() - 1);
+    }
+
+    if (m1.hasAcceptState(state))
+      tokens.push_back(Token(Name::IDENTIFIER, lexeme));
   }
 
-  while (!m1.hasAcceptState(state)) {
-    state = stack.top();
-    stack.pop();
-  }
 
-  if (m1.hasAcceptState(state)) {
-    tokens.push_back(Token(Name::KEYWORD, lexeme));
-  }
-  else {
-    std::cout << "Invalid token\n" << '\n';
-  }
+
+
+
+
+
+
+
+
 
   for (Token &t : tokens)
     printf("<%d, %s>\n", t.getName(), t.getValue().c_str());
