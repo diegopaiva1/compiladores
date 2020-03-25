@@ -3,7 +3,7 @@
  * @author Diego Paiva
  * @date   11/03/2020
  *
- * A implementable automaton. It contains the common features for DFAs, NDFAs, etc.
+ * @brief A implementable automaton. It contains the common features for DFAs, NDFAs, etc.
  */
 
 #include <vector>
@@ -35,7 +35,7 @@ public:
   * @details Pure virtual method.
   *
   * @param word The word.
-  * @return     True if 'word' matches the language defined by the automaton, false otherwise.
+  * @return     `true` if *word* matches the language defined by the automaton, `false` otherwise.
   */
   virtual bool match(std::string word) = 0;
 

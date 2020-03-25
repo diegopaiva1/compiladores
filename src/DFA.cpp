@@ -1,9 +1,3 @@
-/**
- * @file   DFA.cpp
- * @author Diego Paiva
- * @date   11/03/2020
- */
-
 #include "DFA.hpp"
 
 #include <algorithm>
@@ -14,7 +8,7 @@ DFA::~DFA()
   // Empty destructor
 }
 
-DFA::DFA(std::string fileName)
+DFA::DFA(const std::string &fileName)
 {
   std::ifstream file(fileName);
 
