@@ -1,3 +1,4 @@
-int main () {
-    func(0);
+int main ()
+{
+    int x = 4 * 4;
 }
