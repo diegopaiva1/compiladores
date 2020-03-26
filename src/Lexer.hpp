@@ -2,7 +2,7 @@
  * @author Diego Paiva
  * @date   24/03/2020
  *
- * @brief A hand-crafted module that performs lexical analysis for compilers.
+ * @brief A hand-crafted lexical analyzer for compilers.
  */
 
 #ifndef Lexer_H_INCLUDED

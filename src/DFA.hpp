@@ -56,7 +56,7 @@ public:
   int move(std::pair<int, char> pair);
 
 /**
-  * @brief Checks whether a state belongs to the accept states set or not.
+  * @brief Check whether a state belongs to the accept states set or not.
   *
   * @param state The state.
   * @return      `true` if *state* belongs to the accept states set, `false` otherwise.
