@@ -3,7 +3,7 @@
  * @author Diego Paiva
  * @date   11/03/2020
  *
- * @brief A implementable automaton. It contains the common features for DFAs, NDFAs, etc.
+ * @brief An implementable automaton. It contains the common features for DFAs, NDFAs, etc.
  */
 
 #include <vector>
@@ -12,6 +12,10 @@
 #ifndef AUTOMATON_H_INCLUDED
 #define AUTOMATON_H_INCLUDED
 
+/**
+ * @brief Can be used in [`std::unordered_map`](http://www.cplusplus.com/reference/unordered_map/unordered_map/)
+ *        to determine the hash value of a given <state, character> key.
+ */
 struct KeyHasher
 {
  std::size_t operator()(const std::pair<int, char>& k) const
