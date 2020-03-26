@@ -8,10 +8,12 @@ Lexer::Lexer()
 {
   dfa = new DFA("../tokens_pattern.txt");
 
-  // Map each accept state to it's corresponding token type
+  // Here we map each accept state to it's corresponding token type
   acceptStateMap[1] = Type::LITERAL;
   acceptStateMap[2] = Type::IDENTIFIER;
   acceptStateMap[3] = Type::SEPARATOR;
+  acceptStateMap[4] = Type::OPERATOR;
+  acceptStateMap[5] = Type::OPERATOR;
 }
 
 Lexer::~Lexer()
@@ -30,10 +32,14 @@ std::vector<Token> Lexer::getTokens(const std::string &programFileName)
 
   std::vector<Token> tokens;
   int beginning = 0;
+  int lineCount = 1;
 
   while (buffer.peek() != EOF) {
-    // If we read blank or line break, we consume the character and keep moving
+    // If we read white space or line break, we consume the character and keep moving
     if (buffer.peek() == ' ' || buffer.peek() == '\n') {
+      if (buffer.peek() == '\n')
+        lineCount++;
+
       buffer.get();
       beginning++;
       continue;
@@ -69,7 +75,7 @@ std::vector<Token> Lexer::getTokens(const std::string &programFileName)
       beginning += length;
     }
     else {
-      printf("Error: undefined token\n");
+      printf("Error: undefined token in line %d\n", lineCount);
       exit(1);
     }
   }
