@@ -6,17 +6,33 @@
  * @brief Implementation of a deterministic finite automaton.
  */
 
-#include "Automaton.hpp"
+#include "State.hpp"
 
 #include <unordered_map>
 
 #ifndef DFA_H_INCLUDED
 #define DFA_H_INCLUDED
 
-class DFA : public Automaton
+struct KeyHasher
+{
+  std::size_t operator()(const std::pair<State*, char>& k) const
+  {
+    return k.first->id ^ k.second;
+  }
+};
+
+class DFA
 {
 protected:
-  std::unordered_map<std::pair<int, char>, int, KeyHasher> transitionsMap;
+ /**
+  * @brief A hash map to retrieve a state by it's id.
+  */
+  std::unordered_map<int, State*> states;
+
+ /**
+  * @brief A hash map to efficiently query the DFA's transitions.
+  */
+  std::unordered_map<std::pair<State*, char>, State*, KeyHasher> transitionsMap;
 
 public:
  /**
@@ -32,36 +48,46 @@ public:
   ~DFA();
 
  /**
-  * @copydoc Automaton::match()
+  * @brief Check if a given word matches the language defined by the automaton.
+  *
+  * @param word The word.
+  * @return     `true` if *word* matches the language defined by the automaton, `false` otherwise.
   */
   bool match(std::string word);
 
  /**
   * @brief Add a new transition.
   *
-  * @param pair             The [`std::pair`](http://www.cplusplus.com/reference/utility/pair/)
-  *                         containing the origin state and the character.
-  * @param destinationState The destination state.
+  * @param pair               The [`std::pair`](http://www.cplusplus.com/reference/utility/pair/)
+  *                           containing the origin state and the character.
+  * @param destination        The destination state.
   */
-  void addTransition(std::pair<int, char> pair, int destinationState);
+  void addTransition(std::pair<State*, char> pair, State* destination);
 
  /**
   * @brief Move from a state with a character.
   *
   * @param pair The [`std::pair`](http://www.cplusplus.com/reference/utility/pair/)
   *             containing the state and the character.
-  * @return     The state resulting from the transition of the state with the character or `-1` if
-  *             the transisition is not defined.
+  * @return     The state resulting from the transition of the state with the character or a bad state
+  *             if the transisition is not defined.
   */
-  int move(std::pair<int, char> pair);
+  State* move(std::pair<State*, char> pair);
 
-/**
-  * @brief Check whether a state belongs to the accept states set or not.
+ /**
+  * @brief Get the start state.
   *
-  * @param state The state.
-  * @return      `true` if *state* belongs to the accept states set, `false` otherwise.
+  * @return The start state.
   */
-  bool hasAcceptState(int state);
+  State* getStartState();
+
+ /**
+  * @brief Get a state by it's id.
+  *
+  * @param id State's id.
+  * @return   The state.
+  */
+  State* getStateById(int id);
 };
 
 #endif // DFA_H_INCLUDED

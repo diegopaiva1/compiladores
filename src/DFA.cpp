@@ -3,11 +3,6 @@
 #include <algorithm>
 #include <fstream>
 
-DFA::~DFA()
-{
-  // Empty destructor
-}
-
 DFA::DFA(const std::string &fileName)
 {
   std::ifstream file(fileName);
@@ -18,58 +13,76 @@ DFA::DFA(const std::string &fileName)
   }
 
   // 1st block (header)
-  file >> states;
-  file >> transitions;
-  file >> startState;
+  int statesAmount;
+  int transitionsAmount;
+
+  file >> statesAmount;
+  file >> transitionsAmount;
+
+  // States are initialized as not isAccepted
+  for (int i = 0; i < statesAmount; i++)
+    states[i] = new State(i, false);
+
+  // Add a bad state
+  states[-1] = new State(-1, false);
 
   // 2nd block (transitions)
-  for (int i = 0; i < transitions; i++) {
+  for (int i = 0; i < transitionsAmount; i++) {
     int  origin;
-    int  destination;
     char character;
+    int  destination;
 
     file >> origin;
     file >> character;
     file >> destination;
 
-    addTransition(std::make_pair(origin, character), destination);
+    addTransition(std::make_pair(getStateById(origin), character), getStateById(destination));
   }
 
   // 3rd block (accept states)
-  for (int temp; file >> temp; )
-    acceptStates.push_back(temp);
+  for (int id; file >> id; )
+    states[id]->isAccepted = true;
 }
 
-void DFA::addTransition(std::pair<int, char> pair, int destinationState)
+DFA::~DFA()
 {
-  transitionsMap[pair] = destinationState;
+  // Empty destructor
+}
+
+void DFA::addTransition(std::pair<State*, char> pair, State* destination)
+{
+  transitionsMap[pair] = destination;
 }
 
 bool DFA::match(std::string word)
 {
-  int currentState = startState;
+  State *currentState = getStartState();
 
   for (char &c : word)
     currentState = move(std::make_pair(currentState, c));
 
-  if (hasAcceptState(currentState))
+  if (currentState->isAccepted)
     return true;
 
   return false;
 }
 
-int DFA::move(std::pair<int, char> pair)
+State* DFA::move(std::pair<State*, char> pair)
 {
   if (transitionsMap.find(pair) != transitionsMap.end())
     return transitionsMap[pair];
 
-  return -1;
+  // Bad state
+  return states.at(-1);
 }
 
-bool DFA::hasAcceptState(int state)
+State* DFA::getStartState()
 {
-  if (std::find(acceptStates.begin(), acceptStates.end(), state) != acceptStates.end())
-    return true;
+  // We always assume start state is the one with id equal to 0
+  return states.at(0);
+}
 
-  return false;
+State* DFA::getStateById(int id)
+{
+  return states.at(id);
 }
