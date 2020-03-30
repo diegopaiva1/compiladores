@@ -10,7 +10,6 @@
 #define TOKEN_H_INCLUDED
 
 #include <string>
-#include <unordered_map>
 
 /**
  * @brief Enumeration of possible token types.
@@ -21,7 +20,7 @@ class Token
 {
 private:
   Type type;
-  std::string value;
+  std::string lexeme;
 
 public:
  /**
@@ -32,10 +31,10 @@ public:
  /**
   * @brief Construct a new Token.
   *
-  * @param type  Type.
-  * @param value Value.
+  * @param type   Type.
+  * @param lexeme Lexeme.
   */
-  Token(Type type, std::string value);
+  Token(Type type, std::string lexeme);
 
  /**
   * @brief Default destructor.
@@ -50,11 +49,11 @@ public:
   std::string getType();
 
  /**
-  * @brief Get the value of the Token.
+  * @brief Get the lexeme of the Token.
   *
-  * @return A [`std::string`](http://www.cplusplus.com/reference/string/string/) containing the value.
+  * @return A [`std::string`](http://www.cplusplus.com/reference/string/string/) containing the lexeme.
   */
-  std::string getValue();
+  std::string getLexeme();
 
  /**
   * @brief Set the token's type.
@@ -64,11 +63,11 @@ public:
   void setType(Type type);
 
  /**
-  * @brief Set the token's value.
+  * @brief Set the token's lexeme.
   *
-  * @param value The value to be set to.
+  * @param lexeme The lexeme to be set to.
   */
-  void setValue(std::string value);
+  void setLexeme(std::string lexeme);
 
  /**
   * @brief Check if token is an identifier.

@@ -8,7 +8,7 @@ Lexer::Lexer()
 {
   dfa = new DFA("../tokens_pattern.txt");
 
-  // Here we map each accept state to it's corresponding token type
+  // Here we map each accept state id to it's corresponding token type
   acceptStateMap[1] = Type::LITERAL;
   acceptStateMap[2] = Type::IDENTIFIER;
   acceptStateMap[3] = Type::SEPARATOR;
@@ -47,11 +47,11 @@ std::vector<Token> Lexer::getTokens(const std::string &programFileName)
 
     // Init
     int length = 0;
-    std::stack<int> s;
-    int state = dfa->getStartState();
+    std::stack<State*> s;
+    State* state = dfa->getStartState();
 
     // Processing
-    while (state != -1) {
+    while (!state->bad()) {
       char c = buffer.get();
       s.push(state);
       state = dfa->move(std::make_pair(state, c));
@@ -59,18 +59,19 @@ std::vector<Token> Lexer::getTokens(const std::string &programFileName)
     }
 
     // Emiting
-    while (!dfa->hasAcceptState(state) && !s.empty()) {
+    while (!state->isAccepted && !s.empty()) {
       state = s.top();
       s.pop();
       buffer.unget();
       length--;
     }
 
-    if (dfa->hasAcceptState(state)) {
+    if (state->isAccepted) {
       buffer.seekg(beginning);
-      char lexeme[length];
+      char lexeme[length + 1];
       buffer.read(lexeme, length);
-      Type name = acceptStateMap[state];
+      lexeme[length] = '\0';
+      Type name = acceptStateMap[state->id];
       tokens.push_back(Token(name, lexeme));
       beginning += length;
     }

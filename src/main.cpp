@@ -1,5 +1,3 @@
-#include "DFA.hpp"
-#include "Token.hpp"
 #include "Lexer.hpp"
 
 int main(int argc, char *argv[])
@@ -18,8 +16,9 @@ int main(int argc, char *argv[])
   std::vector<Token> tokens = lexer.getTokens(programFileName);
 
   printf("Printing all tokens:\n\n");
+
   for (Token &t : tokens)
-    printf("%20s is %s\n", t.getValue().c_str(), t.getType().c_str());
+    printf("%20s is %s\n", t.getLexeme().c_str(), t.getType().c_str());
 
   return 0;
 }

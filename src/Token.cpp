@@ -5,10 +5,10 @@ Token::Token()
   // Empty constructor
 }
 
-Token::Token(Type type, std::string value)
+Token::Token(Type type, std::string lexeme)
 {
-  this->type  = type;
-  this->value = value;
+  this->type   = type;
+  this->lexeme = lexeme;
 }
 
 Token::~Token()
@@ -36,9 +36,9 @@ std::string Token::getType()
   return type;
 }
 
-std::string Token::getValue()
+std::string Token::getLexeme()
 {
-  return value;
+  return lexeme;
 }
 
 void Token::setType(Type type)
@@ -46,9 +46,9 @@ void Token::setType(Type type)
   this->type = type;
 }
 
-void Token::setValue(std::string value)
+void Token::setLexeme(std::string lexeme)
 {
-  this->value = value;
+  this->lexeme = lexeme;
 }
 
 bool Token::isIdentifier()

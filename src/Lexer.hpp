@@ -11,10 +11,19 @@
 #include "DFA.hpp"
 #include "Token.hpp"
 
+#include <vector>
+
 class Lexer
 {
-private:
+protected:
+ /**
+  * @brief The DFA our lexer will work on to recognize the tokens.
+  */
   DFA *dfa;
+
+ /**
+  * @brief A hash map to retrieve the type of a Token based on the accept state.
+  */
   std::unordered_map<int, Type> acceptStateMap;
 
 public:
