@@ -2,7 +2,7 @@
 
 O código-fonte na pasta `src/` contém a implementação do analisador léxico para reconhecimentos de tokens.
 
-# Utilização
+## Utilização
 
 ```cpp
 #include "Lexer.hpp"
@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
 }
 ```
 
-# Compilando o código-fonte
+## Compilando o código-fonte
 
-## [CMake](https://cmake.org/)
+### [CMake](https://cmake.org/)
 
 ```
 git clone git@github.com:diegopaiva1/compiladores.git
@@ -49,7 +49,7 @@ mkdir build && cd build
 cmake ..
 ```
 
-## g++
+### g++
 
 ```
 git clone git@github.com:diegopaiva1/compiladores.git
@@ -61,7 +61,7 @@ mkdir bin && cd bin
 g++ -std=c++1z -O3 ../src/*.cpp -o lex
 ```
 
-# Execução e exemplo
+## Execução e exemplo
 
 Para reconhecer os tokens de um programa, e.g, `program.txt`, digite  `./lex program.txt`.
 
