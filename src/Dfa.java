@@ -39,11 +39,11 @@ public class Dfa {
 
       // 2nd block (transitions)
       for (int i = 0; i < transitionsNum; i++) {
-        int origin = Integer.parseInt(fileReader.next());
-        char character = fileReader.next().charAt(0);
-        int destination = Integer.parseInt(fileReader.next());
+        int originId = Integer.parseInt(fileReader.next());
+        char c = fileReader.next().charAt(0);
+        int destinationId = Integer.parseInt(fileReader.next());
 
-        transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(origin), character), states.get(destination));
+        transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), c), states.get(destinationId));
       }
 
       // 3rd block (accept states)
