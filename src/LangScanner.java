@@ -28,22 +28,19 @@ public class LangScanner {
  /**
   * @brief Default constructor.
   *
-  * @param program Name of the file containing the program to be parsed.
+  * @param program Name of the file containing the program to be scanned.
   */
-  public LangScanner(String program) throws IOException {
-    buffer = new PushbackInputStream(new FileInputStream(program));
+  public LangScanner(String program) {
+    try {
+      buffer = new PushbackInputStream(new FileInputStream(program));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
-  private char nextChar() throws IOException {
-    int c = buffer.read();
-
-    // -1 is EOF
-    if (c == -1)
-      return '\0';
-
-    return (char) c;
-  }
-
+ /**
+  * @brief Get next token.
+  */
   public Token nextToken() throws IOException
   {
     statesStack.clear();
@@ -73,5 +70,18 @@ public class LangScanner {
       return new Token(state.type, lexeme);
 
     return null;
+  }
+
+ /**
+  * @brief Get next char.
+  */
+  private char nextChar() throws IOException {
+    int c = buffer.read();
+
+    // -1 is EOF
+    if (c == -1)
+      return '\0';
+
+    return (char) c;
   }
 }

@@ -21,7 +21,7 @@ public class State {
   }
 
  /**
-  * @brief Check if state is error, i.e, a state without transitions to any other state.
+  * @brief Check if is error state.
   *
   * @return `true` if error state.
   */
