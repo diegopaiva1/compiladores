@@ -1,5 +1,2 @@
-int main ()
-{
-    int c = 3 * 4;
-    printf(c);
-}
+a = 3;
+b = 5;

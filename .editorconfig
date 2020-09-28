@@ -12,6 +12,6 @@ insert_final_newline = true
 [Makefile]
 indent_style = tab
 
-[*.{c,h,cpp,hpp,py}]
+[*.java]
 indent_style = space
 indent_size = 2
