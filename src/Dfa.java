@@ -50,7 +50,12 @@ public class Dfa {
       for (int i = 0; i < acceptStatesNum; i++) {
         int id = Integer.parseInt(fileReader.next());
         String typeString = fileReader.next();
-        states.get(id).type = Token.Type.valueOf(typeString);
+
+        try {
+          states.get(id).type = Token.Type.valueOf(typeString);
+        } catch (IllegalArgumentException e) {
+          e.printStackTrace();
+        }
       }
 
       fileReader.close();
