@@ -1,40 +1,40 @@
 public class State {
  /**
-  * @brief id.
+  * id.
   */
   public int id;
 
  /**
-  * @brief Type of token returned by the state.
+  * Type of token returned by the state.
   */
-  public Token.Type type;
+  public Token.Type tokenType;
 
  /**
-  * @brief Construct a new State.
+  * Construct a new State.
   *
   * @param id   id.
-  * @param type type.
+  * @param tokenType Type of token returned by the state.
   */
-  public State(int id, Token.Type type) {
+  public State(int id, Token.Type tokenType) {
     this.id = id;
-    this.type = type;
+    this.tokenType = tokenType;
   }
 
  /**
-  * @brief Check if is error state.
+  * Check if is error state.
   *
-  * @return `true` if error state.
+  * @return true if error state.
   */
   public boolean isError() {
     return id == -1;
   }
 
  /**
-  * @brief Check if state is accepted.
+  * Check if state is accepted.
   *
-  * @return `true` if accepted.
+  * @return true if accepted.
   */
   public boolean isAccepted() {
-    return type != Token.Type.NONE;
+    return tokenType != Token.Type.NONE;
   }
 }

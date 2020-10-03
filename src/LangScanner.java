@@ -6,27 +6,27 @@ import java.util.Stack;
 
 public class LangScanner {
  /**
-  * @brief Buffer containing the program.
+  * Buffer containing the program.
   */
   private PushbackInputStream buffer;
 
  /**
-  * @brief The DFA our scanner will work on to recognize the tokens.
+  * The DFA our scanner will work on to recognize the tokens.
   */
   private Dfa dfa = new Dfa();
 
  /**
-  * @brief Utility for stacking states during scanner proccesing.
+  * Utility for stacking states during scanner proccesing.
   */
   private Stack<State> statesStack = new Stack<State>();
 
  /**
-  * @brief Utility for stacking characters during scanner proccesing.
+  * Utility for stacking characters during scanner proccesing.
   */
   private Stack<Character> charsStack = new Stack<Character>();
 
  /**
-  * @brief Default constructor.
+  * Default constructor.
   *
   * @param program Name of the file containing the program to be scanned.
   */
@@ -39,10 +39,11 @@ public class LangScanner {
   }
 
  /**
-  * @brief Get next token.
+  * Get next token.
+  *
+  * @return The next Token in current buffer.
   */
-  public Token nextToken() throws IOException
-  {
+  public Token nextToken() throws IOException {
     statesStack.clear();
     charsStack.clear();
 
@@ -57,23 +58,27 @@ public class LangScanner {
       state = dfa.move(new AbstractMap.SimpleEntry<State, Character>(state, c));
     }
 
-    lexeme = lexeme.substring(0, lexeme.length() - 1);
+    lexeme = rollback(charsStack.pop(), lexeme);
     state = statesStack.pop();
 
     while (!state.isAccepted() && !statesStack.empty()) {
       state = statesStack.pop();
-      buffer.unread(charsStack.pop());
-      lexeme = lexeme.substring(0, lexeme.length() - 1);
+      lexeme = rollback(charsStack.pop(), lexeme);
     }
 
-    if (state.isAccepted())
-      return new Token(state.type, lexeme);
+    return state.isAccepted() ? new Token(state.tokenType, lexeme) : null;
+  }
 
-    return null;
+  private String rollback(int b, String lexeme) throws IOException {
+    buffer.unread(b);
+    lexeme = lexeme.substring(0, lexeme.length() - 1);
+    return lexeme;
   }
 
  /**
-  * @brief Get next char.
+  * Get next char.
+  *
+  * @return The next char in current buffer.
   */
   private char nextChar() throws IOException {
     int c = buffer.read();

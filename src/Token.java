@@ -1,21 +1,21 @@
 public class Token {
  /**
-  * @brief Enumeration of possible tokens types.
+  * Enumeration of possible tokens types.
   */
   public enum Type {NONE, EOF, MULT, SEMI, EQ, VAR, PLUS, INT}
 
  /**
-  * @brief Token's type.
+  * Token's type.
   */
   private Type type;
 
  /**
-  * @brief Lexeme value.
+  * Lexeme value.
   */
   private String lexeme;
 
  /**
-  * @brief Construct a new Token.
+  * Construct a new Token.
   *
   * @param type   Token's type.
   * @param lexeme Lexeme value.
@@ -26,7 +26,7 @@ public class Token {
   }
 
  /**
-  * @brief Get type.
+  * Get type.
   *
   * @return Type.
   */
@@ -35,7 +35,7 @@ public class Token {
   }
 
  /**
-  * @brief Get lexeme.
+  * Get lexeme.
   *
   * @return Lexeme.
   */

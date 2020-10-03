@@ -6,18 +6,18 @@ import java.util.Scanner;
 
 public class Dfa {
  /**
-  * @brief HashMap to retrieve a state by its id.
+  * HashMap to retrieve a state by its id.
   */
   protected HashMap<Integer, State> states = new HashMap<Integer, State>();
 
  /**
-  * @brief HashMap to efficiently query the DFA's transitions.
+  * HashMap to efficiently query the DFA's transitions.
   */
   protected HashMap<AbstractMap.SimpleEntry<State, Character>, State> transitionsMap =
         new HashMap<AbstractMap.SimpleEntry<State, Character>, State>();
 
  /**
-  * @brief Construct a new Dfa.
+  * Construct a new Dfa.
   */
   public Dfa() {
     File file = new File("dfa.txt");
@@ -40,7 +40,8 @@ public class Dfa {
       // 2nd block (transitions)
       for (int i = 0; i < transitionsNum; i++) {
         int originId = Integer.parseInt(fileReader.next());
-        char c = fileReader.next().charAt(0);
+        String word = fileReader.next();
+        char c = word.length() == 1 ? word.charAt(0) : (char) Integer.parseInt(word);
         int destinationId = Integer.parseInt(fileReader.next());
 
         transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), c), states.get(destinationId));
@@ -52,7 +53,7 @@ public class Dfa {
         String typeString = fileReader.next();
 
         try {
-          states.get(id).type = Token.Type.valueOf(typeString);
+          states.get(id).tokenType = Token.Type.valueOf(typeString);
         } catch (IllegalArgumentException e) {
           e.printStackTrace();
         }
@@ -66,7 +67,7 @@ public class Dfa {
   }
 
  /**
-  * @brief Get the start State.
+  * Get the start State.
   *
   * @return Start State.
   */
@@ -76,7 +77,7 @@ public class Dfa {
   }
 
  /**
-  * @brief Move from a state with a character.
+  * Move from a state with a character.
   *
   * @param pair The AbstractMap.SimpleEntry<State, Character> containing the state and the character.
   * @return     The state resulting from the transition of the state with the character or a bad state
