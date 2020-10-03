@@ -44,21 +44,25 @@ public class LangScanner {
   * @return The next Token in current buffer.
   */
   public Token nextToken() throws IOException {
-    statesStack.clear();
-    charsStack.clear();
+    String lexeme;
+    State state;
 
-    String lexeme = "";
-    State state = dfa.getStartState();
+    do {
+      statesStack.clear();
+      state = dfa.getStartState();
+      lexeme = "";
 
-    while (!state.isError()) {
-      char c = nextChar();
-      charsStack.push(c);
-      statesStack.push(state);
-      lexeme += c;
-      state = dfa.move(new AbstractMap.SimpleEntry<State, Character>(state, c));
-    }
+      while (!state.isError()) {
+        char c = nextChar();
+        charsStack.push(c);
+        statesStack.push(state);
+        lexeme += c;
+        state = dfa.move(new AbstractMap.SimpleEntry<State, Character>(state, c));
+      }
 
-    lexeme = rollback(charsStack.pop(), lexeme);
+      lexeme = rollback(charsStack.pop(), lexeme);
+    } while (statesStack.peek().id == 5);
+
     state = statesStack.pop();
 
     while (!state.isAccepted() && !statesStack.empty()) {
