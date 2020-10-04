@@ -8,9 +8,10 @@ fat(num :: Int) : Int {
             c = 'a';
             d = 'a';
             {-
-            este é um comentário
-            multilinha
+            multiline
+            comment
             -}
             return num * fat(num - 1);
+            -- One-line comment
     }
 }

@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class LangScanner {
+  int line;
+
+  int column;
+
  /**
   * Buffer containing the program.
   */
@@ -27,6 +31,9 @@ public class LangScanner {
   * @param program Name of the file containing the program to be scanned.
   */
   public LangScanner(String program) {
+    line = 1;
+    column = 1;
+
     langKeywords.put("true",    Token.Type.BOOL);
     langKeywords.put("false",   Token.Type.BOOL);
     langKeywords.put("null",    Token.Type.NULL);
@@ -92,6 +99,14 @@ public class LangScanner {
     return null;
   }
 
+ /**
+  * Put a byte back in the buffer and truncate lexeme.
+  *
+  * @param b      Byte.
+  * @param lexeme Lexeme.
+  *
+  * @return Updated lexeme.
+  */
   private String rollback(int b, String lexeme) throws IOException {
     buffer.unread(b);
     lexeme = lexeme.substring(0, lexeme.length() - 1);
@@ -105,6 +120,6 @@ public class LangScanner {
   */
   private char nextChar() throws IOException {
     int c = buffer.read();
-    return c == - 1 ? '\0' : (char) c;
+    return c == -1 ? '\0' : (char) c;
   }
 }
