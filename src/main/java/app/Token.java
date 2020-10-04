@@ -1,3 +1,5 @@
+package app;
+
 public class Token {
  /**
   * Enumeration of possible tokens types.
