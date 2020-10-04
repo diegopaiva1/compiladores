@@ -17,8 +17,9 @@ public class State {
  /**
   * Construct a new State.
   *
-  * @param id   id.
+  * @param id        id.
   * @param tokenType Type of token returned by the state.
+  * @param isSkip    Is skip state.
   */
   public State(int id, Token.Type tokenType, boolean isSkip) {
     this.id = id;

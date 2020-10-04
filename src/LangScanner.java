@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class LangScanner {
-  int line;
-
-  int column;
-
  /**
   * Buffer containing the program.
   */
@@ -31,28 +27,25 @@ public class LangScanner {
   * @param program Name of the file containing the program to be scanned.
   */
   public LangScanner(String program) {
-    line = 1;
-    column = 1;
-
-    langKeywords.put("true",    Token.Type.BOOL);
-    langKeywords.put("false",   Token.Type.BOOL);
-    langKeywords.put("null",    Token.Type.NULL);
-    langKeywords.put("if",      Token.Type.IF);
-    langKeywords.put("else",    Token.Type.ELSE);
-    langKeywords.put("iterate", Token.Type.ITERATE);
-    langKeywords.put("read",    Token.Type.READ);
-    langKeywords.put("print",   Token.Type.PRINT);
-    langKeywords.put("return",  Token.Type.RETURN);
-    langKeywords.put("data",    Token.Type.DATA);
-    langKeywords.put("Int",     Token.Type.TYPE_INT);
-    langKeywords.put("Float",   Token.Type.TYPE_FLOAT);
-    langKeywords.put("Bool",    Token.Type.TYPE_BOOL);
-    langKeywords.put("Char",    Token.Type.TYPE_CHAR);
-
     try {
       buffer = new PushbackInputStream(new FileInputStream(program));
     } catch (IOException e) {
       e.printStackTrace();
+    } finally {
+      langKeywords.put("true",    Token.Type.BOOL);
+      langKeywords.put("false",   Token.Type.BOOL);
+      langKeywords.put("null",    Token.Type.NULL);
+      langKeywords.put("if",      Token.Type.IF);
+      langKeywords.put("else",    Token.Type.ELSE);
+      langKeywords.put("iterate", Token.Type.ITERATE);
+      langKeywords.put("read",    Token.Type.READ);
+      langKeywords.put("print",   Token.Type.PRINT);
+      langKeywords.put("return",  Token.Type.RETURN);
+      langKeywords.put("data",    Token.Type.DATA);
+      langKeywords.put("Int",     Token.Type.TYPE_INT);
+      langKeywords.put("Float",   Token.Type.TYPE_FLOAT);
+      langKeywords.put("Bool",    Token.Type.TYPE_BOOL);
+      langKeywords.put("Char",    Token.Type.TYPE_CHAR);
     }
   }
 
@@ -100,7 +93,7 @@ public class LangScanner {
   }
 
  /**
-  * Put a byte back in the buffer and truncate lexeme.
+  * Put back a byte in the buffer and truncate lexeme.
   *
   * @param b      Byte.
   * @param lexeme Lexeme.

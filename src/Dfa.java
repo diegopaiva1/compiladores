@@ -71,18 +71,19 @@ public class Dfa {
             transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), '\t'), states.get(destinationId));
             break;
           case "^\\n":
-            // TODO: Explain
+            // Add transition for every ascii character except for '\n'
             for (int ascii = 0; ascii < 256; ascii++)
               if ((char) ascii != '\n')
                 transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), (char) ascii), states.get(destinationId));
             break;
           case "^-":
-            // TODO: Explain
+            // Add transition for every ascii character except for '-'
             for (int ascii = 0; ascii < 256; ascii++)
               if ((char) ascii != '-')
                 transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), (char) ascii), states.get(destinationId));
             break;
           case "any":
+            // Add transition for every ascii character
             for (int ascii = 0; ascii < 256; ascii++)
               transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), (char) ascii), states.get(destinationId));
             break;

@@ -5,10 +5,11 @@ public class Token {
   public enum Type {
     NONE,
     IDENTIFIER,
-    INT, FLOAT, CHAR, BOOL, NULL,
-    TYPE_NAME, TYPE_INT, TYPE_FLOAT, TYPE_BOOL, TYPE_CHAR,
-    IF, ELSE, ITERATE, READ, PRINT, RETURN, DATA,
-    SEPARATOR, OPERATOR
+    INT, FLOAT, CHAR, BOOL, NULL, // Literal values
+    TYPE_NAME, TYPE_INT, TYPE_FLOAT, TYPE_BOOL, TYPE_CHAR, // Name of user defined and primitive types
+    IF, ELSE, ITERATE, READ, PRINT, RETURN, DATA, // Commands
+    SEPARATOR,
+    OPERATOR
   }
 
  /**
