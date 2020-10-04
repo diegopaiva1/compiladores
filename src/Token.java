@@ -2,7 +2,7 @@ public class Token {
  /**
   * Enumeration of possible tokens types.
   */
-  public enum Type {NONE, EOF, MULT, SEMI, EQ, VAR, PLUS, INT}
+  public enum Type {NONE, IDENTIFIER, TYPE_NAME, INT, FLOAT, CHAR, SEPARATOR, OPERATOR}
 
  /**
   * Token's type.

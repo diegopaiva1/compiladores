@@ -54,7 +54,7 @@ public class LangScanner {
       }
 
       lexeme = rollback(charsStack.pop(), lexeme);
-    } while (statesStack.peek().id == 5);
+    } while (statesStack.peek().isSkip);
 
     state = statesStack.pop();
 

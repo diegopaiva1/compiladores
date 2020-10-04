@@ -10,14 +10,20 @@ public class State {
   public Token.Type tokenType;
 
  /**
+  * Is skip state.
+  */
+  public boolean isSkip;
+
+ /**
   * Construct a new State.
   *
   * @param id   id.
   * @param tokenType Type of token returned by the state.
   */
-  public State(int id, Token.Type tokenType) {
+  public State(int id, Token.Type tokenType, boolean isSkip) {
     this.id = id;
     this.tokenType = tokenType;
+    this.isSkip = isSkip;
   }
 
  /**

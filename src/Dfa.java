@@ -29,22 +29,66 @@ public class Dfa {
       int statesNum = Integer.parseInt(fileReader.next());
       int transitionsNum = Integer.parseInt(fileReader.next());
       int acceptStatesNum = Integer.parseInt(fileReader.next());
+      int skipState = Integer.parseInt(fileReader.next());
 
       for (int i = 0; i < statesNum; i++) {
         // States are initialized as not accepted (token type is NONE)
-        states.put(i, new State(i, Token.Type.NONE));
+        states.put(i, new State(i, Token.Type.NONE, false));
       }
 
-      states.put(-1, new State(-1, Token.Type.NONE)); // Add an error state
+      states.put(-1, new State(-1, Token.Type.NONE, false)); // Add an error state
+      states.get(skipState).isSkip = true;
 
       // 2nd block (transitions)
       for (int i = 0; i < transitionsNum; i++) {
         int originId = Integer.parseInt(fileReader.next());
         String word = fileReader.next();
-        char c = word.length() == 1 ? word.charAt(0) : (char) Integer.parseInt(word);
         int destinationId = Integer.parseInt(fileReader.next());
 
-        transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), c), states.get(destinationId));
+        switch (word) {
+          case "lowerLetter":
+            for (char ch = 'a'; ch <= 'z'; ch++)
+              transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), ch), states.get(destinationId));
+            break;
+          case "upperLetter":
+            for (char ch = 'A'; ch <= 'Z'; ch++)
+              transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), ch), states.get(destinationId));
+            break;
+          case "digit":
+            for (char digit = '0'; digit <= '9'; digit++)
+              transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), digit), states.get(destinationId));
+            break;
+          case "whitespace":
+            transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), ' '), states.get(destinationId));
+            break;
+          case "\\r":
+            transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), '\r'), states.get(destinationId));
+            break;
+          case "\\n":
+            transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), '\n'), states.get(destinationId));
+            break;
+          case "\\t":
+            transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), '\t'), states.get(destinationId));
+            break;
+          case "^\\n":
+            // TODO: Explain
+            for (int ascii = 0; ascii < 256; ascii++)
+              if ((char) ascii != '\n')
+                transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), (char) ascii), states.get(destinationId));
+            break;
+          case "^-":
+            // TODO: Explain
+            for (int ascii = 0; ascii < 256; ascii++)
+              if ((char) ascii != '-')
+                transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), (char) ascii), states.get(destinationId));
+            break;
+          case "any":
+            for (int ascii = 0; ascii < 256; ascii++)
+              transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), (char) ascii), states.get(destinationId));
+            break;
+          default:
+            transitionsMap.put(new AbstractMap.SimpleEntry<State, Character>(states.get(originId), word.charAt(0)), states.get(destinationId));
+        }
       }
 
       // 3rd block (accept states)
