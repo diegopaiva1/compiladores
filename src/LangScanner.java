@@ -16,16 +16,6 @@ public class LangScanner {
   private Dfa dfa = new Dfa();
 
  /**
-  * Utility for stacking states during scanner proccesing.
-  */
-  private Stack<State> statesStack = new Stack<State>();
-
- /**
-  * Utility for stacking characters during scanner proccesing.
-  */
-  private Stack<Character> charsStack = new Stack<Character>();
-
- /**
   * Default constructor.
   *
   * @param program Name of the file containing the program to be scanned.
@@ -44,6 +34,9 @@ public class LangScanner {
   * @return The next Token in current buffer.
   */
   public Token nextToken() throws IOException {
+    Stack<State> statesStack = new Stack<State>();        // States being processed in DFA simulation
+    Stack<Character> charsStack = new Stack<Character>(); // Characters being processed in DFA simulation
+
     String lexeme;
     State state;
 
