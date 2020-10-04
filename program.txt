@@ -1,12 +1,16 @@
 fat(num :: Int) : Int {
-    if (num < 3.14159)
-        return 1;
-    else
-        c = 'a';
-        d = 'a';
-        {-
-        este é um comentário
-        multilinha
-        -}
-        return num * fat(num - 1);
+    iterate (a < 3) {
+        if (num < 3.14159)
+            return 1;
+        else
+            Bool x = true;
+            Bool y = false;
+            c = 'a';
+            d = 'a';
+            {-
+            este é um comentário
+            multilinha
+            -}
+            return num * fat(num - 1);
+    }
 }

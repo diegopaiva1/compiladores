@@ -2,7 +2,14 @@ public class Token {
  /**
   * Enumeration of possible tokens types.
   */
-  public enum Type {NONE, IDENTIFIER, TYPE_NAME, INT, FLOAT, CHAR, SEPARATOR, OPERATOR}
+  public enum Type {
+    NONE,
+    IDENTIFIER,
+    INT, FLOAT, CHAR, BOOL, NULL,
+    TYPE_NAME, TYPE_INT, TYPE_FLOAT, TYPE_BOOL, TYPE_CHAR,
+    IF, ELSE, ITERATE, READ, PRINT, RETURN, DATA,
+    SEPARATOR, OPERATOR
+  }
 
  /**
   * Token's type.

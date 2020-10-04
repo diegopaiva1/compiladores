@@ -2,6 +2,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Stack;
 
 public class LangScanner {
@@ -16,11 +17,31 @@ public class LangScanner {
   private Dfa dfa = new Dfa();
 
  /**
+  * Hash Map containing Lang's reserved keywords.
+  */
+  private HashMap<String, Token.Type> langKeywords = new HashMap<String, Token.Type>();
+
+ /**
   * Default constructor.
   *
   * @param program Name of the file containing the program to be scanned.
   */
   public LangScanner(String program) {
+    langKeywords.put("true",    Token.Type.BOOL);
+    langKeywords.put("false",   Token.Type.BOOL);
+    langKeywords.put("null",    Token.Type.NULL);
+    langKeywords.put("if",      Token.Type.IF);
+    langKeywords.put("else",    Token.Type.ELSE);
+    langKeywords.put("iterate", Token.Type.ITERATE);
+    langKeywords.put("read",    Token.Type.READ);
+    langKeywords.put("print",   Token.Type.PRINT);
+    langKeywords.put("return",  Token.Type.RETURN);
+    langKeywords.put("data",    Token.Type.DATA);
+    langKeywords.put("Int",     Token.Type.TYPE_INT);
+    langKeywords.put("Float",   Token.Type.TYPE_FLOAT);
+    langKeywords.put("Bool",    Token.Type.TYPE_BOOL);
+    langKeywords.put("Char",    Token.Type.TYPE_CHAR);
+
     try {
       buffer = new PushbackInputStream(new FileInputStream(program));
     } catch (IOException e) {
@@ -63,7 +84,12 @@ public class LangScanner {
       lexeme = rollback(charsStack.pop(), lexeme);
     }
 
-    return state.isAccepted() ? new Token(state.tokenType, lexeme) : null;
+    if (state.isAccepted()) {
+      Token.Type type = langKeywords.containsKey(lexeme) ? langKeywords.get(lexeme) : state.tokenType;
+      return new Token(type, lexeme);
+    }
+
+    return null;
   }
 
   private String rollback(int b, String lexeme) throws IOException {
