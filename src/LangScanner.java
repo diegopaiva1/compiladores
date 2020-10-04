@@ -105,11 +105,6 @@ public class LangScanner {
   */
   private char nextChar() throws IOException {
     int c = buffer.read();
-
-    // -1 is EOF
-    if (c == -1)
-      return '\0';
-
-    return (char) c;
+    return c == - 1 ? '\0' : (char) c;
   }
 }
