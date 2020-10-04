@@ -1,3 +1,8 @@
+/*
+ * @author Diego Paiva (201565516C)
+ * @author Thaynara Ferreira (201565254C)
+ */
+
 package app;
 
 public class State {
