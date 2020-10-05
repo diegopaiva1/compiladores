@@ -69,10 +69,12 @@ public class LangScanner {
     State state;
 
     do {
+      // Init
       statesStack.clear();
       state = dfa.getStartState();
       lexeme = "";
 
+      // Process
       while (!state.isError()) {
         char c = nextChar();
         charsStack.push(c);
@@ -86,14 +88,19 @@ public class LangScanner {
 
     state = statesStack.pop();
 
+    // Rollback
     while (!state.isAccepted() && !statesStack.empty()) {
       state = statesStack.pop();
       lexeme = rollback(charsStack.pop(), lexeme);
     }
 
+    // Emit
     if (state.isAccepted()) {
       Token.Type type = langKeywords.containsKey(lexeme) ? langKeywords.get(lexeme) : state.tokenType;
       return new Token(type, lexeme);
+    }
+    else {
+      System.out.println("Invalid token found");
     }
 
     return null;
