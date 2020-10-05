@@ -66,6 +66,7 @@ public class LangScanner {
     Stack<Character> charsStack = new Stack<Character>(); // Characters being processed in DFA simulation
 
     String lexeme;
+    String invalid;
     State state;
 
     do {
@@ -73,6 +74,7 @@ public class LangScanner {
       statesStack.clear();
       state = dfa.getStartState();
       lexeme = "";
+      invalid = "";
 
       // Process
       while (!state.isError()) {
@@ -83,6 +85,7 @@ public class LangScanner {
         state = dfa.move(new AbstractMap.SimpleEntry<State, Character>(state, c));
       }
 
+      invalid = lexeme;
       lexeme = rollback(charsStack.pop(), lexeme);
     } while (statesStack.peek().isSkip);
 
@@ -99,8 +102,8 @@ public class LangScanner {
       Token.Type type = langKeywords.containsKey(lexeme) ? langKeywords.get(lexeme) : state.tokenType;
       return new Token(type, lexeme);
     }
-    else {
-      System.out.println("Invalid token found");
+    else if (!invalid.trim().isEmpty()) {
+      System.out.println("Invalid token '" + invalid + "' found");
     }
 
     return null;
