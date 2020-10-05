@@ -9,6 +9,11 @@ import java.io.IOException;
 
 public class App {
   public static void main(String[] args) {
+    if (args.length != 1) {
+      System.out.println("Invalid number of arguments");
+      System.exit(1);
+    }
+
     try {
       LangScanner langScanner = new LangScanner(args[0]);
 
