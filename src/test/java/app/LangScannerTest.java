@@ -13,7 +13,7 @@ import org.junit.Test;
 /**
  * Unit test for LangScanner App.
  */
-public class AppTest
+public class LangScannerTest
 {
   /**
    * Test tokens for input program.
