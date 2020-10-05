@@ -1,4 +1,4 @@
-21 65 11 11
+22 66 12 11
 
 0  lowerLetter 1
 0  upperLetter 2
@@ -37,7 +37,7 @@
 2  digit       2
 2  _           2
 3  digit       3
-3  .           4
+3  .          21
 4  digit       5
 5  digit       5
 7  =           8
@@ -65,10 +65,12 @@
 18 \          19
 18 '          19
 19 '          20
+21 digit       5
 
 1  IDENTIFIER
 2  TYPE_NAME
 3  INT
+4  SEPARATOR
 5  FLOAT
 6  SEPARATOR
 7  OPERATOR
