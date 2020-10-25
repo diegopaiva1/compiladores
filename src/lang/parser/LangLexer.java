@@ -1,4 +1,7 @@
-// Generated from /home/diego/java/lang-parser/Lang.g4 by ANTLR 4.8
+// Generated from Lang.g4 by ANTLR 4.7.1
+
+package lang.parser;
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -10,7 +13,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class LangLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -31,39 +34,30 @@ public class LangLexer extends Lexer {
 		"DEFAULT_MODE"
 	};
 
-	private static String[] makeRuleNames() {
-		return new String[] {
-			"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
-			"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
-			"T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", 
-			"T__25", "T__26", "T__27", "T__28", "T__29", "T__30", "T__31", "T__32", 
-			"T__33", "T__34", "T__35", "T__36", "T__37", "LOWER_LETTER", "UPPER_LETTER", 
-			"ANY_LETTER", "DIGIT", "SPECIAL_CHAR", "ASCII_CHAR", "ID", "TYPE_NAME", 
-			"INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", "BLOCK_COMMENT"
-		};
-	}
-	public static final String[] ruleNames = makeRuleNames();
+	public static final String[] ruleNames = {
+		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
+		"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
+		"T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", 
+		"T__25", "T__26", "T__27", "T__28", "T__29", "T__30", "T__31", "T__32", 
+		"T__33", "T__34", "T__35", "T__36", "T__37", "LOWER_LETTER", "UPPER_LETTER", 
+		"ANY_LETTER", "DIGIT", "SPECIAL_CHAR", "ASCII_CHAR", "ID", "TYPE_NAME", 
+		"INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", "BLOCK_COMMENT"
+	};
 
-	private static String[] makeLiteralNames() {
-		return new String[] {
-			null, "'data'", "'{'", "'}'", "'::'", "';'", "'('", "')'", "':'", "','", 
-			"'['", "']'", "'Int'", "'Char'", "'Bool'", "'Float'", "'if'", "'iterate'", 
-			"'read'", "'print'", "'return'", "'='", "'<'", "'>'", "'else'", "'&&'", 
-			"'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'true'", "'false'", 
-			"'null'", "'new'", "'.'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, "ID", "TYPE_NAME", "INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", 
-			"BLOCK_COMMENT"
-		};
-	}
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
+	private static final String[] _LITERAL_NAMES = {
+		null, "'data'", "'{'", "'}'", "'::'", "';'", "'('", "')'", "':'", "','", 
+		"'['", "']'", "'Int'", "'Char'", "'Bool'", "'Float'", "'if'", "'iterate'", 
+		"'read'", "'print'", "'return'", "'='", "'<'", "'>'", "'else'", "'&&'", 
+		"'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'true'", "'false'", 
+		"'null'", "'new'", "'.'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, "ID", "TYPE_NAME", "INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", 
+		"BLOCK_COMMENT"
+	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**

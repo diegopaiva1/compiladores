@@ -1,4 +1,7 @@
-// Generated from /home/diego/java/lang-parser/Lang.g4 by ANTLR 4.8
+// Generated from Lang.g4 by ANTLR 4.7.1
+
+package lang.parser;
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,7 +13,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class LangParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -30,36 +33,27 @@ public class LangParser extends Parser {
 		RULE_rexp3 = 15, RULE_aexp = 16, RULE_aexp1 = 17, RULE_aexp2 = 18, RULE_mexp = 19, 
 		RULE_mexp1 = 20, RULE_mexp2 = 21, RULE_sexp = 22, RULE_pexp = 23, RULE_lvalue = 24, 
 		RULE_lvalue1 = 25, RULE_lvalue2 = 26, RULE_exps = 27;
-	private static String[] makeRuleNames() {
-		return new String[] {
-			"prog", "data", "decl", "func", "params", "type", "type1", "btype", "cmd", 
-			"cmd1", "exp", "exp1", "rexp", "rexp1", "rexp2", "rexp3", "aexp", "aexp1", 
-			"aexp2", "mexp", "mexp1", "mexp2", "sexp", "pexp", "lvalue", "lvalue1", 
-			"lvalue2", "exps"
-		};
-	}
-	public static final String[] ruleNames = makeRuleNames();
+	public static final String[] ruleNames = {
+		"prog", "data", "decl", "func", "params", "type", "type1", "btype", "cmd", 
+		"cmd1", "exp", "exp1", "rexp", "rexp1", "rexp2", "rexp3", "aexp", "aexp1", 
+		"aexp2", "mexp", "mexp1", "mexp2", "sexp", "pexp", "lvalue", "lvalue1", 
+		"lvalue2", "exps"
+	};
 
-	private static String[] makeLiteralNames() {
-		return new String[] {
-			null, "'data'", "'{'", "'}'", "'::'", "';'", "'('", "')'", "':'", "','", 
-			"'['", "']'", "'Int'", "'Char'", "'Bool'", "'Float'", "'if'", "'iterate'", 
-			"'read'", "'print'", "'return'", "'='", "'<'", "'>'", "'else'", "'&&'", 
-			"'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'true'", "'false'", 
-			"'null'", "'new'", "'.'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, "ID", "TYPE_NAME", "INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", 
-			"BLOCK_COMMENT"
-		};
-	}
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
+	private static final String[] _LITERAL_NAMES = {
+		null, "'data'", "'{'", "'}'", "'::'", "';'", "'('", "')'", "':'", "','", 
+		"'['", "']'", "'Int'", "'Char'", "'Bool'", "'Float'", "'if'", "'iterate'", 
+		"'read'", "'print'", "'return'", "'='", "'<'", "'>'", "'else'", "'&&'", 
+		"'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'true'", "'false'", 
+		"'null'", "'new'", "'.'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, "ID", "TYPE_NAME", "INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", 
+		"BLOCK_COMMENT"
+	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -109,7 +103,6 @@ public class LangParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-
 	public static class ProgContext extends ParserRuleContext {
 		public List<DataContext> data() {
 			return getRuleContexts(DataContext.class);
@@ -127,6 +120,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_prog; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterProg(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitProg(this);
+		}
 	}
 
 	public final ProgContext prog() throws RecognitionException {
@@ -189,6 +190,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_data; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterData(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitData(this);
+		}
 	}
 
 	public final DataContext data() throws RecognitionException {
@@ -242,6 +251,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_decl; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterDecl(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitDecl(this);
+		}
 	}
 
 	public final DeclContext decl() throws RecognitionException {
@@ -292,6 +309,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_func; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterFunc(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitFunc(this);
+		}
 	}
 
 	public final FuncContext func() throws RecognitionException {
@@ -391,6 +416,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_params; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterParams(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitParams(this);
+		}
 	}
 
 	public final ParamsContext params() throws RecognitionException {
@@ -450,6 +483,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitType(this);
+		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -483,6 +524,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterType1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitType1(this);
+		}
 	}
 
 	public final Type1Context type1() throws RecognitionException {
@@ -525,6 +574,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_btype; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterBtype(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitBtype(this);
+		}
 	}
 
 	public final BtypeContext btype() throws RecognitionException {
@@ -587,6 +644,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_cmd; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterCmd(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitCmd(this);
+		}
 	}
 
 	public final CmdContext cmd() throws RecognitionException {
@@ -788,6 +853,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_cmd1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterCmd1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitCmd1(this);
+		}
 	}
 
 	public final Cmd1Context cmd1() throws RecognitionException {
@@ -832,6 +905,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_exp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitExp(this);
+		}
 	}
 
 	public final ExpContext exp() throws RecognitionException {
@@ -868,6 +949,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_exp1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterExp1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitExp1(this);
+		}
 	}
 
 	public final Exp1Context exp1() throws RecognitionException {
@@ -917,6 +1006,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rexp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterRexp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitRexp(this);
+		}
 	}
 
 	public final RexpContext rexp() throws RecognitionException {
@@ -952,6 +1049,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rexp1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterRexp1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitRexp1(this);
+		}
 	}
 
 	public final Rexp1Context rexp1() throws RecognitionException {
@@ -994,6 +1099,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rexp2; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterRexp2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitRexp2(this);
+		}
 	}
 
 	public final Rexp2Context rexp2() throws RecognitionException {
@@ -1047,6 +1160,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rexp3; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterRexp3(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitRexp3(this);
+		}
 	}
 
 	public final Rexp3Context rexp3() throws RecognitionException {
@@ -1092,6 +1213,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_aexp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterAexp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitAexp(this);
+		}
 	}
 
 	public final AexpContext aexp() throws RecognitionException {
@@ -1125,6 +1254,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_aexp1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterAexp1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitAexp1(this);
+		}
 	}
 
 	public final Aexp1Context aexp1() throws RecognitionException {
@@ -1178,6 +1315,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_aexp2; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterAexp2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitAexp2(this);
+		}
 	}
 
 	public final Aexp2Context aexp2() throws RecognitionException {
@@ -1223,6 +1368,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mexp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterMexp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitMexp(this);
+		}
 	}
 
 	public final MexpContext mexp() throws RecognitionException {
@@ -1256,6 +1409,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mexp1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterMexp1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitMexp1(this);
+		}
 	}
 
 	public final Mexp1Context mexp1() throws RecognitionException {
@@ -1318,6 +1479,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_mexp2; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterMexp2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitMexp2(this);
+		}
 	}
 
 	public final Mexp2Context mexp2() throws RecognitionException {
@@ -1366,6 +1535,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_sexp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterSexp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitSexp(this);
+		}
 	}
 
 	public final SexpContext sexp() throws RecognitionException {
@@ -1480,6 +1657,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_pexp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterPexp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitPexp(this);
+		}
 	}
 
 	public final PexpContext pexp() throws RecognitionException {
@@ -1580,6 +1765,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_lvalue; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterLvalue(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitLvalue(this);
+		}
 	}
 
 	public final LvalueContext lvalue() throws RecognitionException {
@@ -1614,6 +1807,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_lvalue1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterLvalue1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitLvalue1(this);
+		}
 	}
 
 	public final Lvalue1Context lvalue1() throws RecognitionException {
@@ -1669,6 +1870,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_lvalue2; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterLvalue2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitLvalue2(this);
+		}
 	}
 
 	public final Lvalue2Context lvalue2() throws RecognitionException {
@@ -1714,6 +1923,14 @@ public class LangParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_exps; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterExps(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitExps(this);
+		}
 	}
 
 	public final ExpsContext exps() throws RecognitionException {

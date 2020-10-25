@@ -1,17 +1,27 @@
 grammar Lang;
 
+@parser::header
+{
+package lang.parser;
+}
+
+@lexer::header
+{
+package lang.parser;
+}
+
 prog : data* func* ;
 data : 'data' TYPE_NAME '{' decl* '}' ;
 decl : ID '::' type ';' ;
 func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' ;
-params : ID '::' type (',' ID '::' type)* ; 
+params : ID '::' type (',' ID '::' type)* ;
 type : btype type1 ;
 type1 : ('[' ']' type1)? ;
 btype : 'Int'
       | 'Char'
       | 'Bool'
       | 'Float'
-      | TYPE_NAME 
+      | TYPE_NAME
       ;
 cmd : '{' cmd* '}'
     | 'if' '(' exp ')' cmd cmd1
@@ -20,7 +30,7 @@ cmd : '{' cmd* '}'
     | 'print' exp ';'
     | 'return' exp (',' exp)* ';'
     | lvalue '=' exp ';'
-    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' 
+    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';'
     ;
 cmd1 : ('else' cmd)? ;
 exp : rexp exp1 ;

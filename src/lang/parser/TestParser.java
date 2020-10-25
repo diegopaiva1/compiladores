@@ -5,25 +5,25 @@ import lang.ast.SuperNode;
 import lang.parser.*;
 import java.util.List;
 
-// Adaptador para classe de parser. a Função parseFile deve retornar null caso o parser resulte em erro. 
+// Adaptador para classe de parser. a Função parseFile deve retornar null caso o parser resulte em erro.
 
 public class TestParser {
    private ParseAdaptor adp;
    private String okSrcs = "testes/sintaxe/certo/";
    private File f;
-   
+
    public TestParser(ParseAdaptor adp){
         this.adp = adp;
         f = new File(okSrcs);
         runOkTests();
    }
-   
+
    private String filler(int n){
       String s = "";
       for(int i =0; i< n; i++){ s += " "; }
       return s;
    }
-   
+
    public void runOkTests(){
        File inst[];
        int flips, flops;
@@ -39,7 +39,7 @@ public class TestParser {
                    if(adp.parseFile(s.getPath()) != null){
                        System.out.println("  OK  ]");
                        flips++;
-                   }else{ 
+                   }else{
                       System.out.println("FALHOU]");
                       flops++;
                    }
@@ -49,7 +49,7 @@ public class TestParser {
            }else{
               System.out.println("O caminho " + f.getPath() + " não é um diretório ou não existe.");
            }
-           
+
        }catch(Exception e){
            e.printStackTrace();
        }
