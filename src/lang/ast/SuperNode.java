@@ -1,6 +1,6 @@
 package lang.ast;
 
-public abstract class SuperNode {
+public interface SuperNode {
 
    // The line and column of the node in the input text
 

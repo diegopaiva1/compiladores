@@ -1,11 +1,11 @@
 package lang.parser;
 
+import lang.ast.ProgNode;
 import lang.ast.SuperNode;
 import java.io.IOException;
 import org.antlr.v4.runtime.*;
 
 public class LangParserAdaptor implements ParseAdaptor {
-
   @Override
   public SuperNode parseFile(String path) {
     try {
@@ -21,7 +21,11 @@ public class LangParserAdaptor implements ParseAdaptor {
       // Create a parser that feeds of the tokens buffer
       LangParser langParser = new LangParser(tokens);
 
-      System.out.println(langParser.prog().toStringTree(langParser));
+      // Run root
+      langParser.prog();
+
+      if (langParser.getNumberOfSyntaxErrors() == 0)
+        return new ProgNode();
     }
     catch (IOException e) {
       e.printStackTrace();
