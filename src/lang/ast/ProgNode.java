@@ -1,6 +1,6 @@
 package lang.ast;
 
-public class ProgNode implements SuperNode {
+public class ProgNode extends SuperNode {
   public ProgNode() {
 
   }
