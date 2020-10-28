@@ -1,4 +1,4 @@
-package lang.ast;
+package lang.compiler.ast;
 
 public abstract class SuperNode {
 

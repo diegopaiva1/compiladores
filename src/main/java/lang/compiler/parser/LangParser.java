@@ -1,6 +1,6 @@
 // Generated from Lang.g4 by ANTLR 4.7.1
 
-package lang.parser;
+package lang.compiler.parser;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -19,39 +19,39 @@ public class LangParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
-		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
-		T__31=32, T__32=33, T__33=34, T__34=35, T__35=36, T__36=37, T__37=38, 
-		ID=39, TYPE_NAME=40, INT=41, FLOAT=42, CHAR=43, WS=44, LINE_COMMENT=45, 
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9,
+		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17,
+		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24,
+		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31,
+		T__31=32, T__32=33, T__33=34, T__34=35, T__35=36, T__36=37, T__37=38,
+		ID=39, TYPE_NAME=40, INT=41, FLOAT=42, CHAR=43, WS=44, LINE_COMMENT=45,
 		BLOCK_COMMENT=46;
 	public static final int
-		RULE_prog = 0, RULE_data = 1, RULE_decl = 2, RULE_func = 3, RULE_params = 4, 
-		RULE_type = 5, RULE_type1 = 6, RULE_btype = 7, RULE_cmd = 8, RULE_cmd1 = 9, 
-		RULE_exp = 10, RULE_exp1 = 11, RULE_rexp = 12, RULE_rexp1 = 13, RULE_rexp2 = 14, 
-		RULE_rexp3 = 15, RULE_aexp = 16, RULE_aexp1 = 17, RULE_aexp2 = 18, RULE_mexp = 19, 
-		RULE_mexp1 = 20, RULE_mexp2 = 21, RULE_sexp = 22, RULE_pexp = 23, RULE_lvalue = 24, 
+		RULE_prog = 0, RULE_data = 1, RULE_decl = 2, RULE_func = 3, RULE_params = 4,
+		RULE_type = 5, RULE_type1 = 6, RULE_btype = 7, RULE_cmd = 8, RULE_cmd1 = 9,
+		RULE_exp = 10, RULE_exp1 = 11, RULE_rexp = 12, RULE_rexp1 = 13, RULE_rexp2 = 14,
+		RULE_rexp3 = 15, RULE_aexp = 16, RULE_aexp1 = 17, RULE_aexp2 = 18, RULE_mexp = 19,
+		RULE_mexp1 = 20, RULE_mexp2 = 21, RULE_sexp = 22, RULE_pexp = 23, RULE_lvalue = 24,
 		RULE_lvalue1 = 25, RULE_lvalue2 = 26, RULE_exps = 27;
 	public static final String[] ruleNames = {
-		"prog", "data", "decl", "func", "params", "type", "type1", "btype", "cmd", 
-		"cmd1", "exp", "exp1", "rexp", "rexp1", "rexp2", "rexp3", "aexp", "aexp1", 
-		"aexp2", "mexp", "mexp1", "mexp2", "sexp", "pexp", "lvalue", "lvalue1", 
+		"prog", "data", "decl", "func", "params", "type", "type1", "btype", "cmd",
+		"cmd1", "exp", "exp1", "rexp", "rexp1", "rexp2", "rexp3", "aexp", "aexp1",
+		"aexp2", "mexp", "mexp1", "mexp2", "sexp", "pexp", "lvalue", "lvalue1",
 		"lvalue2", "exps"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'data'", "'{'", "'}'", "'::'", "';'", "'('", "')'", "':'", "','", 
-		"'['", "']'", "'Int'", "'Char'", "'Bool'", "'Float'", "'if'", "'iterate'", 
-		"'read'", "'print'", "'return'", "'='", "'<'", "'>'", "'else'", "'&&'", 
-		"'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'true'", "'false'", 
+		null, "'data'", "'{'", "'}'", "'::'", "';'", "'('", "')'", "':'", "','",
+		"'['", "']'", "'Int'", "'Char'", "'Bool'", "'Float'", "'if'", "'iterate'",
+		"'read'", "'print'", "'return'", "'='", "'<'", "'>'", "'else'", "'&&'",
+		"'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'true'", "'false'",
 		"'null'", "'new'", "'.'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, "ID", "TYPE_NAME", "INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT", 
+		null, null, null, null, null, null, null, null, null, null, null, null,
+		null, null, null, null, null, null, null, null, null, null, null, null,
+		null, null, null, null, null, null, null, null, null, null, null, null,
+		null, null, null, "ID", "TYPE_NAME", "INT", "FLOAT", "CHAR", "WS", "LINE_COMMENT",
 		"BLOCK_COMMENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);

@@ -1,11 +1,11 @@
-package lang.parser;
+package lang.compiler.parser;
 
-import lang.ast.ProgNode;
-import lang.ast.SuperNode;
+import lang.compiler.ast.ProgNode;
+import lang.compiler.ast.SuperNode;
 import java.io.IOException;
 import org.antlr.v4.runtime.*;
 
-public class LangParserAdaptor implements ParseAdaptor {
+public class LangParseAdaptor implements ParseAdaptor {
   @Override
   public SuperNode parseFile(String path) {
     try {

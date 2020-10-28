@@ -1,8 +1,7 @@
-package lang;
+package lang.compiler;
 
-import java.io.*;
-import lang.parser.*;
-import lang.ast.*;
+import lang.compiler.parser.*;
+import lang.compiler.ast.*;
 
 public class LangCompiler{
    // Recupera o nome base (sem extensão) de um arquivo.
@@ -26,7 +25,7 @@ public class LangCompiler{
 
        }
        try{
-	   ParseAdaptor langParser = new LangParserAdaptor();
+	   ParseAdaptor langParser = new LangParseAdaptor();
 
           if(args[0].equals("-bs") ){
               System.out.println("Executando bateria de testes sintáticos:");

@@ -1,4 +1,4 @@
-package lang.ast;
+package lang.compiler.ast;
 
 public class ProgNode extends SuperNode {
   public ProgNode() {
