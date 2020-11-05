@@ -1,8 +1,5 @@
 grammar Lang;
 
-@parser::header { package lang.compiler.parser; }
-@lexer::header { package lang.compiler.parser; }
-
 prog : data* func* ;
 data : 'data' TYPE_NAME '{' decl* '}' ;
 decl : ID '::' type ';' ;
