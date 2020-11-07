@@ -1,8 +1,9 @@
 package lang.compiler.ast.operators.binary;
 
 import lang.compiler.ast.AbstractExpression;
+import lang.compiler.ast.operators.AbstractOperator;
 
-public abstract class AbstractBinaryOperator extends AbstractExpression {
+public abstract class AbstractBinaryOperator extends AbstractOperator {
   private AbstractExpression left;
   private AbstractExpression right;
 
@@ -26,6 +27,4 @@ public abstract class AbstractBinaryOperator extends AbstractExpression {
   public void setRight(AbstractExpression right) {
     this.right = right;
   }
-
-  public abstract String getSymbol();
 }

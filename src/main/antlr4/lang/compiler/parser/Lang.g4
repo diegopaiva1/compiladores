@@ -35,7 +35,7 @@ exp : exp '&&' exp # And
     ;
 rexp : aexp '<' aexp   # LessThan
      | rexp '==' aexp  # Equal
-     | rexp '!=' aexp  # NotEQual
+     | rexp '!=' aexp  # NotEqual
      | aexp            # SeiLa3
      ;
 aexp : aexp '+' mexp # Addition

@@ -2,7 +2,7 @@ main() {
   read x;
   read y;
 
-  if (x % 2 == 0)
+  if (-x)
     print x;
 
   if (x && 3) {

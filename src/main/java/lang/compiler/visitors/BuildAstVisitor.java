@@ -7,6 +7,7 @@ import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
+import lang.compiler.ast.operators.unary.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
 
@@ -153,7 +154,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitNotEQual(LangParser.NotEQualContext ctx) {
+  public AbstractExpression visitNotEqual(LangParser.NotEqualContext ctx) {
     AbstractExpression left = visit(ctx.rexp());
     AbstractExpression right = visit(ctx.aexp());
     return new NotEqual(left, right);
@@ -192,5 +193,17 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     AbstractExpression left = visit(ctx.mexp());
     AbstractExpression right = visit(ctx.sexp());
     return new Module(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitNot(LangParser.NotContext ctx) {
+    AbstractExpression expr = visit(ctx.sexp());
+    return new Not(expr);
+  }
+
+  @Override
+  public AbstractExpression visitNegate(LangParser.NegateContext ctx) {
+    AbstractExpression expr = visit(ctx.sexp());
+    return new Negate(expr);
   }
 }
