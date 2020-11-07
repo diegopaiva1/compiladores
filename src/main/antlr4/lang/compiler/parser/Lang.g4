@@ -1,93 +1,88 @@
 grammar Lang;
 
-prog : data* func* ;
-data : 'data' TYPE_NAME '{' decl* '}' ;
-decl : ID '::' type ';' ;
-func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' ;
-params : ID '::' type (',' ID '::' type)* ;
-type : btype type1 ;
-type1 : ('[' ']' type1)? ;
+/* Parser rules */
+prog : data* func* EOF # Program
+     ;
+data : 'data' TYPE_NAME '{' decl* '}'
+     ;
+decl : ID '::' type ';' # Declaration
+     ;
+func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' # Function
+     ;
+params : ID '::' type (',' ID '::' type)* # Parameters
+       ;
+type : type '[' ']'
+     | btype
+     ;
 btype : 'Int'
       | 'Char'
       | 'Bool'
       | 'Float'
       | TYPE_NAME
       ;
-cmd : '{' cmd* '}'
-    | 'if' '(' exp ')' cmd cmd1
-    | 'iterate' '(' exp ')' cmd
-    | 'read' lvalue ';'
-    | 'print' exp ';'
-    | 'return' exp (',' exp)* ';'
-    | lvalue '=' exp ';'
-    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';'
+cmd : '{' cmd* '}'                                         # BlockScope
+    | 'if' '(' exp ')' cmd                                 # If
+    | 'if' '(' exp ')' cmd 'else' cmd                      # IfElse
+    | 'iterate' '(' exp ')' cmd                            # Iterate
+    | 'read' lvalue ';'                                    # Read
+    | 'print' exp ';'                                      # Print
+    | 'return' exp (',' exp)* ';'                          # Return
+    | lvalue '=' exp ';'                                   # Assignment
+    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' # SeiLa
     ;
-cmd1 : ('else' cmd)? ;
-exp : rexp exp1 ;
-exp1 : ('&&' exp exp1)? ;
-rexp : aexp rexp1 rexp3 ;
-rexp1 : ('<' aexp)? ;
-rexp2 : '==' aexp
-      | '!=' aexp
-      ;
-rexp3 : (rexp2 rexp3)? ;
-aexp : mexp aexp2 ;
-aexp1 : '+' mexp
-      | '-' mexp
-      ;
-aexp2 : (aexp1 aexp2)? ;
-mexp : sexp mexp2 ;
-mexp1 : '*' sexp
-      | '/' sexp
-      | '%' sexp
-      ;
-mexp2 : (mexp1 mexp2)? ;
-sexp : '!' sexp
-     | '-' sexp
-     | 'true'
-     | 'false'
-     | 'null'
-     | INT
-     | FLOAT
-     | CHAR
-     | pexp
+exp : exp '&&' exp
+    | rexp
+    ;
+rexp : aexp '<' aexp
+     | rexp '==' aexp
+     | rexp '!=' aexp
+     | aexp
+     ;
+aexp : aexp '+' mexp # Addition
+     | aexp '-' mexp # Subtraction
+     | mexp          # Other
+     ;
+mexp : mexp '*' sexp  # Multiplication
+     | mexp '/' sexp  # Division
+     | mexp '%' sexp  # Module
+     | sexp           # SymbolicExpression
+     ;
+sexp : '!' sexp  # Not
+     | '-' sexp  # Negate
+     | 'true'    # True
+     | 'false'   # False
+     | 'null'    # Null
+     | INT       # Int
+     | FLOAT     # Float
+     | CHAR      # Char
+     | pexp      # PrimaryExpression
      ;
 pexp : lvalue
      | '(' exp ')'
-     | 'new' btype ('[' sexp ']')?
+     | 'new' type ('[' exp ']')?
      | ID '(' exps? ')' '[' exp ']'
      ;
-lvalue : ID lvalue2 ;
-lvalue1 : '[' exp ']'
-        | '.' ID
-        ;
-lvalue2 : (lvalue1 lvalue2)? ;
-exps : exp (',' exp)* ;
+lvalue : ID
+       | lvalue '[' exp ']'
+       | lvalue '.' ID
+       ;
+exps : exp (',' exp)*
+     ;
 
-fragment
-LOWER_LETTER : [a-z] ;
+/* Tokens fragments */
+fragment LOWER_LETTER : [a-z];
+fragment UPPER_LETTER : [A-Z];
+fragment ANY_LETTER : (LOWER_LETTER|UPPER_LETTER);
+fragment DIGIT : [0-9];
+fragment SPECIAL_CHAR : ('\\n'|'\\t'|'\\b'|'\\r'|'\\\\'|'\\\'');
+fragment ASCII_CHAR : ([\u0000-\u0026]|[\u0028-\u005B]|[\u005D-\u007F]);
 
-fragment
-UPPER_LETTER : [A-Z] ;
-
-fragment
-ANY_LETTER : (LOWER_LETTER|UPPER_LETTER) ;
-
-fragment
-DIGIT : [0-9] ;
-
-fragment
-SPECIAL_CHAR : ('\\n'|'\\t'|'\\b'|'\\r'|'\\\\'|'\\\'') ;
-
-fragment
-ASCII_CHAR : ([\u0000-\u0026]|[\u0028-\u005B]|[\u005D-\u007F]) ;
-
-ID : LOWER_LETTER+(ANY_LETTER|DIGIT|'_')* ;
-TYPE_NAME : UPPER_LETTER+(ANY_LETTER|DIGIT|'_')* ;
-INT : DIGIT+ ;
-FLOAT : DIGIT* '.' DIGIT+ ;
-CHAR : '\'' (ASCII_CHAR|SPECIAL_CHAR) '\'' ;
-
-WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
-LINE_COMMENT : '--' ~[\r\n]* '\r'? '\n' -> skip ;
-BLOCK_COMMENT : '{-' .*? '-}' -> skip ;
+/* Tokens definitions */
+ID : LOWER_LETTER+(ANY_LETTER|DIGIT|'_')*;
+TYPE_NAME : UPPER_LETTER+(ANY_LETTER|DIGIT|'_')*;
+INT : DIGIT+;
+FLOAT : DIGIT* '.' DIGIT+;
+CHAR : '\'' (ASCII_CHAR|SPECIAL_CHAR) '\'';
+WS : [ \t\r\n]+ -> skip;
+LINE_COMMENT : '--' ~[\r\n]* '\r'? '\n' -> skip;
+BLOCK_COMMENT : '{-' .*? '-}' -> skip;

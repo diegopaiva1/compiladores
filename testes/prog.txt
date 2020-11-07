@@ -1,0 +1,5 @@
+main() {
+   read x;
+   print x;
+   return x;
+}

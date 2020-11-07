@@ -1,33 +1,32 @@
 package lang.compiler.parser;
 
-import lang.compiler.ast.ProgNode;
-import lang.compiler.ast.SuperNode;
 import java.io.IOException;
+
+import lang.compiler.ExpressionEvaluator;
+import lang.compiler.ast.Program;
+import lang.compiler.visitors.ProgramVisitor;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class LangParseAdaptor implements ParseAdaptor {
   @Override
-  public SuperNode parseFile(String path) {
+  public Program parseFile(String path) {
     try {
-      // Create a ANTLR CharStream from a file
-      CharStream stream = CharStreams.fromFileName(path);
+      CharStream inputStream = CharStreams.fromFileName(path);
+      LangLexer langLexer = new LangLexer(inputStream);
+      CommonTokenStream tokenStream = new CommonTokenStream(langLexer);
+      LangParser langParser = new LangParser(tokenStream);
 
-      // Create a lexer that feeds off of stream
-      LangLexer langLexer = new LangLexer(stream);
+      ParseTree cst = langParser.prog(); // Retrieve ANTLR parse tree from the start symbol 'prog'
+      Program prog = new ProgramVisitor().visit(cst); // Convert parse tree into Program object
+      ExpressionEvaluator ev = new ExpressionEvaluator(prog.getExpressions());
 
-      // Create a buffer of tokens pulled from the lexer
-      CommonTokenStream tokens = new CommonTokenStream(langLexer);
-
-      // Create a parser that feeds of the tokens buffer
-      LangParser langParser = new LangParser(tokens);
-
-      // Run root
-      langParser.prog();
+      for (String eval : ev.getEvaluationResults())
+        System.out.println(eval);
 
       if (langParser.getNumberOfSyntaxErrors() == 0)
-        return new ProgNode();
-    }
-    catch (IOException e) {
+        return prog;
+    } catch (IOException e) {
       e.printStackTrace();
     }
 

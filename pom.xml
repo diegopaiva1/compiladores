@@ -76,7 +76,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <plugin>
       <groupId>org.antlr</groupId>
       <artifactId>antlr4-maven-plugin</artifactId>
-      <version>4.5</version>
+      <version>4.7.1</version>
+      <configuration>
+        <arguments>
+          <argument>-visitor</argument>
+        </arguments>
+      </configuration>
       <executions>
         <execution>
           <id>antlr</id>
@@ -91,7 +96,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
       <configuration>
         <archive>
           <manifest>
-            <mainClass>lang.compiler.LangCompiler</mainClass>
+            <mainClass>lang.compiler.App</mainClass>
           </manifest>
         </archive>
         <descriptorRefs>
