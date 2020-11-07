@@ -20,7 +20,7 @@ btype : 'Int'
       | 'Float'
       | TYPE_NAME
       ;
-cmd : '{' cmd* '}'                                         # BlockScope
+cmd : '{' cmd* '}'                                         # CmdScope
     | 'if' '(' exp ')' cmd                                 # If
     | 'if' '(' exp ')' cmd 'else' cmd                      # IfElse
     | 'iterate' '(' exp ')' cmd                            # Iterate
@@ -28,19 +28,19 @@ cmd : '{' cmd* '}'                                         # BlockScope
     | 'print' exp ';'                                      # Print
     | 'return' exp (',' exp)* ';'                          # Return
     | lvalue '=' exp ';'                                   # Assignment
-    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' # SeiLa
+    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' # SeiLa1
     ;
-exp : exp '&&' exp
-    | rexp
+exp : exp '&&' exp # And
+    | rexp         # SeiLa2
     ;
-rexp : aexp '<' aexp
-     | rexp '==' aexp
-     | rexp '!=' aexp
-     | aexp
+rexp : aexp '<' aexp   # LessThan
+     | rexp '==' aexp  # Equal
+     | rexp '!=' aexp  # NotEQual
+     | aexp            # SeiLa3
      ;
 aexp : aexp '+' mexp # Addition
      | aexp '-' mexp # Subtraction
-     | mexp          # Other
+     | mexp          # SeiLa4
      ;
 mexp : mexp '*' sexp  # Multiplication
      | mexp '/' sexp  # Division

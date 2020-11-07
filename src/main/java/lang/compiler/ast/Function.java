@@ -6,13 +6,13 @@ import lang.compiler.ast.commands.AbstractCommand;
 
 public class Function extends AbstractExpression {
   private String id;
-  private List<Parameter> parameters;
-  private List<AbstractCommand> commands;
+  private List<Parameter> params;
+  private List<AbstractCommand> cmds;
 
-  public Function(String id, List<Parameter> parameters, List<AbstractCommand> commands) {
+  public Function(String id, List<Parameter> params, List<AbstractCommand> cmds) {
     this.id = id;
-    this.parameters = parameters;
-    this.commands = commands;
+    this.params = params;
+    this.cmds = cmds;
   }
 
   public String getId() {
@@ -24,18 +24,18 @@ public class Function extends AbstractExpression {
   }
 
   public List<Parameter> getParameters() {
-    return parameters;
+    return params;
   }
 
-  public void setParameters(List<Parameter> parameters) {
-    this.parameters = parameters;
+  public void setParameters(List<Parameter> params) {
+    this.params = params;
   }
 
   public List<AbstractCommand> getCommands() {
-    return commands;
+    return cmds;
   }
 
-  public void setCommands(List<AbstractCommand> commands) {
-    this.commands = commands;
+  public void setCommands(List<AbstractCommand> cmds) {
+    this.cmds = cmds;
   }
 }

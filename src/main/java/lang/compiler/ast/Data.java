@@ -4,11 +4,11 @@ import java.util.List;
 
 public class Data extends AbstractExpression {
   private String typeName;
-  private List<Declaration> declarations;
+  private List<Declaration> decls;
 
-  public Data(String typeName, List<Declaration> declarations) {
+  public Data(String typeName, List<Declaration> decls) {
     this.typeName = typeName;
-    this.declarations = declarations;
+    this.decls = decls;
   }
 
   public String getTypeName() {
@@ -20,10 +20,10 @@ public class Data extends AbstractExpression {
   }
 
   public List<Declaration> getDeclarations() {
-    return declarations;
+    return decls;
   }
 
-  public void setDeclarations(List<Declaration> declarations) {
-    this.declarations = declarations;
+  public void setDeclarations(List<Declaration> decls) {
+    this.decls = decls;
   }
 }

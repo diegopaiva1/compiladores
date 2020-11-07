@@ -5,12 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lang.compiler.ast.AbstractExpression;
-import lang.compiler.ast.Data;
-import lang.compiler.ast.Declaration;
-import lang.compiler.ast.Function;
-import lang.compiler.ast.Parameter;
-import lang.compiler.ast.commands.AbstractCommand;
+import lang.compiler.ast.*;
+import lang.compiler.ast.commands.*;;
 
 public class ExpressionEvaluator {
   private List<AbstractExpression> exprs;
@@ -32,8 +28,14 @@ public class ExpressionEvaluator {
         for (Parameter p : f.getParameters())
           evaluations.add("Param: " + p.getId() + " :: " + p.getType());
 
-        for (AbstractCommand cmd : f.getCommands())
+        for (AbstractCommand cmd : f.getCommands()) {
           evaluations.add("Command: " + cmd.getName());
+
+          if (cmd instanceof If) {
+            If i = (If) cmd;
+            evaluations.add("If condition = " + i.getExpression());
+          }
+        }
       } else if (expr instanceof Data) {
         Data d = (Data) expr;
         evaluations.add(d.getTypeName());

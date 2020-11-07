@@ -1,5 +1,26 @@
 main() {
-   read x;
-   print x;
-   return x;
+  read x;
+  read y;
+
+  if (x % 2 == 0)
+    print x;
+
+  if (x && 3) {
+    print y;
+  }
+  else {
+    {- Do nothing -}
+  }
+
+  iterate (x < 100) {
+    x = x + 1;
+  }
+
+  print x;
+
+  return x, y;
+}
+
+dummy() {
+
 }

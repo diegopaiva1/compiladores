@@ -3,16 +3,10 @@ package lang.compiler.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import lang.compiler.ast.Data;
-import lang.compiler.ast.Declaration;
-import lang.compiler.ast.Function;
-import lang.compiler.ast.Int;
-import lang.compiler.ast.Parameter;
-import lang.compiler.ast.commands.AbstractCommand;
-import lang.compiler.ast.commands.Print;
-import lang.compiler.ast.commands.Read;
-import lang.compiler.ast.commands.Return;
-import lang.compiler.ast.AbstractExpression;
+import lang.compiler.ast.*;
+import lang.compiler.ast.commands.*;
+import lang.compiler.ast.operators.binary.*;
+import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
 
@@ -20,16 +14,17 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitFunction(LangParser.FunctionContext ctx) {
     String id = ctx.ID().getText();
-    List<AbstractCommand> commands = new ArrayList<>();
-    List<Parameter> parameters = new ArrayList<>();
+    List<AbstractCommand> cmds = new ArrayList<>();
+    List<Parameter> params = new ArrayList<>();
 
     for (LangParser.CmdContext cmdCtx : ctx.cmd()) {
       AbstractCommand cmd = (AbstractCommand) visit(cmdCtx);
-      commands.add(cmd);
+      cmds.add(cmd);
     }
 
     if (ctx.params() != null) {
-      /**         ----------
+      /**
+       *          ----------
        *          | PARAMS |
        *          ----------
        *         /    |     \
@@ -38,9 +33,10 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        */
       String paramId = ctx.params().getChild(0).getText();
       String paramType = ctx.params().getChild(2).getText();
-      parameters.add(new Parameter(paramId, paramType));
+      params.add(new Parameter(paramId, paramType));
 
-      /**     ----------------------------------------------
+      /**
+       *      ----------------------------------------------
        *      |                   PARAMS                   |
        *      ----------------------------------------------
        *     /    |     |     |      |     |     |     |    \
@@ -50,11 +46,11 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
       for (int i = 4; i < ctx.params().getChildCount(); i += 4) {
         paramId = ctx.params().getChild(i).getText();
         paramType = ctx.params().getChild(i + 2).getText();
-        parameters.add(new Parameter(paramId, paramType));
+        params.add(new Parameter(paramId, paramType));
       }
     }
 
-    return new Function(id, parameters, commands);
+    return new Function(id, params, cmds);
   }
 
   @Override
@@ -67,12 +63,12 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitData(LangParser.DataContext ctx) {
     String typeName = ctx.TYPE_NAME().getText();
-    List<Declaration> declarations = new ArrayList<>();
+    List<Declaration> decls = new ArrayList<>();
 
     for (LangParser.DeclContext declCtx : ctx.decl())
-      declarations.add((Declaration) visit(declCtx));
+      decls.add((Declaration) visit(declCtx));
 
-    return new Data(typeName, declarations);
+    return new Data(typeName, decls);
   }
 
   @Override
@@ -84,14 +80,14 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitPrint(LangParser.PrintContext ctx) {
-    AbstractExpression stmt = visit(ctx.exp());
-    return new Print(stmt);
+    AbstractExpression expr = visit(ctx.exp());
+    return new Print(expr);
   }
 
   @Override
   public AbstractExpression visitRead(LangParser.ReadContext ctx) {
-    AbstractExpression stmt = visit(ctx.lvalue());
-    return new Read(stmt);
+    AbstractExpression expr = visit(ctx.lvalue());
+    return new Read(expr);
   }
 
   @Override
@@ -103,13 +99,98 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
      *        exp   ,    exp   ,    ...
      *        0     1     2    3     n
      */
-    List<AbstractExpression> stmts = new ArrayList<>();
+    List<AbstractExpression> exprs = new ArrayList<>();
 
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
-      AbstractExpression stmt = visit(ctx.getChild(i));
-      stmts.add(stmt);
+      AbstractExpression expr = visit(ctx.getChild(i));
+      exprs.add(expr);
     }
 
-    return new Return(stmts);
+    return new Return(exprs);
+  }
+
+  @Override
+  public AbstractExpression visitIf(LangParser.IfContext ctx) {
+    AbstractExpression expr = visit(ctx.exp());
+    AbstractCommand cmd = (AbstractCommand) visit(ctx.cmd());
+    return new If(expr, cmd);
+  }
+
+  @Override
+  public AbstractExpression visitIfElse(LangParser.IfElseContext ctx) {
+    AbstractExpression expr = visit(ctx.exp());
+    AbstractCommand ifCmd = (AbstractCommand) visit(ctx.cmd(0));
+    AbstractCommand elseCmd = (AbstractCommand) visit(ctx.cmd(1));
+    return new IfElse(expr, ifCmd, elseCmd);
+  }
+
+  @Override
+  public AbstractExpression visitIterate(LangParser.IterateContext ctx) {
+    AbstractExpression expr = visit(ctx.exp());
+    AbstractCommand cmd = (AbstractCommand) visit(ctx.cmd());
+    return new Iterate(expr, cmd);
+  }
+
+  @Override
+  public AbstractExpression visitAnd(LangParser.AndContext ctx) {
+    AbstractExpression left = visit(ctx.exp(0));
+    AbstractExpression right = visit(ctx.exp(1));
+    return new And(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitLessThan(LangParser.LessThanContext ctx) {
+    AbstractExpression left = visit(ctx.aexp(0));
+    AbstractExpression right = visit(ctx.aexp(1));
+    return new LessThan(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitEqual(LangParser.EqualContext ctx) {
+    AbstractExpression left = visit(ctx.rexp());
+    AbstractExpression right = visit(ctx.aexp());
+    return new Equal(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitNotEQual(LangParser.NotEQualContext ctx) {
+    AbstractExpression left = visit(ctx.rexp());
+    AbstractExpression right = visit(ctx.aexp());
+    return new NotEqual(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitAddition(LangParser.AdditionContext ctx) {
+    AbstractExpression left = visit(ctx.aexp());
+    AbstractExpression right = visit(ctx.mexp());
+    return new Addition(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitSubtraction(LangParser.SubtractionContext ctx) {
+    AbstractExpression left = visit(ctx.aexp());
+    AbstractExpression right = visit(ctx.mexp());
+    return new Subtraction(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitMultiplication(LangParser.MultiplicationContext ctx) {
+    AbstractExpression left = visit(ctx.mexp());
+    AbstractExpression right = visit(ctx.sexp());
+    return new Multiplication(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitDivision(LangParser.DivisionContext ctx) {
+    AbstractExpression left = visit(ctx.mexp());
+    AbstractExpression right = visit(ctx.sexp());
+    return new Division(left, right);
+  }
+
+  @Override
+  public AbstractExpression visitModule(LangParser.ModuleContext ctx) {
+    AbstractExpression left = visit(ctx.mexp());
+    AbstractExpression right = visit(ctx.sexp());
+    return new Module(left, right);
   }
 }
