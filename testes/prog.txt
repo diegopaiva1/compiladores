@@ -1,8 +1,8 @@
-main() {
+main(z :: Int) {
   read x;
   read y;
 
-  if (-x)
+  if ('\n')
     print x;
 
   if (x && 3) {

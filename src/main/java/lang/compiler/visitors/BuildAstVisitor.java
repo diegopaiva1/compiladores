@@ -3,13 +3,26 @@ package lang.compiler.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.lang.model.type.NullType;
+
+import org.apache.commons.lang3.StringUtils;
+
 import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
+import lang.compiler.ast.literals.Bool;
+import lang.compiler.ast.literals.Float;
+import lang.compiler.ast.literals.Int;
+import lang.compiler.ast.literals.Null;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
+import lang.compiler.parser.LangParser.CharContext;
+import lang.compiler.parser.LangParser.FalseContext;
+import lang.compiler.parser.LangParser.FloatContext;
+import lang.compiler.parser.LangParser.NullContext;
+import lang.compiler.parser.LangParser.TrueContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
@@ -52,13 +65,6 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     }
 
     return new Function(id, params, cmds);
-  }
-
-  @Override
-  public AbstractExpression visitInt(LangParser.IntContext ctx) {
-    String valueText = ctx.INT().getText();
-    Integer value = Integer.parseInt(valueText);
-    return new Int(value);
   }
 
   @Override
@@ -205,5 +211,50 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   public AbstractExpression visitNegate(LangParser.NegateContext ctx) {
     AbstractExpression expr = visit(ctx.sexp());
     return new Negate(expr);
+  }
+
+  @Override
+  public AbstractExpression visitTrue(TrueContext ctx) {
+    Boolean value = Boolean.parseBoolean(ctx.getText());
+    return new Bool(value);
+  }
+
+  @Override
+  public AbstractExpression visitFalse(FalseContext ctx) {
+    Boolean value = Boolean.parseBoolean(ctx.getText());
+    return new Bool(value);
+  }
+
+  @Override
+  public AbstractExpression visitChar(CharContext ctx) {
+    String valueText = ctx.CHAR().getText();
+    Character value = null;
+    //TODO: Errado
+    if (valueText.contains("\\"))
+      value = '\\' + 'n';
+    else
+      value = StringUtils.substringBetween(valueText, "'", "'").charAt(0);
+
+    System.out.println(value);
+    return null;
+  }
+
+  @Override
+  public AbstractExpression visitFloat(FloatContext ctx) {
+    String valueText = ctx.FLOAT().getText();
+    java.lang.Float value = java.lang.Float.parseFloat(valueText);
+    return new Float(value);
+  }
+
+  @Override
+  public AbstractExpression visitInt(LangParser.IntContext ctx) {
+    String valueText = ctx.INT().getText();
+    Integer value = Integer.parseInt(valueText);
+    return new Int(value);
+  }
+
+  @Override
+  public AbstractExpression visitNull(NullContext ctx) {
+    return new Null(null);
   }
 }
