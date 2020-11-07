@@ -2,9 +2,6 @@ package lang.compiler.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.lang.model.type.NullType;
-
 import org.apache.commons.lang3.StringUtils;
 
 import lang.compiler.ast.*;

@@ -33,7 +33,7 @@ public class ExpressionEvaluator {
 
           if (cmd instanceof If) {
             If i = (If) cmd;
-            evaluations.add("If condition = " + i.getExpression());
+            evaluations.add("If condition = " + i.getExpression() + " " + i.getCommand());
           }
         }
       } else if (expr instanceof Data) {

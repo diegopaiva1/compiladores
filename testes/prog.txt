@@ -1,11 +1,11 @@
-main(z :: Int) {
+main(z :: Int[], w :: Float) {
   read x;
   read y;
 
-  if ('\n')
+  if (x < 3)
     print x;
 
-  if (x && 3) {
+  if (x < 3) {
     print y;
   }
   else {
@@ -22,5 +22,4 @@ main(z :: Int) {
 }
 
 dummy() {
-
 }

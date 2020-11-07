@@ -9,10 +9,10 @@ decl : ID '::' type ';' # Declaration
      ;
 func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' # Function
      ;
-params : ID '::' type (',' ID '::' type)* # Parameters
+params : ID '::' type (',' ID '::' type)*
        ;
-type : type '[' ']'
-     | btype
+type : type '[' ']' # Array
+     | btype        # PrimitiveType
      ;
 btype : 'Int'
       | 'Char'
@@ -26,47 +26,47 @@ cmd : '{' cmd* '}'                                         # CmdScope
     | 'iterate' '(' exp ')' cmd                            # Iterate
     | 'read' lvalue ';'                                    # Read
     | 'print' exp ';'                                      # Print
-    | 'return' exp (',' exp)* ';'                          # Return
+    | 'return' exps* ';'                                   # Return
     | lvalue '=' exp ';'                                   # Assignment
-    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' # SeiLa1
+    | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' # StaticFunctionCall
     ;
 exp : exp '&&' exp # And
-    | rexp         # SeiLa2
+    | rexp         # SeiLa1
     ;
-rexp : aexp '<' aexp   # LessThan
-     | rexp '==' aexp  # Equal
-     | rexp '!=' aexp  # NotEqual
-     | aexp            # SeiLa3
+rexp : aexp '<' aexp  # LessThan
+     | rexp '==' aexp # Equal
+     | rexp '!=' aexp # NotEqual
+     | aexp           # SeiLa3
      ;
 aexp : aexp '+' mexp # Addition
      | aexp '-' mexp # Subtraction
-     | mexp          # SeiLa4
+     | mexp          # MetaExpression
      ;
-mexp : mexp '*' sexp  # Multiplication
-     | mexp '/' sexp  # Division
-     | mexp '%' sexp  # Module
-     | sexp           # SymbolicExpression
+mexp : mexp '*' sexp # Multiplication
+     | mexp '/' sexp # Division
+     | mexp '%' sexp # Module
+     | sexp          # SymbolicExpression
      ;
-sexp : '!' sexp  # Not
-     | '-' sexp  # Negate
-     | 'true'    # True
-     | 'false'   # False
-     | 'null'    # Null
-     | INT       # Int
-     | FLOAT     # Float
-     | CHAR      # Char
-     | pexp      # PrimaryExpression
+sexp : '!' sexp # Not
+     | '-' sexp # Negate
+     | 'true'   # True
+     | 'false'  # False
+     | 'null'   # Null
+     | INT      # Int
+     | FLOAT    # Float
+     | CHAR     # Char
+     | pexp     # PrimaryExpression
      ;
-pexp : lvalue
-     | '(' exp ')'
-     | 'new' type ('[' exp ']')?
-     | ID '(' exps? ')' '[' exp ']'
+pexp : lvalue                       # LocatorValue
+     | '(' exp ')'                  # BalancedParenthesesExpression
+     | 'new' type ('[' exp ']')?    # Instantiation
+     | ID '(' exps? ')' '[' exp ']' # AssignableFunctionCall
      ;
-lvalue : ID
-       | lvalue '[' exp ']'
-       | lvalue '.' ID
+lvalue : ID                 # Identifier
+       | lvalue '[' exp ']' # ArrayAccess
+       | lvalue '.' ID      # DataIdentifierAccess
        ;
-exps : exp (',' exp)*
+exps : exp (',' exp)* # Expressions
      ;
 
 /* Tokens fragments */
