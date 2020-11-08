@@ -2,22 +2,24 @@ package lang.compiler.ast;
 
 import java.util.List;
 
+import lang.compiler.ast.lvalues.Identifier;
+
 public class AssignableFunctionCall extends AbstractExpression {
-  private String id;
+  private Identifier id;
   private List<AbstractExpression> args;
   private AbstractExpression index;
 
-  public AssignableFunctionCall(String id, List<AbstractExpression> args, AbstractExpression index) {
+  public AssignableFunctionCall(Identifier id, List<AbstractExpression> args, AbstractExpression index) {
     this.id = id;
     this.args = args;
     this.index = index;
   }
 
-  public String getId() {
+  public Identifier getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Identifier id) {
     this.id = id;
   }
 

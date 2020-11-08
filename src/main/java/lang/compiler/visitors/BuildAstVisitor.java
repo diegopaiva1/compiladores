@@ -15,6 +15,7 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
+import lang.compiler.parser.LangParser.AssignmentContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
@@ -257,7 +258,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitAssignableFunctionCall(LangParser.AssignableFunctionCallContext ctx) {
-    String id = ctx.ID().getText();
+    Identifier id = new Identifier(ctx.ID().getText());
     List<AbstractExpression> args = new ArrayList<>();
     AbstractExpression index = visit(ctx.exp());
 
@@ -328,5 +329,12 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
     Identifier id = new Identifier(ctx.ID().getText());
     return new DataIdentifierAccess(lvalue, id);
+  }
+
+  @Override
+  public AbstractExpression visitAssignment(AssignmentContext ctx) {
+    AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
+    AbstractExpression expr = visit(ctx.exp());
+    return new Assignment(lvalue, expr);
   }
 }

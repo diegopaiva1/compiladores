@@ -4,6 +4,7 @@ data Ponto {
 }
 
 dummy(x :: Int, y :: Int) : Int, Int {
+  x = x + 1;
   if (x < 3)
     print x;
 
