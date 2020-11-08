@@ -10,21 +10,30 @@ import lang.compiler.ast.literals.Bool;
 import lang.compiler.ast.literals.Float;
 import lang.compiler.ast.literals.Int;
 import lang.compiler.ast.literals.Null;
+import lang.compiler.ast.lvalues.AbstractLvalue;
+import lang.compiler.ast.lvalues.ArrayAccess;
+import lang.compiler.ast.lvalues.DataIdentifierAccess;
+import lang.compiler.ast.lvalues.Identifier;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
+import lang.compiler.parser.LangParser.ArrayAccessContext;
 import lang.compiler.parser.LangParser.CharContext;
+import lang.compiler.parser.LangParser.CmdContext;
+import lang.compiler.parser.LangParser.CmdScopeContext;
+import lang.compiler.parser.LangParser.DataIdentifierAccessContext;
 import lang.compiler.parser.LangParser.FalseContext;
 import lang.compiler.parser.LangParser.FloatContext;
+import lang.compiler.parser.LangParser.IdentifierContext;
 import lang.compiler.parser.LangParser.NullContext;
 import lang.compiler.parser.LangParser.TrueContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitFunction(LangParser.FunctionContext ctx) {
-    String id = ctx.ID().getText();
+    String name = ctx.ID().getText();
     List<AbstractCommand> cmds = new ArrayList<>();
     List<Parameter> params = new ArrayList<>();
 
@@ -44,7 +53,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        */
       String paramId = ctx.params().getChild(0).getText();
       String paramType = ctx.params().getChild(2).getText();
-      params.add(new Parameter(paramId, paramType));
+      params.add(new Parameter(new Identifier(paramId), paramType));
 
       /**
        *      ----------------------------------------------
@@ -57,11 +66,11 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
       for (int i = 4; i < ctx.params().getChildCount(); i += 4) {
         paramId = ctx.params().getChild(i).getText();
         paramType = ctx.params().getChild(i + 2).getText();
-        params.add(new Parameter(paramId, paramType));
+        params.add(new Parameter(new Identifier(paramId), paramType));
       }
     }
 
-    return new Function(id, params, cmds);
+    return new Function(new Identifier(name), params, cmds);
   }
 
   @Override
@@ -79,7 +88,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   public AbstractExpression visitDeclaration(LangParser.DeclarationContext ctx) {
     String id = ctx.ID().getText();
     String type = ctx.type().getText();
-    return new Declaration(id, type);
+    return new Declaration(new Identifier(id), type);
   }
 
   @Override
@@ -253,5 +262,30 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitNull(NullContext ctx) {
     return new Null(null);
+  }
+
+  @Override
+  public AbstractExpression visitCmdScope(CmdScopeContext ctx) {
+    List<AbstractCommand> cmds = new ArrayList<>();
+
+    for (CmdContext cmdCtx : ctx.cmd()) {
+      cmds.add((AbstractCommand) visit(cmdCtx));
+    }
+
+    return new CmdScope(cmds);
+  }
+
+  @Override
+  public AbstractExpression visitArrayAccess(ArrayAccessContext ctx) {
+    AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
+    AbstractExpression expr = visit(ctx.exp());
+    return new ArrayAccess(lvalue, expr);
+  }
+
+  @Override
+  public AbstractExpression visitDataIdentifierAccess(DataIdentifierAccessContext ctx) {
+    AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
+    String id = ctx.ID().getText();
+    return new DataIdentifierAccess(lvalue, new Identifier(id));
   }
 }

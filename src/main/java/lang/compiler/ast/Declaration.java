@@ -1,19 +1,21 @@
 package lang.compiler.ast;
 
+import lang.compiler.ast.lvalues.Identifier;
+
 public class Declaration extends AbstractExpression {
-  private String id;
+  private Identifier id;
   private String type;
 
-  public Declaration(String id, String type) {
+  public Declaration(Identifier id, String type) {
     this.id = id;
     this.type = type;
   }
 
-  public String getId() {
+  public Identifier getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Identifier id) {
     this.id = id;
   }
 
