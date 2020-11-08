@@ -4,25 +4,26 @@ import java.util.List;
 
 import lang.compiler.ast.commands.AbstractCommand;
 import lang.compiler.ast.types.AbstractType;
+import lang.compiler.ast.lvalues.Identifier;
 
 public class Function extends AbstractExpression {
-  private String id;
+  private Identifier id;
   private List<Parameter> params;
   private List<AbstractType> returnTypes;
   private List<AbstractCommand> cmds;
 
-  public Function(String id, List<Parameter> params, List<AbstractType> returnTypes, List<AbstractCommand> cmds) {
+  public Function(Identifier id, List<Parameter> params, List<AbstractType> returnTypes, List<AbstractCommand> cmds) {
     this.id = id;
     this.params = params;
     this.returnTypes = returnTypes;
     this.cmds = cmds;
   }
 
-  public String getId() {
+  public Identifier getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Identifier id) {
     this.id = id;
   }
 

@@ -8,6 +8,7 @@ import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
 import lang.compiler.ast.literals.Float;
+import lang.compiler.ast.lvalues.*;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
@@ -18,7 +19,7 @@ import lang.compiler.parser.LangParser;
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitFunction(LangParser.FunctionContext ctx) {
-    String id = ctx.ID().getText();
+    Identifier id = new Identifier(ctx.ID().getText());
     List<AbstractCommand> cmds = new ArrayList<>();
     List<Parameter> params = new ArrayList<>();
     List<AbstractType> returnTypes = new ArrayList<>();
@@ -42,8 +43,8 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        *        ID    ::   type
        *        0     1     2
        */
-      String paramId = ctx.params().getChild(0).getText();
       AbstractType paramType = (AbstractType) visit(ctx.params().getChild(2));
+      Identifier paramId = new Identifier(ctx.params().getChild(0).getText());
       params.add(new Parameter(paramId, paramType));
 
       /**
@@ -55,7 +56,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        *    0     1     2     3      4      5    6     7     n
        */
       for (int i = 4; i < ctx.params().getChildCount(); i += 4) {
-        paramId = ctx.params().getChild(i).getText();
+        paramId = new Identifier(ctx.params().getChild(i).getText());
         paramType = (AbstractType) visit(ctx.params().getChild(i + 2));
         params.add(new Parameter(paramId, paramType));
       }
@@ -77,7 +78,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitDeclaration(LangParser.DeclarationContext ctx) {
-    String id = ctx.ID().getText();
+    Identifier id = new Identifier(ctx.ID().getText());
     AbstractType type = (AbstractType) visit(ctx.type());
     return new Declaration(id, type);
   }
@@ -298,5 +299,34 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   public AbstractExpression visitBalancedParenthesesExpression(LangParser.BalancedParenthesesExpressionContext ctx) {
     AbstractExpression expr = visit(ctx.exp());
     return new BalancedParenthesesExpression(expr);
+  }
+
+  public AbstractExpression visitCmdScope(LangParser.CmdScopeContext ctx) {
+    List<AbstractCommand> cmds = new ArrayList<>();
+
+    for (LangParser.CmdContext cmdCtx : ctx.cmd()) {
+      cmds.add((AbstractCommand) visit(cmdCtx));
+    }
+
+    return new CmdScope(cmds);
+  }
+
+  @Override
+  public AbstractExpression visitArrayAccess(LangParser.ArrayAccessContext ctx) {
+    AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
+    AbstractExpression expr = visit(ctx.exp());
+    return new ArrayAccess(lvalue, expr);
+  }
+
+  @Override
+  public AbstractExpression visitIdentifier(LangParser.IdentifierContext ctx) {
+    return new Identifier(ctx.ID().getText());
+  }
+
+  @Override
+  public AbstractExpression visitDataIdentifierAccess(LangParser.DataIdentifierAccessContext ctx) {
+    AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
+    Identifier id = new Identifier(ctx.ID().getText());
+    return new DataIdentifierAccess(lvalue, id);
   }
 }

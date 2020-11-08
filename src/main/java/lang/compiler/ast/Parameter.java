@@ -1,21 +1,22 @@
 package lang.compiler.ast;
 
 import lang.compiler.ast.types.AbstractType;
+import lang.compiler.ast.lvalues.Identifier;
 
 public class Parameter extends AbstractExpression {
-  private String id;
+  private Identifier id;
   private AbstractType type;
 
-  public Parameter(String id, AbstractType type) {
+  public Parameter(Identifier id, AbstractType type) {
     this.id = id;
     this.type = type;
   }
 
-  public String getId() {
+  public Identifier getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Identifier id) {
     this.id = id;
   }
 

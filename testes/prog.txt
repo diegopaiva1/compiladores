@@ -21,6 +21,18 @@ dummy(x :: Int, y :: Int) : Int, Int {
   print x;
 
   return x, y;
+
+  if (x < 3) {
+    print x;
+    print y;
+    iterate (x < 100) {
+      x = x + 1;
+    }
+  }
+
+  print x;
+  print x[1+1];
+  print ponto.x;
 }
 
 main(args :: Char[][]) {
