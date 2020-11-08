@@ -329,4 +329,31 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     Identifier id = new Identifier(ctx.ID().getText());
     return new DataIdentifierAccess(lvalue, id);
   }
+
+  @Override
+  public AbstractExpression visitStaticFunctionCall(LangParser.StaticFunctionCallContext ctx) {
+    Identifier id = new Identifier(ctx.ID().getText());
+    List<AbstractLvalue> lvalues = new ArrayList<>();
+    List<AbstractExpression> args = new ArrayList<>();
+
+    for (LangParser.LvalueContext lvalueCtx : ctx.lvalue()) {
+      AbstractLvalue lvalue = (AbstractLvalue) visit(lvalueCtx);
+      lvalues.add(lvalue);
+    }
+
+    /**
+     *          --------------------
+     *          |       EXPS       |
+     *          --------------------
+     *         /    |     |    |    \
+     *        exp   ,    exp   ,    ...
+     *        0     1     2    3     n
+     */
+    for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
+      AbstractExpression arg = visit(ctx.getChild(i));
+      args.add(arg);
+    }
+
+    return new StaticFunctionCall(id, args, lvalues);
+  }
 }

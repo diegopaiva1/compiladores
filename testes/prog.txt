@@ -1,44 +1,7 @@
-data Ponto {
-  x :: Float;
-  y :: Float;
+divmod(num :: Int, div :: Int) : Int, Int {
+  return q, r;
 }
 
-dummy(x :: Int, y :: Int) : Int, Int {
-  if (x < 3)
-    print x;
-
-  if (x < 3) {
-    print y;
-  }
-  else {
-    {- Do nothing -}
-  }
-
-  iterate (x < 100) {
-    x = x + 1;
-  }
-
-  print x;
-
-  return x, y;
-
-  if (x < 3) {
-    print x;
-    print y;
-    iterate (x < 100) {
-      x = x + 1;
-    }
-  }
-
-  print x;
-  print x[1+1];
-  print ponto.x;
-}
-
-main(args :: Char[][]) {
-  read x;
-  read y;
-
-  if ('\'')
-    print dummy(x, y)[0];
+main() {
+  divmod(5, 2)<q, r>;
 }
