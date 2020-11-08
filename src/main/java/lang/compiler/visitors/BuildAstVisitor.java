@@ -10,25 +10,12 @@ import lang.compiler.ast.literals.Bool;
 import lang.compiler.ast.literals.Float;
 import lang.compiler.ast.literals.Int;
 import lang.compiler.ast.literals.Null;
-import lang.compiler.ast.lvalues.AbstractLvalue;
-import lang.compiler.ast.lvalues.ArrayAccess;
-import lang.compiler.ast.lvalues.DataIdentifierAccess;
-import lang.compiler.ast.lvalues.Identifier;
+import lang.compiler.ast.lvalues.*;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
-import lang.compiler.parser.LangParser.ArrayAccessContext;
-import lang.compiler.parser.LangParser.CharContext;
-import lang.compiler.parser.LangParser.CmdContext;
-import lang.compiler.parser.LangParser.CmdScopeContext;
-import lang.compiler.parser.LangParser.DataIdentifierAccessContext;
-import lang.compiler.parser.LangParser.FalseContext;
-import lang.compiler.parser.LangParser.FloatContext;
-import lang.compiler.parser.LangParser.IdentifierContext;
-import lang.compiler.parser.LangParser.NullContext;
-import lang.compiler.parser.LangParser.TrueContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
@@ -220,19 +207,19 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitTrue(TrueContext ctx) {
+  public AbstractExpression visitTrue(LangParser.TrueContext ctx) {
     Boolean value = Boolean.parseBoolean(ctx.getText());
     return new Bool(value);
   }
 
   @Override
-  public AbstractExpression visitFalse(FalseContext ctx) {
+  public AbstractExpression visitFalse(LangParser.FalseContext ctx) {
     Boolean value = Boolean.parseBoolean(ctx.getText());
     return new Bool(value);
   }
 
   @Override
-  public AbstractExpression visitChar(CharContext ctx) {
+  public AbstractExpression visitChar(LangParser.CharContext ctx) {
     String valueText = ctx.CHAR().getText();
     Character value = null;
     //TODO: Errado
@@ -246,7 +233,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitFloat(FloatContext ctx) {
+  public AbstractExpression visitFloat(LangParser.FloatContext ctx) {
     String valueText = ctx.FLOAT().getText();
     java.lang.Float value = java.lang.Float.parseFloat(valueText);
     return new Float(value);
@@ -260,15 +247,15 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitNull(NullContext ctx) {
+  public AbstractExpression visitNull(LangParser.NullContext ctx) {
     return new Null(null);
   }
 
   @Override
-  public AbstractExpression visitCmdScope(CmdScopeContext ctx) {
+  public AbstractExpression visitCmdScope(LangParser.CmdScopeContext ctx) {
     List<AbstractCommand> cmds = new ArrayList<>();
 
-    for (CmdContext cmdCtx : ctx.cmd()) {
+    for (LangParser.CmdContext cmdCtx : ctx.cmd()) {
       cmds.add((AbstractCommand) visit(cmdCtx));
     }
 
@@ -276,14 +263,14 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitArrayAccess(ArrayAccessContext ctx) {
+  public AbstractExpression visitArrayAccess(LangParser.ArrayAccessContext ctx) {
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
     AbstractExpression expr = visit(ctx.exp());
     return new ArrayAccess(lvalue, expr);
   }
 
   @Override
-  public AbstractExpression visitDataIdentifierAccess(DataIdentifierAccessContext ctx) {
+  public AbstractExpression visitDataIdentifierAccess(LangParser.DataIdentifierAccessContext ctx) {
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
     String id = ctx.ID().getText();
     return new DataIdentifierAccess(lvalue, new Identifier(id));
