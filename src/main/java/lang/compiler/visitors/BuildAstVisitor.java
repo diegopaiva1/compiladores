@@ -355,7 +355,6 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
       System.out.println(ctx.exps().getChildCount());
       for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
-        System.out.println(i);
         AbstractExpression arg = visit(ctx.exps().getChild(i));
         args.add(arg);
       }
