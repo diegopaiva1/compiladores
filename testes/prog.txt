@@ -1,4 +1,6 @@
 divmod(num :: Int, div :: Int) : Int, Int {
+  q = num / div;
+  r = num % div;
   return q, r;
 }
 
