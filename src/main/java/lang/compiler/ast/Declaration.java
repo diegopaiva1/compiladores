@@ -1,10 +1,12 @@
 package lang.compiler.ast;
 
+import lang.compiler.ast.types.AbstractType;
+
 public class Declaration extends AbstractExpression {
   private String id;
-  private String type;
+  private AbstractType type;
 
-  public Declaration(String id, String type) {
+  public Declaration(String id, AbstractType type) {
     this.id = id;
     this.type = type;
   }
@@ -17,11 +19,11 @@ public class Declaration extends AbstractExpression {
     this.id = id;
   }
 
-  public String getType() {
+  public AbstractType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(AbstractType type) {
     this.type = type;
   }
 }

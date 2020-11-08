@@ -3,15 +3,18 @@ package lang.compiler.ast;
 import java.util.List;
 
 import lang.compiler.ast.commands.AbstractCommand;
+import lang.compiler.ast.types.AbstractType;
 
 public class Function extends AbstractExpression {
   private String id;
   private List<Parameter> params;
+  private List<AbstractType> returnTypes;
   private List<AbstractCommand> cmds;
 
-  public Function(String id, List<Parameter> params, List<AbstractCommand> cmds) {
+  public Function(String id, List<Parameter> params, List<AbstractType> returnTypes, List<AbstractCommand> cmds) {
     this.id = id;
     this.params = params;
+    this.returnTypes = returnTypes;
     this.cmds = cmds;
   }
 
@@ -29,6 +32,14 @@ public class Function extends AbstractExpression {
 
   public void setParameters(List<Parameter> params) {
     this.params = params;
+  }
+
+  public List<AbstractType> getReturnTypes() {
+    return returnTypes;
+  }
+
+  public void setReturnTypes(List<AbstractType> returnTypes) {
+    this.returnTypes = returnTypes;
   }
 
   public List<AbstractCommand> getCommands() {
