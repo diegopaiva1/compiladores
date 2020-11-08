@@ -261,17 +261,19 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     List<AbstractExpression> args = new ArrayList<>();
     AbstractExpression index = visit(ctx.exp());
 
-    /**
-     *          --------------------
-     *          |       EXPS       |
-     *          --------------------
-     *         /    |     |    |    \
-     *        exp   ,    exp   ,    ...
-     *        0     1     2    3     n
-     */
-    for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
-      AbstractExpression arg = visit(ctx.getChild(i));
-      args.add(arg);
+    if (ctx.exps() != null) {
+      /**
+       *          --------------------
+       *          |       EXPS       |
+       *          --------------------
+       *         /    |     |    |    \
+       *        exp   ,    exp   ,    ...
+       *        0     1     2    3     n
+       */
+      for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
+        AbstractExpression arg = visit(ctx.getChild(i));
+        args.add(arg);
+      }
     }
 
     return new AssignableFunctionCall(id, args, index);
@@ -341,17 +343,20 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
       lvalues.add(lvalue);
     }
 
-    /**
-     *          --------------------
-     *          |       EXPS       |
-     *          --------------------
-     *         /    |     |    |    \
-     *        exp   ,    exp   ,    ...
-     *        0     1     2    3     n
-     */
-    for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
-      AbstractExpression arg = visit(ctx.getChild(i));
-      args.add(arg);
+    if (ctx.exps() != null) {
+      /**
+       *          --------------------
+       *          |       EXPS       |
+       *          --------------------
+       *         /    |     |    |    \
+       *        exp   ,    exp   ,    ...
+       *        0     1     2    3     n
+       */
+
+      for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
+        AbstractExpression arg = visit(ctx.getChild(i));
+        args.add(arg);
+      }
     }
 
     return new StaticFunctionCall(id, args, lvalues);

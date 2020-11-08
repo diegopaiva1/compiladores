@@ -3,5 +3,5 @@ divmod(num :: Int, div :: Int) : Int, Int {
 }
 
 main() {
-  divmod(5, 2)<q, r>;
+  divmod(5, 4)<q, r>;
 }

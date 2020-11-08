@@ -7,6 +7,7 @@ import java.util.Map;
 
 import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
+import lang.compiler.ast.literals.Int;
 import lang.compiler.ast.lvalues.*;
 import lang.compiler.ast.types.AbstractType;
 
@@ -35,6 +36,14 @@ public class ExpressionEvaluator {
 
         for (AbstractCommand cmd : f.getCommands()) {
           evaluations.add("Command: " + cmd.getName());
+
+          if (cmd instanceof StaticFunctionCall) {
+            StaticFunctionCall st = (StaticFunctionCall) cmd;
+
+            for (AbstractExpression arg : st.getArgs()) {
+              System.out.println(arg);
+            }
+          }
 
           if (cmd instanceof If) {
             If i = (If) cmd;

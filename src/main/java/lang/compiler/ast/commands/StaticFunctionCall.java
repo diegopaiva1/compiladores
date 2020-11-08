@@ -1,11 +1,12 @@
-package lang.compiler.ast;
+package lang.compiler.ast.commands;
 
 import java.util.List;
 
+import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.lvalues.AbstractLvalue;
 import lang.compiler.ast.lvalues.Identifier;
 
-public class StaticFunctionCall extends AbstractExpression {
+public class StaticFunctionCall extends AbstractCommand {
   private Identifier id;
   private List<AbstractExpression> args;
   private List<AbstractLvalue> lvalues;
@@ -38,5 +39,10 @@ public class StaticFunctionCall extends AbstractExpression {
 
   public void setLvalues(List<AbstractLvalue> lvalues) {
     this.lvalues = lvalues;
+  }
+
+  @Override
+  public String getName() {
+    return "Static Function Call";
   }
 }
