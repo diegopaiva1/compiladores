@@ -7,7 +7,7 @@ import java.util.Map;
 
 import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
-import lang.compiler.ast.types.AbstractType;;
+import lang.compiler.ast.types.AbstractType;
 
 public class ExpressionEvaluator {
   private List<AbstractExpression> exprs;
