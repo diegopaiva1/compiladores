@@ -12,7 +12,7 @@ func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' # Function
 params : ID '::' type (',' ID '::' type)*
        ;
 type : type '[' ']' # Array
-     | btype        # PrimitiveType
+     | btype        # BasicType
      ;
 btype : 'Int'
       | 'Char'
@@ -26,7 +26,7 @@ cmd : '{' cmd* '}'                                         # CmdScope
     | 'iterate' '(' exp ')' cmd                            # Iterate
     | 'read' lvalue ';'                                    # Read
     | 'print' exp ';'                                      # Print
-    | 'return' exps* ';'                                   # Return
+    | 'return' exp (',' exp)* ';'                          # Return
     | lvalue '=' exp ';'                                   # Assignment
     | ID '(' exps? ')' ('<' lvalue (',' lvalue)* '>')? ';' # StaticFunctionCall
     ;

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import lang.compiler.ast.*;
-import lang.compiler.ast.commands.*;;
+import lang.compiler.ast.commands.*;
+import lang.compiler.ast.types.AbstractType;;
 
 public class ExpressionEvaluator {
   private List<AbstractExpression> exprs;
@@ -27,6 +28,9 @@ public class ExpressionEvaluator {
 
         for (Parameter p : f.getParameters())
           evaluations.add("Param: " + p.getId() + " :: " + p.getType());
+
+        for (AbstractType type : f.getReturnTypes())
+          evaluations.add("Return: " + type.getName());
 
         for (AbstractCommand cmd : f.getCommands()) {
           evaluations.add("Command: " + cmd.getName());

@@ -1,7 +1,9 @@
-main(z :: Int[], w :: Float) {
-  read x;
-  read y;
+data Ponto {
+  x :: Float;
+  y :: Float;
+}
 
+dummy(x :: Int, y :: Int) : Int, Int {
   if (x < 3)
     print x;
 
@@ -21,5 +23,10 @@ main(z :: Int[], w :: Float) {
   return x, y;
 }
 
-dummy() {
+main(args :: Char[][]) {
+  read x;
+  read y;
+
+  if (((x + y) * 3 == 4))
+    print dummy(x, y)[0];
 }
