@@ -271,7 +271,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        *        0     1     2    3     n
        */
       for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
-        AbstractExpression arg = visit(ctx.getChild(i));
+        AbstractExpression arg = visit(ctx.exps().getChild(i));
         args.add(arg);
       }
     }
@@ -353,8 +353,10 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        *        0     1     2    3     n
        */
 
+      System.out.println(ctx.exps().getChildCount());
       for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
-        AbstractExpression arg = visit(ctx.getChild(i));
+        System.out.println(i);
+        AbstractExpression arg = visit(ctx.exps().getChild(i));
         args.add(arg);
       }
     }
