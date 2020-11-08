@@ -33,7 +33,7 @@ import lang.compiler.parser.LangParser.TrueContext;
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitFunction(LangParser.FunctionContext ctx) {
-    String name = ctx.ID().getText();
+    Identifier name = new Identifier(ctx.ID().getText());
     List<AbstractCommand> cmds = new ArrayList<>();
     List<Parameter> params = new ArrayList<>();
 
@@ -51,9 +51,9 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        *        ID    ::   type
        *        0     1     2
        */
-      String paramId = ctx.params().getChild(0).getText();
+      Identifier paramId = new Identifier(ctx.params().getChild(0).getText());
       String paramType = ctx.params().getChild(2).getText();
-      params.add(new Parameter(new Identifier(paramId), paramType));
+      params.add(new Parameter(paramId, paramType));
 
       /**
        *      ----------------------------------------------
@@ -64,13 +64,13 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
        *    0     1     2     3      4      5    6     7     n
        */
       for (int i = 4; i < ctx.params().getChildCount(); i += 4) {
-        paramId = ctx.params().getChild(i).getText();
+        paramId = new Identifier(ctx.params().getChild(i).getText());
         paramType = ctx.params().getChild(i + 2).getText();
-        params.add(new Parameter(new Identifier(paramId), paramType));
+        params.add(new Parameter(paramId, paramType));
       }
     }
 
-    return new Function(new Identifier(name), params, cmds);
+    return new Function(name, params, cmds);
   }
 
   @Override
@@ -86,9 +86,9 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitDeclaration(LangParser.DeclarationContext ctx) {
-    String id = ctx.ID().getText();
+    Identifier id = new Identifier(ctx.ID().getText());
     String type = ctx.type().getText();
-    return new Declaration(new Identifier(id), type);
+    return new Declaration(id, type);
   }
 
   @Override
@@ -283,9 +283,14 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
+  public AbstractExpression visitIdentifier(IdentifierContext ctx) {
+    return new Identifier(ctx.ID().getText());
+  }
+
+  @Override
   public AbstractExpression visitDataIdentifierAccess(DataIdentifierAccessContext ctx) {
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
-    String id = ctx.ID().getText();
-    return new DataIdentifierAccess(lvalue, new Identifier(id));
+    Identifier id = new Identifier(ctx.ID().getText());
+    return new DataIdentifierAccess(lvalue, id);
   }
 }
