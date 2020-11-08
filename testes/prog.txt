@@ -27,6 +27,6 @@ main(args :: Char[][]) {
   read x;
   read y;
 
-  if (((x + y) * 3 == 4))
+  if ('\'')
     print dummy(x, y)[0];
 }

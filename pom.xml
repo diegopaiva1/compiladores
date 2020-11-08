@@ -17,7 +17,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 </properties>
 
 <dependencies>
-  <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
   <dependency>
     <groupId>org.antlr</groupId>
     <artifactId>antlr4-runtime</artifactId>
@@ -31,13 +30,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <scope>test</scope>
   </dependency>
 
-  <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
   <dependency>
     <groupId>org.apache.commons</groupId>
-    <artifactId>commons-lang3</artifactId>
-    <version>3.4</version>
+    <artifactId>commons-text</artifactId>
+    <version>1.4</version>
   </dependency>
-
 </dependencies>
 
 <build>

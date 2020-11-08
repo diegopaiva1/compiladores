@@ -2,7 +2,7 @@ package lang.compiler.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
@@ -14,8 +14,6 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
-import lang.compiler.parser.LangParser.BalancedParenthesesExpressionContext;
-import lang.compiler.parser.LangParser.InstantiationContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
@@ -227,15 +225,14 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitChar(LangParser.CharContext ctx) {
     String valueText = ctx.CHAR().getText();
-    Character value = null;
-    //TODO: Errado
-    if (valueText.contains("\\"))
-      value = '\\' + 'n';
-    else
-      value = StringUtils.substringBetween(valueText, "'", "'").charAt(0);
 
-    System.out.println(value);
-    return null;
+    // Pick string inside simple quotes ''
+    valueText = valueText.substring(1, valueText.length() - 1);
+
+    // In case it is a special character we must unscape it
+    Character value = StringEscapeUtils.unescapeJava(valueText).charAt(0);
+
+    return new Char(value);
   }
 
   @Override
@@ -291,14 +288,14 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitInstantiation(InstantiationContext ctx) {
+  public AbstractExpression visitInstantiation(LangParser.InstantiationContext ctx) {
     AbstractType type = (AbstractType) visit(ctx.type());
     AbstractExpression expr = visit(ctx.exp());
     return new Instantiation(type, expr);
   }
 
   @Override
-  public AbstractExpression visitBalancedParenthesesExpression(BalancedParenthesesExpressionContext ctx) {
+  public AbstractExpression visitBalancedParenthesesExpression(LangParser.BalancedParenthesesExpressionContext ctx) {
     AbstractExpression expr = visit(ctx.exp());
     return new BalancedParenthesesExpression(expr);
   }
