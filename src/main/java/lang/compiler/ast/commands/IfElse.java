@@ -1,17 +1,17 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class IfElse extends AbstractCommand {
   private AbstractExpression expr;
-  private AbstractCommand ifCmd;
-  private AbstractCommand elseCmd;
+  private AbstractCommand ifScopeCmd;
+  private AbstractCommand elseScopeCmd;
 
-  public IfElse(AbstractExpression expr, AbstractCommand ifCmd, AbstractCommand elseCmd) {
+  public IfElse(AbstractExpression expr, AbstractCommand ifScopeCmd, AbstractCommand elseScopeCmd) {
     this.expr = expr;
-    this.ifCmd = ifCmd;
-    this.elseCmd = elseCmd;
+    this.ifScopeCmd = ifScopeCmd;
+    this.elseScopeCmd = elseScopeCmd;
   }
 
   public AbstractExpression getExpression() {
@@ -22,20 +22,20 @@ public class IfElse extends AbstractCommand {
     this.expr = expr;
   }
 
-  public AbstractCommand getIfCommand() {
-    return ifCmd;
+  public AbstractCommand getIfScopeCommand() {
+    return ifScopeCmd;
   }
 
-  public void setIfCommand(AbstractCommand ifCmd) {
-    this.ifCmd = ifCmd;
+  public void setIfScopeCommand(AbstractCommand ifScopeCmd) {
+    this.ifScopeCmd = ifScopeCmd;
   }
 
-  public AbstractCommand getElseCommand() {
-    return elseCmd;
+  public AbstractCommand getElseScopeCommand() {
+    return elseScopeCmd;
   }
 
-  public void setElseCommand(AbstractCommand elseCmd) {
-    this.elseCmd = elseCmd;
+  public void setElseScopeCommand(AbstractCommand elseScopeCmd) {
+    this.elseScopeCmd = elseScopeCmd;
   }
 
   @Override
@@ -44,7 +44,7 @@ public class IfElse extends AbstractCommand {
   }
 
   @Override
-  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+  public Object accept(AbstractExpressionEvaluatorVisitor v) {
     return v.visitIfElse(this);
   }
 }

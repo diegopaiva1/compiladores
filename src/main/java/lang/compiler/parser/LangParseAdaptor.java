@@ -2,8 +2,11 @@ package lang.compiler.parser;
 
 import java.io.IOException;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
+import lang.compiler.ast.Data;
+import lang.compiler.ast.Function;
+import lang.compiler.ast.Parameter;
 import lang.compiler.ast.Program;
 import lang.compiler.visitors.ProgramVisitor;
 import org.antlr.v4.runtime.*;
@@ -18,15 +21,33 @@ public class LangParseAdaptor implements ParseAdaptor {
       CommonTokenStream tokenStream = new CommonTokenStream(langLexer);
       LangParser langParser = new LangParser(tokenStream);
 
-      ParseTree cst = langParser.prog(); // Retrieve ANTLR parse tree from the start symbol 'prog'
-      Program prog = new ProgramVisitor().visit(cst); // Convert parse tree into Program object
-      AbstractExpressionEvaluatorVisitor ev = new AbstractExpressionEvaluatorVisitor();
+      // Retrieve ANTLR parse tree from the start symbol 'prog'
+      ParseTree cst = langParser.prog();
 
-      for (AbstractExpression expr : prog.getExpressions())
-        expr.accept(ev);
+      if (langParser.getNumberOfSyntaxErrors() == 0) {
+        // Convert parse tree into Program object
+        Program prog = new ProgramVisitor().visit(cst);
+        AbstractExpressionEvaluatorVisitor ev = new AbstractExpressionEvaluatorVisitor();
+        boolean hasMainFunction = false;
 
-      if (langParser.getNumberOfSyntaxErrors() == 0)
+        for (AbstractExpression expr : prog.getExpressions()) {
+          if (expr instanceof Function) {
+            Function f = (Function) expr;
+            ev.addFunction(f);
+
+            if (f.getId().getName().equals("main")) {
+              hasMainFunction = true;
+              expr.accept(ev);
+              break;
+            }
+          }
+        }
+
+        if (!hasMainFunction)
+          throw new RuntimeException("function main does not exist");
+
         return prog;
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }

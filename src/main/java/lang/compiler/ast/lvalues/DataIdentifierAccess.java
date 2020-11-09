@@ -1,6 +1,6 @@
 package lang.compiler.ast.lvalues;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
 public class DataIdentifierAccess extends AbstractLvalue {
   private AbstractLvalue lvalue;

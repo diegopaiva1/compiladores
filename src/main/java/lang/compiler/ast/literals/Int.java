@@ -1,8 +1,12 @@
 package lang.compiler.ast.literals;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
 public class Int extends AbstractLiteral<Integer> {
+  public Int() {
+    super();
+  }
+
   public Int(Integer value) {
     super(value);
   }

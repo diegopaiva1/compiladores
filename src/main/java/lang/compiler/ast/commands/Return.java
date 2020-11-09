@@ -2,7 +2,7 @@ package lang.compiler.ast.commands;
 
 import java.util.List;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Return extends AbstractCommand {
@@ -26,8 +26,7 @@ public class Return extends AbstractCommand {
   }
 
   @Override
-  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
-    // TODO Auto-generated method stub
-    return null;
+  public List<Object> accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitReturn(this);
   }
 }

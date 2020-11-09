@@ -2,7 +2,7 @@ package lang.compiler.ast.literals;
 
 import javax.lang.model.type.NullType;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
 public class Null extends AbstractLiteral<NullType> {
   public Null(NullType value) {

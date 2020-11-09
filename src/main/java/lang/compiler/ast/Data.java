@@ -2,23 +2,23 @@ package lang.compiler.ast;
 
 import java.util.List;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
-import lang.compiler.ast.types.BasicType;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.ast.types.TypeCustom;
 
 public class Data extends AbstractExpression {
-  private BasicType type;
+  private TypeCustom type;
   private List<Declaration> decls;
 
-  public Data(BasicType type, List<Declaration> decls) {
+  public Data(TypeCustom type, List<Declaration> decls) {
     this.type = type;
     this.decls = decls;
   }
 
-  public BasicType getType() {
+  public TypeCustom getType() {
     return type;
   }
 
-  public void setType(BasicType type) {
+  public void setType(TypeCustom type) {
     this.type = type;
   }
 

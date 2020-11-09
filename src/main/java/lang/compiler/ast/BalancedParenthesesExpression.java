@@ -1,6 +1,6 @@
 package lang.compiler.ast;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
 public class BalancedParenthesesExpression extends AbstractExpression{
   private AbstractExpression expr;

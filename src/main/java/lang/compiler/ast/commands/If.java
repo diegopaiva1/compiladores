@@ -1,15 +1,15 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class If extends AbstractCommand {
   private AbstractExpression expr;
-  private AbstractCommand cmd;
+  private AbstractCommand scopeCmd;
 
-  public If(AbstractExpression expr, AbstractCommand cmd) {
+  public If(AbstractExpression expr, AbstractCommand scopeCmd) {
     this.expr = expr;
-    this.cmd = cmd;
+    this.scopeCmd = scopeCmd;
   }
 
   public AbstractExpression getExpression() {
@@ -20,12 +20,12 @@ public class If extends AbstractCommand {
     this.expr = expr;
   }
 
-  public AbstractCommand getCommand() {
-    return cmd;
+  public AbstractCommand getScopeCommand() {
+    return scopeCmd;
   }
 
-  public void setCommand(AbstractCommand cmd) {
-    this.cmd = cmd;
+  public void setScopeCommand(AbstractCommand scopeCmd) {
+    this.scopeCmd = scopeCmd;
   }
 
   @Override
@@ -34,7 +34,7 @@ public class If extends AbstractCommand {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+  public Object accept(AbstractExpressionEvaluatorVisitor v) {
     return v.visitIf(this);
   }
 }

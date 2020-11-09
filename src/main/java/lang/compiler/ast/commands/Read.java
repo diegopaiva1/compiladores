@@ -1,6 +1,6 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.lvalues.AbstractLvalue;
 
 public class Read extends AbstractCommand {
@@ -24,7 +24,7 @@ public class Read extends AbstractCommand {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+  public Void accept(AbstractExpressionEvaluatorVisitor v) {
     return v.visitRead(this);
   }
 }

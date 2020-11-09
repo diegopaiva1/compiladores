@@ -2,7 +2,7 @@ package lang.compiler.ast.commands;
 
 import java.util.List;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.lvalues.AbstractLvalue;
 import lang.compiler.ast.lvalues.Identifier;
@@ -48,8 +48,7 @@ public class StaticFunctionCall extends AbstractCommand {
   }
 
   @Override
-  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
-    // TODO Auto-generated method stub
-    return null;
+  public Void accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitStaticFunctionCall(this);
   }
 }

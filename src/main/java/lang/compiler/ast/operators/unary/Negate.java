@@ -1,6 +1,6 @@
 package lang.compiler.ast.operators.unary;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Negate extends AbstractUnaryOperator {

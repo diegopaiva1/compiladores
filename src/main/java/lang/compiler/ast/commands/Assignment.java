@@ -1,6 +1,6 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.lvalues.AbstractLvalue;
 
@@ -35,7 +35,7 @@ public class Assignment extends AbstractCommand {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+  public Void accept(AbstractExpressionEvaluatorVisitor v) {
     return v.visitAssignment(this);
   }
 }

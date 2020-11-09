@@ -1,7 +1,7 @@
 package lang.compiler.ast;
 
 import lang.compiler.ast.types.AbstractType;
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.lvalues.Identifier;
 
 public class Parameter extends AbstractExpression {

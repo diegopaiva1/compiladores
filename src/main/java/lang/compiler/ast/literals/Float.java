@@ -1,8 +1,12 @@
 package lang.compiler.ast.literals;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
 public class Float extends AbstractLiteral<java.lang.Float> {
+  public Float() {
+    super();
+  }
+
   public Float(java.lang.Float value) {
     super(value);
   }

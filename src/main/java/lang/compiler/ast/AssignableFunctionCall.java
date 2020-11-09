@@ -2,7 +2,7 @@ package lang.compiler.ast;
 
 import java.util.List;
 
-import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.lvalues.Identifier;
 
 public class AssignableFunctionCall extends AbstractExpression {
@@ -41,8 +41,7 @@ public class AssignableFunctionCall extends AbstractExpression {
   }
 
   @Override
-  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
-    // TODO Auto-generated method stub
-    return null;
+  public Object accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitAssignableFunctionCall(this);
   }
 }
