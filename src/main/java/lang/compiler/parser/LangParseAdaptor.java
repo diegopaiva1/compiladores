@@ -4,9 +4,7 @@ import java.io.IOException;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
-import lang.compiler.ast.Data;
 import lang.compiler.ast.Function;
-import lang.compiler.ast.Parameter;
 import lang.compiler.ast.Program;
 import lang.compiler.visitors.ProgramVisitor;
 import org.antlr.v4.runtime.*;
