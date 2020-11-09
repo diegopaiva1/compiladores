@@ -1,5 +1,6 @@
 package lang.compiler.ast.operators.binary;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class And extends AbstractBinaryOperator {
@@ -10,5 +11,10 @@ public class And extends AbstractBinaryOperator {
   @Override
   public String getSymbol() {
     return "&&";
+  }
+
+  @Override
+  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitAnd(this);
   }
 }

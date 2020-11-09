@@ -1,5 +1,6 @@
 package lang.compiler.ast.operators.unary;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Not extends AbstractUnaryOperator {
@@ -10,5 +11,10 @@ public class Not extends AbstractUnaryOperator {
   @Override
   public String getSymbol() {
     return "!";
+  }
+
+  @Override
+  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitNot(this);
   }
 }

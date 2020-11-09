@@ -1,5 +1,6 @@
 package lang.compiler.ast.commands;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Iterate extends AbstractCommand {
@@ -30,5 +31,10 @@ public class Iterate extends AbstractCommand {
   @Override
   public String getName() {
     return "Iterate";
+  }
+
+  @Override
+  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitIterate(this);
   }
 }

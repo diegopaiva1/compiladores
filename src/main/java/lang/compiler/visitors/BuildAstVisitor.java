@@ -16,6 +16,7 @@ import lang.compiler.ast.types.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
 import lang.compiler.parser.LangParser.AssignmentContext;
+import lang.compiler.parser.LangParser.CommandScopeContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
@@ -68,13 +69,13 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitData(LangParser.DataContext ctx) {
-    String typeName = ctx.TYPE_NAME().getText();
+    BasicType type = new BasicType(ctx.TYPE_NAME().getText());
     List<Declaration> decls = new ArrayList<>();
 
     for (LangParser.DeclContext declCtx : ctx.decl())
       decls.add((Declaration) visit(declCtx));
 
-    return new Data(typeName, decls);
+    return new Data(type, decls);
   }
 
   @Override
@@ -92,8 +93,8 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitRead(LangParser.ReadContext ctx) {
-    AbstractExpression expr = visit(ctx.lvalue());
-    return new Read(expr);
+    AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
+    return new Read(lvalue);
   }
 
   @Override
@@ -304,14 +305,15 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     return new BalancedParenthesesExpression(expr);
   }
 
-  public AbstractExpression visitCmdScope(LangParser.CmdScopeContext ctx) {
+  @Override
+  public AbstractExpression visitCommandScope(CommandScopeContext ctx) {
     List<AbstractCommand> cmds = new ArrayList<>();
 
     for (LangParser.CmdContext cmdCtx : ctx.cmd()) {
       cmds.add((AbstractCommand) visit(cmdCtx));
     }
 
-    return new CmdScope(cmds);
+    return new CommandScope(cmds);
   }
 
   @Override

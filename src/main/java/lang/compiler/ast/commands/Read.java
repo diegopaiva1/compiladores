@@ -1,24 +1,30 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.ast.AbstractExpression;
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.ast.lvalues.AbstractLvalue;
 
 public class Read extends AbstractCommand {
-  private AbstractExpression expr;
+  private AbstractLvalue lvalue;
 
-  public Read(AbstractExpression expr) {
-    this.expr = expr;
+  public Read(AbstractLvalue lvalue) {
+    this.lvalue = lvalue;
   }
 
-  public AbstractExpression getExpression() {
-    return expr;
+  public AbstractLvalue getLvalue() {
+    return lvalue;
   }
 
-  public void setExpression(AbstractExpression expr) {
-    this.expr = expr;
+  public void setLvalue(AbstractLvalue lvalue) {
+    this.lvalue = lvalue;
   }
 
   @Override
   public String getName() {
     return "Read";
+  }
+
+  @Override
+  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitRead(this);
   }
 }

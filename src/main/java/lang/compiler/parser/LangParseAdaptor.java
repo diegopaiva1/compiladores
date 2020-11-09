@@ -2,7 +2,8 @@ package lang.compiler.parser;
 
 import java.io.IOException;
 
-import lang.compiler.ExpressionEvaluator;
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.Program;
 import lang.compiler.visitors.ProgramVisitor;
 import org.antlr.v4.runtime.*;
@@ -19,10 +20,10 @@ public class LangParseAdaptor implements ParseAdaptor {
 
       ParseTree cst = langParser.prog(); // Retrieve ANTLR parse tree from the start symbol 'prog'
       Program prog = new ProgramVisitor().visit(cst); // Convert parse tree into Program object
-      ExpressionEvaluator ev = new ExpressionEvaluator(prog.getExpressions());
+      AbstractExpressionEvaluatorVisitor ev = new AbstractExpressionEvaluatorVisitor();
 
-      for (String eval : ev.getEvaluationResults())
-        System.out.println(eval);
+      for (AbstractExpression expr : prog.getExpressions())
+        expr.accept(ev);
 
       if (langParser.getNumberOfSyntaxErrors() == 0)
         return prog;

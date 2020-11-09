@@ -1,6 +1,7 @@
 package lang.compiler.ast;
 
 import lang.compiler.ast.types.AbstractType;
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.lvalues.Identifier;
 
 public class Parameter extends AbstractExpression {
@@ -26,5 +27,11 @@ public class Parameter extends AbstractExpression {
 
   public void setType(AbstractType type) {
     this.type = type;
+  }
+
+  @Override
+  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

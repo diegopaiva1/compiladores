@@ -1,5 +1,6 @@
 package lang.compiler.ast.lvalues;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class ArrayAccess extends AbstractLvalue {
@@ -30,5 +31,15 @@ public class ArrayAccess extends AbstractLvalue {
   @Override
   public String getLabel() {
     return "ArrayAccess";
+  }
+
+  @Override
+  public String toString() {
+    return lvalue.toString() + expr.accept(new AbstractExpressionEvaluatorVisitor()).toString();
+  }
+
+  @Override
+  public Object accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitArrayAccess(this);
   }
 }

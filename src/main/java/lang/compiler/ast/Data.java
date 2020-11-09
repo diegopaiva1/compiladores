@@ -2,21 +2,24 @@ package lang.compiler.ast;
 
 import java.util.List;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.ast.types.BasicType;
+
 public class Data extends AbstractExpression {
-  private String typeName;
+  private BasicType type;
   private List<Declaration> decls;
 
-  public Data(String typeName, List<Declaration> decls) {
-    this.typeName = typeName;
+  public Data(BasicType type, List<Declaration> decls) {
+    this.type = type;
     this.decls = decls;
   }
 
-  public String getTypeName() {
-    return typeName;
+  public BasicType getType() {
+    return type;
   }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
+  public void setType(BasicType type) {
+    this.type = type;
   }
 
   public List<Declaration> getDeclarations() {
@@ -25,5 +28,11 @@ public class Data extends AbstractExpression {
 
   public void setDeclarations(List<Declaration> decls) {
     this.decls = decls;
+  }
+
+  @Override
+  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

@@ -1,5 +1,7 @@
 package lang.compiler.ast;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
+
 public class BalancedParenthesesExpression extends AbstractExpression{
   private AbstractExpression expr;
 
@@ -7,11 +9,16 @@ public class BalancedParenthesesExpression extends AbstractExpression{
     this.expr = expr;
   }
 
-  public AbstractExpression getExpr() {
+  public AbstractExpression getExpression() {
     return expr;
   }
 
-  public void setExpr(AbstractExpression expr) {
+  public void setExpression(AbstractExpression expr) {
     this.expr = expr;
+  }
+
+  @Override
+  public Object accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitBalancedParentheses(this);
   }
 }

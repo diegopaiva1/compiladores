@@ -1,5 +1,7 @@
 package lang.compiler.ast.types;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
+
 public class Array extends AbstractType {
   private AbstractType type;
 
@@ -18,5 +20,11 @@ public class Array extends AbstractType {
   @Override
   public String getName() {
     return "Array of " + type.getName();
+  }
+
+  @Override
+  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

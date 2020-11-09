@@ -1,5 +1,6 @@
 package lang.compiler.ast.commands;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class If extends AbstractCommand {
@@ -30,5 +31,10 @@ public class If extends AbstractCommand {
   @Override
   public String getName() {
     return "If";
+  }
+
+  @Override
+  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitIf(this);
   }
 }

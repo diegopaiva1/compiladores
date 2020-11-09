@@ -20,7 +20,7 @@ btype : 'Int'
       | 'Float'
       | TYPE_NAME
       ;
-cmd : '{' cmd* '}'                                         # CmdScope
+cmd : '{' cmd* '}'                                         # CommandScope
     | 'if' '(' exp ')' cmd                                 # If
     | 'if' '(' exp ')' cmd 'else' cmd                      # IfElse
     | 'iterate' '(' exp ')' cmd                            # Iterate
@@ -66,7 +66,7 @@ lvalue : ID                 # Identifier
        | lvalue '[' exp ']' # ArrayAccess
        | lvalue '.' ID      # DataIdentifierAccess
        ;
-exps : exp (',' exp)* # Expressions
+exps : exp (',' exp)*
      ;
 
 /* Tokens fragments */

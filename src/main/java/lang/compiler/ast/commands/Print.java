@@ -1,5 +1,6 @@
 package lang.compiler.ast.commands;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Print extends AbstractCommand {
@@ -20,5 +21,10 @@ public class Print extends AbstractCommand {
   @Override
   public String getName() {
     return "Print";
+  }
+
+  @Override
+  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitPrint(this);
   }
 }

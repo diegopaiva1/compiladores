@@ -2,6 +2,7 @@ package lang.compiler.ast;
 
 import java.util.List;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.lvalues.Identifier;
 
 public class AssignableFunctionCall extends AbstractExpression {
@@ -37,5 +38,11 @@ public class AssignableFunctionCall extends AbstractExpression {
 
   public void setIndex(AbstractExpression index) {
     this.index = index;
+  }
+
+  @Override
+  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

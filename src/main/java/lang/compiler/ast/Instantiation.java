@@ -1,5 +1,6 @@
 package lang.compiler.ast;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.types.AbstractType;
 
 public class Instantiation extends AbstractExpression {
@@ -25,5 +26,11 @@ public class Instantiation extends AbstractExpression {
 
   public void setExpr(AbstractExpression expr) {
     this.expr = expr;
+  }
+
+  @Override
+  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

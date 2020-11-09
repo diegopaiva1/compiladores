@@ -2,6 +2,7 @@ package lang.compiler.ast;
 
 import java.util.List;
 
+import lang.compiler.AbstractExpressionEvaluatorVisitor;
 import lang.compiler.ast.commands.AbstractCommand;
 import lang.compiler.ast.types.AbstractType;
 import lang.compiler.ast.lvalues.Identifier;
@@ -49,5 +50,10 @@ public class Function extends AbstractExpression {
 
   public void setCommands(List<AbstractCommand> cmds) {
     this.cmds = cmds;
+  }
+
+  @Override
+  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+    return v.visitFunction(this);
   }
 }
