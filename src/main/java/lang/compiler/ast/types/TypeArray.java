@@ -34,6 +34,6 @@ public class TypeArray extends AbstractType {
 
   @Override
   public String toString() {
-    return "Array";
+    return "Array of " + type.toString();
   }
 }

@@ -1,6 +1,10 @@
-data Ponto {
-  x :: Float;
-  y :: Float;
+main(ponto :: Ponto) {
+  -- TODO: Fix bug below
+  --i = 1;
+  --z[i] = 0;
+
+  z = new Char[][][1];
+  print z;
 }
 
 fat(x :: Int) : Int {
@@ -25,16 +29,3 @@ testIterateFunction(num :: Int) {
   }
 }
 
-main(ponto :: Ponto) {
-  -- TODO: Fix bug below
-  --i = 1;
-  --z[i] = 0;
-  z = new Char[];
-  print z;
-
-  divmod(3, 2)<x, y>;
-  print x;
-  print y;
-
-  print fat(5)[0];
-}

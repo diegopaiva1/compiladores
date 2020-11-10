@@ -280,30 +280,44 @@ public class AbstractExpressionEvaluatorVisitor {
   }
 
   public Object visitNew(New newCmd) {
-    int length = newCmd.getExpression() != null ? (int) newCmd.getExpression().accept(this) : 0;
+    try {
+      int length = newCmd.getExpression() != null ? (int) newCmd.getExpression().accept(this) : 0;
 
-    if (newCmd.getType() instanceof TypeArray) {
-      // TODO.
-      TypeArray array = (TypeArray) newCmd.getType();
-      return null;
-      // return new TypeArray();
-      // return new Object[(int) newCmd.getExpr().accept(this)];
-    }
-    else if (newCmd.getType() instanceof TypeBool) {
-      return length == 0 ? new Bool() : new Bool[length];
-    }
-    else if (newCmd.getType() instanceof TypeChar) {
-      return length == 0 ? new Char() : new Char[length];
-    }
-    else if (newCmd.getType() instanceof TypeFloat) {
-      return length == 0 ? new lang.compiler.ast.literals.Float() : new lang.compiler.ast.literals.Float[length];
-    }
-    else if (newCmd.getType() instanceof TypeInt) {
-      return length == 0 ? new Int() : new Int[length];
-    }
-    else { // TypeCustom
-      // TODO
-      return null;
+      if (newCmd.getType() instanceof TypeArray) {
+        TypeArray typeArray = (TypeArray) newCmd.getType();
+        List<Object> array = new ArrayList<Object>();
+
+        if (length == 0) {
+          array.add(new New(typeArray.getType(), null).accept(this));
+          return array;
+        }
+        else {
+          for (int i = 0; i < length; i++) {
+            // Recursive call to the type this array holds
+            array.add(new New(typeArray.getType(), null).accept(this));
+          }
+
+          return array;
+        }
+      }
+      else if (newCmd.getType() instanceof TypeBool) {
+        return length == 0 ? new Bool() : new ArrayList<Bool>(length);
+      }
+      else if (newCmd.getType() instanceof TypeChar) {
+        return length == 0 ? new Char() : new ArrayList<Char>(length);
+      }
+      else if (newCmd.getType() instanceof TypeFloat) {
+        return length == 0 ? new lang.compiler.ast.literals.Float() : new ArrayList<lang.compiler.ast.literals.Float>(length);
+      }
+      else if (newCmd.getType() instanceof TypeInt) {
+        return length == 0 ? new Int() : new ArrayList<Int>(length);
+      }
+      else { // TypeCustom
+        // TODO
+        return null;
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Invalid use of 'New'");
     }
   }
 
