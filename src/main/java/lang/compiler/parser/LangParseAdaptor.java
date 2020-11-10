@@ -26,28 +26,24 @@ public class LangParseAdaptor implements ParseAdaptor {
         // Convert parse tree into Program object
         Program prog = new ProgramVisitor().visit(cst);
         AbstractExpressionEvaluatorVisitor ev = new AbstractExpressionEvaluatorVisitor();
-        boolean hasMainFunction = false;
 
+        // Store functions before evaluation
         for (AbstractExpression expr : prog.getExpressions()) {
-          if (expr instanceof Function) {
+          if (expr instanceof Function)
             ev.addFunction((Function) expr);
-          }
         }
+
+        if (!ev.hasFunction("main"))
+          throw new RuntimeException("function main does not exist");
 
         for (AbstractExpression expr : prog.getExpressions()) {
           if (expr instanceof Function) {
             Function f = (Function) expr;
 
-            if (f.getId().getName().equals("main")) {
-              hasMainFunction = true;
+            if (f.getId().getName().equals("main"))
               expr.accept(ev);
-              break;
-            }
           }
         }
-
-        if (!hasMainFunction)
-          throw new RuntimeException("function main does not exist");
 
         return prog;
       }

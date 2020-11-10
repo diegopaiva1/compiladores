@@ -32,6 +32,10 @@ public class AbstractExpressionEvaluatorVisitor {
     functions.put(f.getId().getName(), f);
   }
 
+  public boolean hasFunction(String functionId) {
+    return functions.containsKey(functionId);
+  }
+
   public Boolean visitBool(Bool bool) {
     return bool.getValue();
   }

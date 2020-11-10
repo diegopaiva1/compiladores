@@ -28,7 +28,7 @@ public class App {
 
       if (args[0].equals("-bs")) {
         System.out.println("Executando bateria de testes sintáticos:");
-        langParseAdaptor.parseFile("testes/prog.txt");
+        TestParser tp = new TestParser(langParseAdaptor);
         return;
       }
       if (args[0].equals("-byt")) {
