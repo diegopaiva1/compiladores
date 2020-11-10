@@ -227,7 +227,7 @@ public class AbstractExpressionEvaluatorVisitor {
       env.pop();
 
       for (int i = 0; i < returnedObjects.size(); i++)
-        env.peek().put(fCall.getLvalues().get(i).toString(), returnedObjects.get(i));
+        env.peek().put(fCall.getLvalues().get(i).toKey(this), returnedObjects.get(i));
 
       return null;
     } catch (Exception e) {
@@ -335,26 +335,26 @@ public class AbstractExpressionEvaluatorVisitor {
   }
 
   public Object visitIdentifier(Identifier id) {
-    return env.peek().get(id.toString());
+    return env.peek().get(id.toKey(this));
   }
 
   public Object visitArrayAccess(ArrayAccess arrayAccess) {
-    return env.peek().get(arrayAccess.toString());
+    return env.peek().get(arrayAccess.toKey(this));
   }
 
   public Object visitDataIdentifierAccess(DataIdentifierAccess dataIdentifierAccess) {
-    return env.peek().get(dataIdentifierAccess.toString());
+    return env.peek().get(dataIdentifierAccess.toKey(this));
   }
 
   public Void visitAssignment(Assignment assignment) {
-    env.peek().put(assignment.getLvalue().toString(), assignment.getExpression().accept(this));
+    env.peek().put(assignment.getLvalue().toKey(this), assignment.getExpression().accept(this));
     return null;
   }
 
   public Void visitRead(Read readCmd) {
     try {
       Scanner scanner = new Scanner(System.in);
-      env.peek().put(readCmd.getLvalue().toString(), scanner.nextInt());
+      env.peek().put(readCmd.getLvalue().toKey(this), scanner.nextInt());
       scanner.close();
       return null;
     }
