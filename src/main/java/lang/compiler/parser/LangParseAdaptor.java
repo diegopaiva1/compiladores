@@ -2,9 +2,6 @@ package lang.compiler.parser;
 
 import java.io.IOException;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
-import lang.compiler.ast.AbstractExpression;
-import lang.compiler.ast.Function;
 import lang.compiler.ast.Program;
 import lang.compiler.visitors.ProgramVisitor;
 import org.antlr.v4.runtime.*;
@@ -25,26 +22,6 @@ public class LangParseAdaptor implements ParseAdaptor {
       if (langParser.getNumberOfSyntaxErrors() == 0) {
         // Convert parse tree into Program object
         Program prog = new ProgramVisitor().visit(cst);
-        AbstractExpressionEvaluatorVisitor ev = new AbstractExpressionEvaluatorVisitor();
-
-        // Store functions before evaluation
-        for (AbstractExpression expr : prog.getExpressions()) {
-          if (expr instanceof Function)
-            ev.addFunction((Function) expr);
-        }
-
-        if (!ev.hasFunction("main"))
-          throw new RuntimeException("function main does not exist");
-
-        for (AbstractExpression expr : prog.getExpressions()) {
-          if (expr instanceof Function) {
-            Function f = (Function) expr;
-
-            if (f.getId().getName().equals("main"))
-              expr.accept(ev);
-          }
-        }
-
         return prog;
       }
     } catch (IOException e) {

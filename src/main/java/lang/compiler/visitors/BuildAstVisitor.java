@@ -8,13 +8,13 @@ import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
 import lang.compiler.ast.lvalues.*;
+import lang.compiler.ast.miscellaneous.*;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 import lang.compiler.parser.LangBaseVisitor;
 import lang.compiler.parser.LangParser;
-import lang.compiler.parser.LangParser.TypeCustomContext;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
@@ -67,7 +67,7 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitData(LangParser.DataContext ctx) {
-    TypeCustom type = (TypeCustom) visit(ctx.TYPE_NAME());
+    CustomType type = (CustomType) visit(ctx.TYPE_NAME());
     List<Declaration> decls = new ArrayList<>();
 
     for (LangParser.DeclContext declCtx : ctx.decl())
@@ -207,13 +207,13 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitTrue(LangParser.TrueContext ctx) {
     Boolean value = Boolean.parseBoolean(ctx.getText());
-    return new Bool(value);
+    return new BoolLiteral(value);
   }
 
   @Override
   public AbstractExpression visitFalse(LangParser.FalseContext ctx) {
     Boolean value = Boolean.parseBoolean(ctx.getText());
-    return new Bool(value);
+    return new BoolLiteral(value);
   }
 
   @Override
@@ -221,26 +221,26 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     String valueText = ctx.CHAR().getText();
     valueText = valueText.substring(1, valueText.length() - 1); // Pick string inside simple quotes ''
     Character value = StringEscapeUtils.unescapeJava(valueText).charAt(0); // If special char, unscape it
-    return new Char(value);
+    return new CharLiteral(value);
   }
 
   @Override
   public AbstractExpression visitFloat(LangParser.FloatContext ctx) {
     String valueText = ctx.FLOAT().getText();
     java.lang.Float value = java.lang.Float.parseFloat(valueText);
-    return new lang.compiler.ast.literals.Float(value);
+    return new lang.compiler.ast.literals.FloatLiteral(value);
   }
 
   @Override
   public AbstractExpression visitInt(LangParser.IntContext ctx) {
     String valueText = ctx.INT().getText();
     Integer value = Integer.parseInt(valueText);
-    return new Int(value);
+    return new IntLiteral(value);
   }
 
   @Override
   public AbstractExpression visitNull(LangParser.NullContext ctx) {
-    return new Null(null);
+    return new NullLiteral(null);
   }
 
   @Override
@@ -347,32 +347,32 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitTypeBool(LangParser.TypeBoolContext ctx) {
-    return new TypeBool();
+  public AbstractExpression visitBoolType(LangParser.BoolTypeContext ctx) {
+    return new BoolType();
   }
 
   @Override
-  public AbstractExpression visitTypeChar(LangParser.TypeCharContext ctx) {
-    return new TypeChar();
+  public AbstractExpression visitCharType(LangParser.CharTypeContext ctx) {
+    return new CharType();
   }
 
   @Override
-  public AbstractExpression visitTypeFloat(LangParser.TypeFloatContext ctx) {
-    return new TypeFloat();
+  public AbstractExpression visitFloatType(LangParser.FloatTypeContext ctx) {
+    return new FloatType();
   }
 
   @Override
-  public AbstractExpression visitTypeInt(LangParser.TypeIntContext ctx) {
-    return new TypeInt();
+  public AbstractExpression visitIntType(LangParser.IntTypeContext ctx) {
+    return new IntType();
   }
 
   @Override
-  public AbstractExpression visitTypeArray(LangParser.TypeArrayContext ctx) {
-    return new TypeArray((AbstractType) visit(ctx.type()));
+  public AbstractExpression visitArrayType(LangParser.ArrayTypeContext ctx) {
+    return new ArrayType((AbstractType) visit(ctx.type()));
   }
 
   @Override
-  public AbstractExpression visitTypeCustom(TypeCustomContext ctx) {
-    return new TypeCustom(ctx.TYPE_NAME().getText());
+  public AbstractExpression visitCustomType(LangParser.CustomTypeContext ctx) {
+    return new CustomType(ctx.TYPE_NAME().getText());
   }
 }

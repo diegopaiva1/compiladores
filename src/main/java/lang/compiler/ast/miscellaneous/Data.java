@@ -1,24 +1,25 @@
-package lang.compiler.ast;
+package lang.compiler.ast.miscellaneous;
 
 import java.util.List;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
-import lang.compiler.ast.types.TypeCustom;
+import lang.compiler.ast.AbstractExpression;
+import lang.compiler.ast.types.CustomType;
 
 public class Data extends AbstractExpression {
-  private TypeCustom type;
+  private CustomType type;
   private List<Declaration> decls;
 
-  public Data(TypeCustom type, List<Declaration> decls) {
+  public Data(CustomType type, List<Declaration> decls) {
     this.type = type;
     this.decls = decls;
   }
 
-  public TypeCustom getType() {
+  public CustomType getType() {
     return type;
   }
 
-  public void setType(TypeCustom type) {
+  public void setType(CustomType type) {
     this.type = type;
   }
 

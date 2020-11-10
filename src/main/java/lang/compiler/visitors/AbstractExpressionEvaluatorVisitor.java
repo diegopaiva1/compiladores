@@ -13,6 +13,7 @@ import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
 import lang.compiler.ast.lvalues.*;
+import lang.compiler.ast.miscellaneous.*;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
@@ -36,23 +37,23 @@ public class AbstractExpressionEvaluatorVisitor {
     return functions.containsKey(functionId);
   }
 
-  public Boolean visitBool(Bool bool) {
-    return bool.getValue();
+  public Boolean visitBoolLiteral(BoolLiteral b) {
+    return b.getValue();
   }
 
-  public Character visitChar(Char c) {
+  public Character visitCharLiteral(CharLiteral c) {
     return c.getValue();
   }
 
-  public java.lang.Float visitFloat(lang.compiler.ast.literals.Float f) {
+  public java.lang.Float visitFloatLiteral(lang.compiler.ast.literals.FloatLiteral f) {
     return f.getValue();
   }
 
-  public Integer visitInt(Int i) {
+  public Integer visitIntLiteral(IntLiteral i) {
     return i.getValue();
   }
 
-  public NullType visitNull(Null n) {
+  public NullType visitNullLiteral(NullLiteral n) {
     return n.getValue();
   }
 
@@ -287,34 +288,34 @@ public class AbstractExpressionEvaluatorVisitor {
     try {
       int length = newCmd.getExpression() != null ? (int) newCmd.getExpression().accept(this) : 0;
 
-      if (newCmd.getType() instanceof TypeArray) {
-        TypeArray typeArray = (TypeArray) newCmd.getType();
+      if (newCmd.getType() instanceof ArrayType) {
+        ArrayType arrayType = (ArrayType) newCmd.getType();
         List<Object> array = new ArrayList<Object>();
 
         if (length == 0) {
-          array.add(new New(typeArray.getType(), null).accept(this));
+          array.add(new New(arrayType.getType(), null).accept(this));
           return array;
         }
         else {
           for (int i = 0; i < length; i++) {
             // Recursive call to the type this array holds
-            array.add(new New(typeArray.getType(), null).accept(this));
+            array.add(new New(arrayType.getType(), null).accept(this));
           }
 
           return array;
         }
       }
-      else if (newCmd.getType() instanceof TypeBool) {
-        return length == 0 ? new Bool() : new ArrayList<Bool>(length);
+      else if (newCmd.getType() instanceof BoolType) {
+        return length == 0 ? new BoolLiteral() : new ArrayList<BoolLiteral>(length);
       }
-      else if (newCmd.getType() instanceof TypeChar) {
-        return length == 0 ? new Char() : new ArrayList<Char>(length);
+      else if (newCmd.getType() instanceof CharType) {
+        return length == 0 ? new CharLiteral() : new ArrayList<CharLiteral>(length);
       }
-      else if (newCmd.getType() instanceof TypeFloat) {
-        return length == 0 ? new lang.compiler.ast.literals.Float() : new ArrayList<lang.compiler.ast.literals.Float>(length);
+      else if (newCmd.getType() instanceof FloatType) {
+        return length == 0 ? new lang.compiler.ast.literals.FloatLiteral() : new ArrayList<lang.compiler.ast.literals.FloatLiteral>(length);
       }
-      else if (newCmd.getType() instanceof TypeInt) {
-        return length == 0 ? new Int() : new ArrayList<Int>(length);
+      else if (newCmd.getType() instanceof IntType) {
+        return length == 0 ? new IntLiteral() : new ArrayList<IntLiteral>(length);
       }
       else { // TypeCustom
         // TODO
@@ -371,32 +372,27 @@ public class AbstractExpressionEvaluatorVisitor {
     return balanced.getExpression().accept(this);
   }
 
-  public Void visitParameter(Parameter param) {
-    // TODO ?
+  public Void visitArrayType(ArrayType arrayType) {
     return null;
   }
 
-  public Void visitTypeArray(TypeArray typeArray) {
+  public Void visitBoolType(BoolType boolType) {
     return null;
   }
 
-  public Void visitTypeBool(TypeBool typeBool) {
+  public Void visitCharType(CharType charType) {
     return null;
   }
 
-  public Void visitTypeChar(TypeChar typeChar) {
+  public Void visitFloatType(FloatType floatType) {
     return null;
   }
 
-  public Void visitTypeFloat(TypeFloat typeFloat) {
+  public Void visitIntType(IntType intType) {
     return null;
   }
 
-  public Void visitTypeInt(TypeInt typeInt) {
-    return null;
-  }
-
-  public Void visitTypeCustom(TypeCustom typeCustom) {
+  public Void visitCustomType(CustomType customType) {
     return null;
   }
 }

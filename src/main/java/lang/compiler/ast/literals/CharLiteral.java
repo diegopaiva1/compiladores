@@ -2,17 +2,17 @@ package lang.compiler.ast.literals;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class Char extends AbstractLiteral<Character> {
-  public Char(){
+public class CharLiteral extends AbstractLiteral<Character> {
+  public CharLiteral(){
     super();
   }
 
-  public Char(Character value) {
+  public CharLiteral(Character value) {
     super(value);
   }
 
   @Override
   public Character accept(AbstractExpressionEvaluatorVisitor v) {
-    return v.visitChar(this);
+    return v.visitCharLiteral(this);
   }
 }

@@ -20,11 +20,11 @@ public class ArrayAccess extends AbstractLvalue {
     this.lvalue = lvalue;
   }
 
-  public AbstractExpression getExpr() {
+  public AbstractExpression getExpression() {
     return expr;
   }
 
-  public void setExpr(AbstractExpression expr) {
+  public void setExpression(AbstractExpression expr) {
     this.expr = expr;
   }
 

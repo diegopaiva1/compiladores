@@ -2,22 +2,22 @@ package lang.compiler.ast.types;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class TypeBool extends AbstractType {
-  public TypeBool() {
+public class CharType extends AbstractType {
+  public CharType() {
   }
 
   @Override
   public boolean match(AbstractType type) {
-    return type instanceof TypeBool;
+    return type instanceof CharType;
   }
 
   @Override
   public Void accept(AbstractExpressionEvaluatorVisitor v) {
-    return v.visitTypeBool(this);
+    return v.visitCharType(this);
   }
 
   @Override
   public String toString() {
-    return "Bool";
+    return "Char";
   }
 }

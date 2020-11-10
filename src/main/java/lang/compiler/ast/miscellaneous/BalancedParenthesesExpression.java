@@ -1,8 +1,9 @@
-package lang.compiler.ast;
+package lang.compiler.ast.miscellaneous;
 
+import lang.compiler.ast.AbstractExpression;
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class BalancedParenthesesExpression extends AbstractExpression{
+public class BalancedParenthesesExpression extends AbstractExpression {
   private AbstractExpression expr;
 
   public BalancedParenthesesExpression(AbstractExpression expr) {

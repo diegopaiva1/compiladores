@@ -2,17 +2,17 @@ package lang.compiler.ast.types;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class TypeCustom extends AbstractType {
+public class CustomType extends AbstractType {
   private String name;
 
-  public TypeCustom(String name) {
+  public CustomType(String name) {
     this.name = name;
   }
 
   @Override
   public boolean match(AbstractType type) {
-    if (type instanceof TypeCustom) {
-      TypeCustom typeCustom = (TypeCustom) type;
+    if (type instanceof CustomType) {
+      CustomType typeCustom = (CustomType) type;
       return this.toString() == typeCustom.toString();
     }
 
@@ -21,7 +21,7 @@ public class TypeCustom extends AbstractType {
 
   @Override
   public Void accept(AbstractExpressionEvaluatorVisitor v) {
-    return v.visitTypeCustom(this);
+    return v.visitCustomType(this);
   }
 
   @Override

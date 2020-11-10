@@ -2,17 +2,17 @@ package lang.compiler.ast.literals;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class Float extends AbstractLiteral<java.lang.Float> {
-  public Float() {
+public class FloatLiteral extends AbstractLiteral<java.lang.Float> {
+  public FloatLiteral() {
     super();
   }
 
-  public Float(java.lang.Float value) {
+  public FloatLiteral(java.lang.Float value) {
     super(value);
   }
 
   @Override
   public java.lang.Float accept(AbstractExpressionEvaluatorVisitor v) {
-    return v.visitFloat(this);
+    return v.visitFloatLiteral(this);
   }
 }

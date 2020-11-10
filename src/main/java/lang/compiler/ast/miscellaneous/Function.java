@@ -1,8 +1,9 @@
-package lang.compiler.ast;
+package lang.compiler.ast.miscellaneous;
 
 import java.util.List;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.commands.AbstractCommand;
 import lang.compiler.ast.types.AbstractType;
 import lang.compiler.ast.lvalues.Identifier;

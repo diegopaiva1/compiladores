@@ -11,14 +11,14 @@ func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' # Function
      ;
 params : ID '::' type (',' ID '::' type)*
        ;
-type : type '[' ']' # TypeArray
+type : type '[' ']' # ArrayType
      | btype        # BasicType
      ;
-btype : 'Int'     # TypeInt
-      | 'Char'    # TypeChar
-      | 'Bool'    # TypeBool
-      | 'Float'   # TypeFloat
-      | TYPE_NAME # TypeCustom
+btype : 'Int'     # IntType
+      | 'Char'    # CharType
+      | 'Bool'    # BoolType
+      | 'Float'   # FloatType
+      | TYPE_NAME # CustomType
       ;
 cmd : '{' cmd* '}'                                         # CommandScope
     | 'if' '(' exp ')' cmd                                 # If

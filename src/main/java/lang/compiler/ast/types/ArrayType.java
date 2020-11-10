@@ -2,10 +2,10 @@ package lang.compiler.ast.types;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class TypeArray extends AbstractType {
+public class ArrayType extends AbstractType {
   private AbstractType type;
 
-  public TypeArray(AbstractType type) {
+  public ArrayType(AbstractType type) {
     this.type = type;
   }
 
@@ -19,8 +19,8 @@ public class TypeArray extends AbstractType {
 
   @Override
   public boolean match(AbstractType type) {
-    if (type instanceof TypeArray) {
-      TypeArray array = (TypeArray) type;
+    if (type instanceof ArrayType) {
+      ArrayType array = (ArrayType) type;
       return this.type.match(array.getType());
     }
 
@@ -29,7 +29,7 @@ public class TypeArray extends AbstractType {
 
   @Override
   public Void accept(AbstractExpressionEvaluatorVisitor v) {
-    return v.visitTypeArray(this);
+    return v.visitArrayType(this);
   }
 
   @Override

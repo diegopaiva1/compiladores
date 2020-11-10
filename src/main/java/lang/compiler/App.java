@@ -46,16 +46,14 @@ public class App {
         return;
       }
 
-      Program result = langParseAdaptor.parseFile(args[1]);
+      Program prog = langParseAdaptor.parseFile(args[1]);
 
-      if (result == null) {
+      if (prog == null) {
         System.err.println("Aborting due to syntax error(s)");
         System.exit(1);
       }
       else if (args[0].equals("-i")) {
-        //iv = new InterpreterVisitor();
-        //result.accept(iv);
-        //((InterpreterVisitor)iv).printEnv();
+        prog.interpret();
       }
       else if (args[0].equals("-ii")) {
         // iv = new InteractiveInterpreterVisitor();

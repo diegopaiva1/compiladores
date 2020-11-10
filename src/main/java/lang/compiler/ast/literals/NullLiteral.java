@@ -4,13 +4,13 @@ import javax.lang.model.type.NullType;
 
 import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
 
-public class Null extends AbstractLiteral<NullType> {
-  public Null(NullType value) {
+public class NullLiteral extends AbstractLiteral<NullType> {
+  public NullLiteral(NullType value) {
     super(value);
   }
 
   @Override
   public NullType accept(AbstractExpressionEvaluatorVisitor v) {
-    return v.visitNull(this);
+    return v.visitNullLiteral(this);
   }
 }
