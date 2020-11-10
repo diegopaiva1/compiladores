@@ -32,9 +32,13 @@ public class LangParseAdaptor implements ParseAdaptor {
 
         for (AbstractExpression expr : prog.getExpressions()) {
           if (expr instanceof Function) {
-            Function f = (Function) expr;
-            ev.addFunction(f);
+            ev.addFunction((Function) expr);
+          }
+        }
 
+        for (AbstractExpression expr : prog.getExpressions()) {
+          if (expr instanceof Function) {
+            Function f = (Function) expr;
             if (f.getId().getName().equals("main")) {
               hasMainFunction = true;
               expr.accept(ev);

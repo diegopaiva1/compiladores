@@ -3,15 +3,6 @@ data Ponto {
   y :: Float;
 }
 
-fat(x :: Int) : Int {
-  if (x < 1) {
-    return 1;
-  }
-  else {
-    return x * fat(x - 1)[0];
-  }
-}
-
 divmod(q :: Int, r :: Int) : Int {
   return q / r, q % r;
 }
@@ -37,4 +28,13 @@ main(ponto :: Ponto) {
   print y;
 
   print fat(5)[0];
+}
+
+fat(x :: Int) : Int {
+  if (x < 1) {
+    return 1;
+  }
+  else {
+    return x * fat(x - 1)[0];
+  }
 }
