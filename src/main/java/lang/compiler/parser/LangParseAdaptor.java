@@ -2,6 +2,8 @@ package lang.compiler.parser;
 
 import java.io.IOException;
 
+import lang.compiler.LangLexer;
+import lang.compiler.LangParser;
 import lang.compiler.ast.Program;
 import lang.compiler.visitors.ProgramVisitor;
 import org.antlr.v4.runtime.*;

@@ -1,4 +1,4 @@
-main(ponto :: Ponto) {
+main() {
   divmod(3, 2)<x, y>;
   print x; -- 1.5
   print y; -- 1.0

@@ -1,8 +1,8 @@
 package lang.compiler.visitors;
 
 import lang.compiler.ast.Program;
-import lang.compiler.parser.LangBaseVisitor;
-import lang.compiler.parser.LangParser;
+import lang.compiler.LangBaseVisitor;
+import lang.compiler.LangParser;
 
 public class ProgramVisitor extends LangBaseVisitor<Program> {
   @Override

@@ -13,8 +13,8 @@ import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
-import lang.compiler.parser.LangBaseVisitor;
-import lang.compiler.parser.LangParser;
+import lang.compiler.LangBaseVisitor;
+import lang.compiler.LangParser;
 
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
