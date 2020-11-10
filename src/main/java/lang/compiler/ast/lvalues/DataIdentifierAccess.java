@@ -33,8 +33,8 @@ public class DataIdentifierAccess extends AbstractLvalue {
   }
 
   @Override
-  public String toString() {
-    return lvalue.toString() + id.toString();
+  public String toKey(AbstractExpressionEvaluatorVisitor v) {
+    return lvalue.toKey(v) + id.toKey(v);
   }
 
   @Override

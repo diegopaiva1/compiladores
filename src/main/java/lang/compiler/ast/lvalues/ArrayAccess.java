@@ -34,9 +34,8 @@ public class ArrayAccess extends AbstractLvalue {
   }
 
   @Override
-  public String toString() {
-    Object test = expr.accept(new AbstractExpressionEvaluatorVisitor());
-    return lvalue.toString() + expr.accept(new AbstractExpressionEvaluatorVisitor()).toString();
+  public String toKey(AbstractExpressionEvaluatorVisitor v) {
+    return lvalue.toKey(v) + expr.accept(v).toString();
   }
 
   @Override

@@ -20,14 +20,18 @@ main(ponto :: Ponto) {
   -- TODO: Fix bug below
   --i = 1;
   --z[i] = 0;
-  z = new Char[];
-  print z;
+  --z = new Char[];
+  --print z;
 
-  divmod(3, 2)<x, y>;
-  print x;
-  print y;
+  --divmod(3, 2)<x, y>;
+  --print x;
+  --print y;
 
-  print fat(5)[0];
+  --print fat(5)[0];
+
+  i = 1;
+  z[i] = 0;
+  print z[1];
 }
 
 fat(x :: Int) : Int {
