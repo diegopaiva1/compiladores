@@ -5,11 +5,10 @@
 package lang.compiler.ast;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import lang.compiler.ast.miscellaneous.Function;
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
-
-import java.util.ArrayList;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 
 public class Program {
   private List<AbstractExpression> exprs;
@@ -27,7 +26,7 @@ public class Program {
   }
 
   public void interpret() {
-    AbstractExpressionEvaluatorVisitor ev = new AbstractExpressionEvaluatorVisitor();
+    AbstractExpressionVisitor ev = new AbstractExpressionVisitor();
 
     // Store functions before evaluation
     for (AbstractExpression expr : exprs) {

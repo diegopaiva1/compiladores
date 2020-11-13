@@ -1,7 +1,7 @@
 package lang.compiler.ast.miscellaneous;
 
 import lang.compiler.ast.types.AbstractType;
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.lvalues.Identifier;
 
@@ -31,7 +31,7 @@ public class Parameter extends AbstractExpression {
   }
 
   @Override
-  public <T> Object accept(AbstractExpressionEvaluatorVisitor v) {
+  public <T> Object accept(AbstractExpressionVisitor v) {
     // TODO Auto-generated method stub
     return null;
   }

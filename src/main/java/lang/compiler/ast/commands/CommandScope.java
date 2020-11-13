@@ -2,7 +2,7 @@ package lang.compiler.ast.commands;
 
 import java.util.List;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 
 public class CommandScope extends AbstractCommand {
   private List<AbstractCommand> cmds;
@@ -25,7 +25,7 @@ public class CommandScope extends AbstractCommand {
   }
 
   @Override
-  public Object accept(AbstractExpressionEvaluatorVisitor v) {
+  public Object accept(AbstractExpressionVisitor v) {
     return v.visitCommandScope(this);
   }
 }

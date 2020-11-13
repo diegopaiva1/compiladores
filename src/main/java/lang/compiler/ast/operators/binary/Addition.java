@@ -1,6 +1,6 @@
 package lang.compiler.ast.operators.binary;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Addition extends AbstractBinaryOperator {
@@ -14,7 +14,7 @@ public class Addition extends AbstractBinaryOperator {
   }
 
   @Override
-  public Number accept(AbstractExpressionEvaluatorVisitor v) {
+  public Number accept(AbstractExpressionVisitor v) {
     return v.visitAddition(this);
   }
 }

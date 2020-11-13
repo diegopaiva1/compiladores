@@ -1,6 +1,6 @@
 package lang.compiler.ast.operators.unary;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Negate extends AbstractUnaryOperator {
@@ -14,7 +14,7 @@ public class Negate extends AbstractUnaryOperator {
   }
 
   @Override
-  public Number accept(AbstractExpressionEvaluatorVisitor v) {
+  public Number accept(AbstractExpressionVisitor v) {
     return v.visitNegate(this);
   }
 }

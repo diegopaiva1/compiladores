@@ -1,6 +1,6 @@
 package lang.compiler.ast.types;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 
 public class ArrayType extends AbstractType {
   private AbstractType type;
@@ -28,7 +28,7 @@ public class ArrayType extends AbstractType {
   }
 
   @Override
-  public Void accept(AbstractExpressionEvaluatorVisitor v) {
+  public Void accept(AbstractExpressionVisitor v) {
     return v.visitArrayType(this);
   }
 

@@ -2,7 +2,7 @@ package lang.compiler.ast.literals;
 
 import javax.lang.model.type.NullType;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 
 public class NullLiteral extends AbstractLiteral<NullType> {
   public NullLiteral(NullType value) {
@@ -10,7 +10,7 @@ public class NullLiteral extends AbstractLiteral<NullType> {
   }
 
   @Override
-  public NullType accept(AbstractExpressionEvaluatorVisitor v) {
+  public NullType accept(AbstractExpressionVisitor v) {
     return v.visitNullLiteral(this);
   }
 }

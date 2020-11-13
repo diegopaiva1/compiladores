@@ -1,6 +1,6 @@
 package lang.compiler.ast.literals;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 
 public class BoolLiteral extends AbstractLiteral<Boolean> {
   public BoolLiteral() {
@@ -12,7 +12,7 @@ public class BoolLiteral extends AbstractLiteral<Boolean> {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+  public Boolean accept(AbstractExpressionVisitor v) {
     return v.visitBoolLiteral(this);
   }
 }

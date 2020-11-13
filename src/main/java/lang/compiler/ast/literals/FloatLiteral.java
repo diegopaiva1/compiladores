@@ -1,6 +1,6 @@
 package lang.compiler.ast.literals;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 
 public class FloatLiteral extends AbstractLiteral<java.lang.Float> {
   public FloatLiteral() {
@@ -12,7 +12,7 @@ public class FloatLiteral extends AbstractLiteral<java.lang.Float> {
   }
 
   @Override
-  public java.lang.Float accept(AbstractExpressionEvaluatorVisitor v) {
+  public java.lang.Float accept(AbstractExpressionVisitor v) {
     return v.visitFloatLiteral(this);
   }
 }

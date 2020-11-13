@@ -1,6 +1,6 @@
 package lang.compiler.ast.operators.binary;
 
-import lang.compiler.visitors.AbstractExpressionEvaluatorVisitor;
+import lang.compiler.visitors.AbstractExpressionVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class LessThan extends AbstractBinaryOperator {
@@ -14,7 +14,7 @@ public class LessThan extends AbstractBinaryOperator {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionEvaluatorVisitor v) {
+  public Boolean accept(AbstractExpressionVisitor v) {
     return v.visitLessThan(this);
   }
 }
