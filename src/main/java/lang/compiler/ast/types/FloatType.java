@@ -1,6 +1,6 @@
 package lang.compiler.ast.types;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class FloatType extends AbstractType {
   public FloatType() {
@@ -12,12 +12,12 @@ public class FloatType extends AbstractType {
   }
 
   @Override
-  public Void accept(AbstractExpressionVisitor v) {
-    return v.visitFloatType(this);
+  public String toString() {
+    return "Float";
   }
 
   @Override
-  public String toString() {
-    return "Float";
+  public Object accept(AstVisitor v) {
+    return v.visitFloatType(this);
   }
 }

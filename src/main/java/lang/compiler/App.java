@@ -60,6 +60,7 @@ public class App {
         // result.accept(iv);
       }
       else if (args[0].equals("-tp")) {
+        prog.checkTypes();
         //iv = new TypeChecker();
         //result.accept(iv);
       }

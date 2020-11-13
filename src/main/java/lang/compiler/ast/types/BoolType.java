@@ -1,6 +1,6 @@
 package lang.compiler.ast.types;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class BoolType extends AbstractType {
   public BoolType() {
@@ -12,12 +12,12 @@ public class BoolType extends AbstractType {
   }
 
   @Override
-  public Void accept(AbstractExpressionVisitor v) {
-    return v.visitBoolType(this);
+  public String toString() {
+    return "Bool";
   }
 
   @Override
-  public String toString() {
-    return "Bool";
+  public Object accept(AstVisitor v) {
+    return v.visitBoolType(this);
   }
 }

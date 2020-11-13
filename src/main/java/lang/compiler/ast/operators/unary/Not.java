@@ -1,6 +1,6 @@
 package lang.compiler.ast.operators.unary;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Not extends AbstractUnaryOperator {
@@ -14,7 +14,7 @@ public class Not extends AbstractUnaryOperator {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitNot(this);
   }
 }

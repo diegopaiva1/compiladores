@@ -1,15 +1,5 @@
 main() {
-  divmod(3, 2)<x, y>;
-  print x; -- 1.5
-  print y; -- 1.0
-
-  n = 0;
-
-  -- Calculando fat de 0 a 10
-  iterate(10) {
-    print fat(n)[0];
-    n = n + 1;
-  }
+  print 3 + false;
 }
 
 divmod(q :: Int, r :: Int) : Int {

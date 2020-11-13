@@ -1,6 +1,6 @@
 package lang.compiler.ast.operators.binary;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class NotEqual extends AbstractBinaryOperator {
@@ -14,7 +14,7 @@ public class NotEqual extends AbstractBinaryOperator {
   }
 
   @Override
-  public Boolean accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitNotEqual(this);
   }
 }

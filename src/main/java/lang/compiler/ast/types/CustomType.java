@@ -1,6 +1,6 @@
 package lang.compiler.ast.types;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class CustomType extends AbstractType {
   private String name;
@@ -20,12 +20,12 @@ public class CustomType extends AbstractType {
   }
 
   @Override
-  public Void accept(AbstractExpressionVisitor v) {
-    return v.visitCustomType(this);
+  public String toString() {
+    return name;
   }
 
   @Override
-  public String toString() {
-    return name;
+  public Object accept(AstVisitor v) {
+    return v.visitCustomType(this);
   }
 }

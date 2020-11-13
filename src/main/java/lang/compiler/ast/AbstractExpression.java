@@ -4,8 +4,8 @@
 
 package lang.compiler.ast;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public abstract class AbstractExpression {
-  public abstract <T>Object accept(AbstractExpressionVisitor v);
+  public abstract Object accept(AstVisitor v);
 }

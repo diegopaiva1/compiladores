@@ -2,7 +2,7 @@ package lang.compiler.ast.miscellaneous;
 
 import java.util.List;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.lvalues.Identifier;
 
@@ -42,7 +42,7 @@ public class AssignableFunctionCall extends AbstractExpression {
   }
 
   @Override
-  public Object accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitAssignableFunctionCall(this);
   }
 }

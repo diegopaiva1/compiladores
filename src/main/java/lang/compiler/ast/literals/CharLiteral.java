@@ -1,6 +1,6 @@
 package lang.compiler.ast.literals;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class CharLiteral extends AbstractLiteral<Character> {
   public CharLiteral(){
@@ -12,7 +12,7 @@ public class CharLiteral extends AbstractLiteral<Character> {
   }
 
   @Override
-  public Character accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitCharLiteral(this);
   }
 }

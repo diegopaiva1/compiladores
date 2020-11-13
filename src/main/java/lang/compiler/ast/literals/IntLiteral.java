@@ -1,6 +1,6 @@
 package lang.compiler.ast.literals;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class IntLiteral extends AbstractLiteral<Integer> {
   public IntLiteral() {
@@ -12,7 +12,7 @@ public class IntLiteral extends AbstractLiteral<Integer> {
   }
 
   @Override
-  public Integer accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitIntLiteral(this);
   }
 }

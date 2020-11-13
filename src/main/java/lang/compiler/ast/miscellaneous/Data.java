@@ -2,7 +2,7 @@ package lang.compiler.ast.miscellaneous;
 
 import java.util.List;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.types.CustomType;
 
@@ -32,8 +32,7 @@ public class Data extends AbstractExpression {
   }
 
   @Override
-  public <T> Object accept(AbstractExpressionVisitor v) {
-    // TODO Auto-generated method stub
-    return null;
+  public Object accept(AstVisitor v) {
+    return v.visitData(this);
   }
 }

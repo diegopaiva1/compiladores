@@ -1,6 +1,6 @@
 package lang.compiler.ast.lvalues;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class Identifier extends AbstractLvalue {
   private String name;
@@ -23,12 +23,12 @@ public class Identifier extends AbstractLvalue {
   }
 
   @Override
-  public String toKey(AbstractExpressionVisitor v) {
+  public String toKey(AstVisitor v) {
     return name;
   }
 
   @Override
-  public Object accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitIdentifier(this);
   }
 }

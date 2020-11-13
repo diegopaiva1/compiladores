@@ -1,6 +1,6 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class If extends AbstractCommand {
@@ -34,7 +34,7 @@ public class If extends AbstractCommand {
   }
 
   @Override
-  public Object accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitIf(this);
   }
 }

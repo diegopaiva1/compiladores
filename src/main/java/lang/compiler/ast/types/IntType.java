@@ -1,6 +1,6 @@
 package lang.compiler.ast.types;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class IntType extends AbstractType {
   public IntType() {
@@ -12,12 +12,12 @@ public class IntType extends AbstractType {
   }
 
   @Override
-  public Void accept(AbstractExpressionVisitor v) {
-    return v.visitIntType(this);
+  public String toString() {
+    return "Int";
   }
 
   @Override
-  public String toString() {
-    return "Int";
+  public Object accept(AstVisitor v) {
+    return v.visitIntType(this);
   }
 }

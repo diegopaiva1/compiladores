@@ -1,6 +1,6 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.types.AbstractType;
 
@@ -30,12 +30,12 @@ public class New extends AbstractCommand {
   }
 
   @Override
-  public Object accept(AbstractExpressionVisitor v) {
-    return v.visitNew(this);
+  public String getName() {
+    return "New";
   }
 
   @Override
-  public String getName() {
-    return "New";
+  public Object accept(AstVisitor v) {
+    return v.visitNew(this);
   }
 }

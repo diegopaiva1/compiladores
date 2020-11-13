@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
   private List<AbstractExpression> exprs;
@@ -45,5 +46,20 @@ public class Program {
           expr.accept(ev);
       }
     }
+  }
+
+  public void checkTypes() {
+    TypeCheckVisitor visitor = new TypeCheckVisitor();
+
+    for (AbstractExpression expr : exprs) {
+      if (expr instanceof Function) {
+        Function f = (Function) expr;
+
+        if (f.getId().getName().equals("main"))
+          expr.accept(visitor);
+      }
+    }
+
+    visitor.printErrors();
   }
 }

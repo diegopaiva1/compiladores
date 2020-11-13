@@ -1,6 +1,6 @@
 package lang.compiler.ast.commands;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Print extends AbstractCommand {
@@ -24,7 +24,7 @@ public class Print extends AbstractCommand {
   }
 
   @Override
-  public Void accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitPrint(this);
   }
 }

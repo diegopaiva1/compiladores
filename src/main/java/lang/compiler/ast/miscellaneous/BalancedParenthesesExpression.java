@@ -1,7 +1,7 @@
 package lang.compiler.ast.miscellaneous;
 
 import lang.compiler.ast.AbstractExpression;
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class BalancedParenthesesExpression extends AbstractExpression {
   private AbstractExpression expr;
@@ -19,7 +19,7 @@ public class BalancedParenthesesExpression extends AbstractExpression {
   }
 
   @Override
-  public Object accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitBalancedParentheses(this);
   }
 }

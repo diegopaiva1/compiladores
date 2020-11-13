@@ -2,7 +2,7 @@ package lang.compiler.ast.miscellaneous;
 
 import java.util.List;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 import lang.compiler.ast.commands.AbstractCommand;
 import lang.compiler.ast.types.AbstractType;
@@ -54,7 +54,7 @@ public class Function extends AbstractExpression {
   }
 
   @Override
-  public List<Object> accept(AbstractExpressionVisitor v) {
+  public Object accept(AstVisitor v) {
     return v.visitFunction(this);
   }
 }

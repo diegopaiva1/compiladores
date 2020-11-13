@@ -19,7 +19,7 @@ import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
-public class AbstractExpressionVisitor {
+public class AbstractExpressionVisitor extends AstVisitor {
   private Stack<Map<String, Object>> env;
   private HashMap<String, Function> functions;
 
@@ -99,23 +99,19 @@ public class AbstractExpressionVisitor {
       Number leftNumber = (Number) leftExpr;
       Number rightNumber = (Number) rightExpr;
       return leftNumber.floatValue() < rightNumber.floatValue();
-    }
-    else if (leftExpr instanceof Number && rightExpr instanceof Character) {
+    } else if (leftExpr instanceof Number && rightExpr instanceof Character) {
       Number leftNumber = (Number) leftExpr;
       Character rightChar = (Character) rightExpr;
       return leftNumber.floatValue() < rightChar.charValue();
-    }
-    else if (leftExpr instanceof Character && rightExpr instanceof Character) {
+    } else if (leftExpr instanceof Character && rightExpr instanceof Character) {
       Character leftChar = (Character) leftExpr;
       Character rightChar = (Character) rightExpr;
       return leftChar.charValue() < rightChar.charValue();
-    }
-    else if (leftExpr instanceof Character && rightExpr instanceof Number) {
+    } else if (leftExpr instanceof Character && rightExpr instanceof Number) {
       Character leftChar = (Character) leftExpr;
       Number rightNumber = (Number) rightExpr;
       return leftChar.charValue() < rightNumber.floatValue();
-    }
-    else {
+    } else {
       throw new RuntimeException("Equal OP: Invalid operators");
     }
   }
@@ -172,7 +168,6 @@ public class AbstractExpressionVisitor {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public List<Object> visitFunction(Function f) {
     for (AbstractCommand cmd : f.getCommands()) {
       Object result = cmd.accept(this);
@@ -205,7 +200,7 @@ public class AbstractExpressionVisitor {
 
       // Create local enviroment for function call
       env.push(localEnv);
-      List<Object> returnedObjects = f.accept(this);
+      List<Object> returnedObjects = (List<Object>) f.accept(this);
       env.pop();
 
       if (!returnedObjects.isEmpty())
@@ -228,7 +223,7 @@ public class AbstractExpressionVisitor {
 
       // Create local enviroment for function call
       env.push(localEnv);
-      List<Object> returnedObjects = f.accept(this);
+      List<Object> returnedObjects = (List<Object>) f.accept(this);
       env.pop();
 
       for (int i = 0; i < returnedObjects.size(); i++)
@@ -240,7 +235,6 @@ public class AbstractExpressionVisitor {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public Object visitCommandScope(CommandScope cmdScope) {
     for (AbstractCommand cmd : cmdScope.getCommmands()) {
       Object result = cmd.accept(this);
@@ -295,8 +289,7 @@ public class AbstractExpressionVisitor {
         if (length == 0) {
           array.add(new New(arrayType.getType(), null).accept(this));
           return array;
-        }
-        else {
+        } else {
           for (int i = 0; i < length; i++) {
             // Recursive call to the type this array holds
             array.add(new New(arrayType.getType(), null).accept(this));
@@ -304,20 +297,16 @@ public class AbstractExpressionVisitor {
 
           return array;
         }
-      }
-      else if (newCmd.getType() instanceof BoolType) {
+      } else if (newCmd.getType() instanceof BoolType) {
         return length == 0 ? new BoolLiteral() : new ArrayList<BoolLiteral>(length);
-      }
-      else if (newCmd.getType() instanceof CharType) {
+      } else if (newCmd.getType() instanceof CharType) {
         return length == 0 ? new CharLiteral() : new ArrayList<CharLiteral>(length);
-      }
-      else if (newCmd.getType() instanceof FloatType) {
-        return length == 0 ? new lang.compiler.ast.literals.FloatLiteral() : new ArrayList<lang.compiler.ast.literals.FloatLiteral>(length);
-      }
-      else if (newCmd.getType() instanceof IntType) {
+      } else if (newCmd.getType() instanceof FloatType) {
+        return length == 0 ? new lang.compiler.ast.literals.FloatLiteral()
+            : new ArrayList<lang.compiler.ast.literals.FloatLiteral>(length);
+      } else if (newCmd.getType() instanceof IntType) {
         return length == 0 ? new IntLiteral() : new ArrayList<IntLiteral>(length);
-      }
-      else { // TypeCustom
+      } else { // TypeCustom
         // TODO
         return null;
       }
@@ -362,8 +351,7 @@ public class AbstractExpressionVisitor {
       env.peek().put(readCmd.getLvalue().toKey(this), scanner.nextInt());
       scanner.close();
       return null;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException("Read CMD: Invalid entry");
     }
   }
@@ -393,6 +381,24 @@ public class AbstractExpressionVisitor {
   }
 
   public Void visitCustomType(CustomType customType) {
+    return null;
+  }
+
+  @Override
+  public Object visitData(Data data) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Object visitDeclaration(Declaration decl) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Object visitParameter(Parameter param) {
+    // TODO Auto-generated method stub
     return null;
   }
 }

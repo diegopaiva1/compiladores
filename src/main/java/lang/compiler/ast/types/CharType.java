@@ -1,6 +1,6 @@
 package lang.compiler.ast.types;
 
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.AstVisitor;
 
 public class CharType extends AbstractType {
   public CharType() {
@@ -12,12 +12,12 @@ public class CharType extends AbstractType {
   }
 
   @Override
-  public Void accept(AbstractExpressionVisitor v) {
-    return v.visitCharType(this);
+  public String toString() {
+    return "Char";
   }
 
   @Override
-  public String toString() {
-    return "Char";
+  public Object accept(AstVisitor v) {
+    return v.visitCharType(this);
   }
 }
