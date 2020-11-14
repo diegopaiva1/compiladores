@@ -54,7 +54,8 @@ public class TypeCheckVisitor extends AstVisitor {
   }
 
   public Object visitPrint(Print printCmd) {
-    return printCmd.getExpression().accept(this);
+    printCmd.getExpression().accept(this);
+    return null;
   }
 
   public Object visitBoolLiteral(BoolLiteral b) {
@@ -112,7 +113,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitBalancedParentheses(BalancedParenthesesExpression balanced) {
-    return balanced.getExpression().accept(this);
+    balanced.getExpression().accept(this);
+    return null;
   }
 
   @Override

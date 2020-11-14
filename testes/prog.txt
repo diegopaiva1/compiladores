@@ -1,8 +1,10 @@
 main() {
-  if (true)
+  if (true) {
     print 1 + false;
-  else
+  }
+  else {
     print false + 'c';
+  }
 }
 
 divmod(q :: Int, r :: Int) : Int {
