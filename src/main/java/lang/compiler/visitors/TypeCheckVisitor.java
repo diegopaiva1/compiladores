@@ -5,16 +5,12 @@ import java.util.List;
 
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
-import lang.compiler.ast.lvalues.ArrayAccess;
-import lang.compiler.ast.lvalues.DataIdentifierAccess;
-import lang.compiler.ast.lvalues.Identifier;
+import lang.compiler.ast.lvalues.*;
 import lang.compiler.ast.miscellaneous.*;
 import lang.compiler.ast.operators.binary.*;
 import lang.compiler.ast.operators.binary.Module;
-import lang.compiler.ast.operators.unary.Negate;
-import lang.compiler.ast.operators.unary.Not;
+import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
-import lang.compiler.visitors.AstVisitor;
 
 public class TypeCheckVisitor extends AstVisitor {
   private BoolType boolType;
@@ -53,8 +49,8 @@ public class TypeCheckVisitor extends AstVisitor {
     else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
       return leftExprType;
 
-    errorsLog.add("Operator " + add.getSymbol() + " does not apply to types " + leftExprType.toString() + " and "
-        + rightExprType.toString());
+    errorsLog.add("Binary operator \"" + add.getSymbol() + "\" does not apply to types " +
+                  leftExprType.toString() + " and " + rightExprType.toString());
 
     return null;
   }
@@ -81,7 +77,15 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitAnd(And and) {
-    // TODO Auto-generated method stub
+    AbstractType leftExprType = (AbstractType) and.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) and.getRight().accept(this);
+
+    if (leftExprType.match(boolType) && rightExprType.match(boolType))
+      return leftExprType;
+
+    errorsLog.add("Binary operator \"" + and.getSymbol() + "\" does not apply to types " +
+                   leftExprType.toString() + " and " + rightExprType.toString());
+
     return null;
   }
 
@@ -159,14 +163,35 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitDivision(Division div) {
-    // TODO Auto-generated method stub
+    AbstractType leftExprType = (AbstractType) div.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) div.getRight().accept(this);
+
+    if (leftExprType.match(intType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return rightExprType;
+    else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return leftExprType;
+
+    errorsLog.add("Binary operator \"" + div.getSymbol() + "\" does not apply to types " +
+                   leftExprType.toString() + " and " + rightExprType.toString());
+
     return null;
   }
 
   @Override
   public Object visitEqual(Equal eq) {
-    // TODO Auto-generated method stub
-    return null;
+    AbstractType leftExprType = (AbstractType) eq.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) eq.getRight().accept(this);
+
+    // Bool can only compare to another bool
+    if ((leftExprType.match(boolType) && !rightExprType.match(boolType)) ||
+        (!leftExprType.match(boolType) && rightExprType.match(boolType))) {
+      errorsLog.add("Binary operator \"" + eq.getSymbol() + "\" does not apply to types " +
+                     leftExprType.toString() + " and " + rightExprType.toString());
+
+      return null;
+    }
+
+    return leftExprType;
   }
 
   @Override
@@ -207,26 +232,62 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitLessThan(LessThan lt) {
-    // TODO Auto-generated method stub
+    AbstractType leftExprType = (AbstractType) lt.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) lt.getRight().accept(this);
+
+    if ((leftExprType.match(intType) || leftExprType.match(charType)) &&
+        (rightExprType.match(intType) || rightExprType.match(charType)))
+      return boolType;
+
+    errorsLog.add("Binary operator \"" + lt.getSymbol() + "\" does not apply to types " +
+                   leftExprType.toString() + " and " + rightExprType.toString());
+
     return null;
   }
 
   @Override
   public Object visitModule(Module mod) {
-    // TODO Auto-generated method stub
+    AbstractType leftExprType = (AbstractType) mod.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) mod.getRight().accept(this);
+
+    if (leftExprType.match(intType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return rightExprType;
+    else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return leftExprType;
+
+    errorsLog.add("Binary operator \"" + mod.getSymbol() + "\" does not apply to types " +
+                   leftExprType.toString() + " and " + rightExprType.toString());
+
     return null;
   }
 
   @Override
   public Object visitMultiplication(Multiplication mult) {
-    // TODO Auto-generated method stub
+    AbstractType leftExprType = (AbstractType) mult.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) mult.getRight().accept(this);
+
+    if (leftExprType.match(intType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return rightExprType;
+    else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return leftExprType;
+
+    errorsLog.add("Binary operator \"" + mult.getSymbol() + "\" does not apply to types " +
+                  leftExprType.toString() + " and " + rightExprType.toString());
+
     return null;
   }
 
   @Override
   public Object visitNegate(Negate neg) {
-    // TODO Auto-generated method stub
-    return null;
+    AbstractType exprType = (AbstractType) neg.getExpression().accept(this);
+
+    // Negating booleans or chars makes no sense
+    if (exprType.match(boolType) || exprType.match(charType)) {
+      errorsLog.add("Unary operator \"" + neg.getSymbol() + "\" does not apply to type " + exprType.toString());
+      return null;
+    }
+
+    return exprType;
   }
 
   @Override
@@ -237,14 +298,32 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitNot(Not not) {
-    // TODO Auto-generated method stub
-    return null;
+    AbstractType exprType = (AbstractType) not.getExpression().accept(this);
+
+    // 'Not' operator can only be applied to boolean value
+    if (!exprType.match(boolType)) {
+      errorsLog.add("Unary operator \"" + not.getSymbol() + "\" does not apply to type " + exprType.toString());
+      return null;
+    }
+
+    return exprType;
   }
 
   @Override
   public Object visitNotEqual(NotEqual neq) {
-    // TODO Auto-generated method stub
-    return null;
+    AbstractType leftExprType = (AbstractType) neq.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) neq.getRight().accept(this);
+
+    // Bool can only compare to another bool
+    if ((leftExprType.match(boolType) && !rightExprType.match(boolType)) ||
+        (!leftExprType.match(boolType) && rightExprType.match(boolType))) {
+      errorsLog.add("Binary operator \"" + neq.getSymbol() + "\" does not apply to types " +
+                     leftExprType.toString() + " and " + rightExprType.toString());
+
+      return null;
+    }
+
+    return leftExprType;
   }
 
   @Override
@@ -279,7 +358,17 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitSubtraction(Subtraction sub) {
-    // TODO Auto-generated method stub
+    AbstractType leftExprType = (AbstractType) sub.getLeft().accept(this);
+    AbstractType rightExprType = (AbstractType) sub.getRight().accept(this);
+
+    if (leftExprType.match(intType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return rightExprType;
+    else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
+      return leftExprType;
+
+    errorsLog.add("Binary operator \"" + sub.getSymbol() + "\" does not apply to types " +
+                   leftExprType.toString() + " and " + rightExprType.toString());
+
     return null;
   }
 }
