@@ -1,9 +1,13 @@
 main() {
+  x = 1;
+
   if (true) {
-    print 1 + false;
-  }
-  else {
-    print false + 'c';
+    if (true) {
+      x = 2;
+      print x;
+    }
+
+    print x;
   }
 }
 

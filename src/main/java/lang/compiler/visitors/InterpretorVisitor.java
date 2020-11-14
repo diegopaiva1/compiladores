@@ -19,11 +19,11 @@ import lang.compiler.ast.operators.binary.Module;
 import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
-public class AbstractExpressionVisitor extends AstVisitor {
+public class IntrepetorVisitor extends AstVisitor {
   private Stack<Map<String, Object>> env;
   private HashMap<String, Function> functions;
 
-  public AbstractExpressionVisitor() {
+  public IntrepetorVisitor() {
     this.env = new Stack<>();
     this.env.push(new HashMap<String, Object>());
     this.functions = new HashMap<>();

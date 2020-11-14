@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import lang.compiler.ast.miscellaneous.Function;
-import lang.compiler.visitors.AbstractExpressionVisitor;
+import lang.compiler.visitors.IntrepetorVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
@@ -27,7 +27,7 @@ public class Program {
   }
 
   public void interpret() {
-    AbstractExpressionVisitor ev = new AbstractExpressionVisitor();
+    IntrepetorVisitor ev = new IntrepetorVisitor();
 
     // Store functions before evaluation
     for (AbstractExpression expr : exprs) {
