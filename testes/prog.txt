@@ -1,5 +1,8 @@
 main() {
-  print !true;
+  if (true)
+    print 1 + false;
+  else
+    print false + 'c';
 }
 
 divmod(q :: Int, r :: Int) : Int {

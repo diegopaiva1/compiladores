@@ -14,7 +14,7 @@ public abstract class AstVisitor {
 
   public abstract Object visitCharLiteral(CharLiteral c);
 
-  public abstract Object visitFloatLiteral(lang.compiler.ast.literals.FloatLiteral f);
+  public abstract Object visitFloatLiteral(FloatLiteral f);
 
   public abstract Object visitIntLiteral(IntLiteral i);
 

@@ -33,9 +33,8 @@ public class TypeCheckVisitor extends AstVisitor {
   }
 
   public Object visitFunction(Function f) {
-    for (AbstractCommand cmd : f.getCommands()) {
-      AbstractType cmdType = (AbstractType) cmd.accept(this);
-    }
+    for (AbstractCommand cmd : f.getCommands())
+      cmd.accept(this);
 
     return null;
   }
@@ -51,7 +50,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + add.getSymbol() + "\" does not apply to types " +
                   leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 
@@ -59,7 +57,7 @@ public class TypeCheckVisitor extends AstVisitor {
     return printCmd.getExpression().accept(this);
   }
 
-  public Object visitBoolLiteral(BoolLiteral c) {
+  public Object visitBoolLiteral(BoolLiteral b) {
     return boolType;
   }
 
@@ -71,7 +69,7 @@ public class TypeCheckVisitor extends AstVisitor {
     return intType;
   }
 
-  public Object visitFloatLiteral(FloatLiteral i) {
+  public Object visitFloatLiteral(FloatLiteral f) {
     return floatType;
   }
 
@@ -85,7 +83,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + and.getSymbol() + "\" does not apply to types " +
                    leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 
@@ -115,8 +112,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitBalancedParentheses(BalancedParenthesesExpression balanced) {
-    // TODO Auto-generated method stub
-    return null;
+    return balanced.getExpression().accept(this);
   }
 
   @Override
@@ -133,7 +129,9 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitCommandScope(CommandScope cmdScope) {
-    // TODO Auto-generated method stub
+    for (AbstractCommand cmd : cmdScope.getCommmands())
+      cmd.accept(this);
+
     return null;
   }
 
@@ -173,7 +171,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + div.getSymbol() + "\" does not apply to types " +
                    leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 
@@ -187,7 +184,6 @@ public class TypeCheckVisitor extends AstVisitor {
         (!leftExprType.match(boolType) && rightExprType.match(boolType))) {
       errorsLog.add("Binary operator \"" + eq.getSymbol() + "\" does not apply to types " +
                      leftExprType.toString() + " and " + rightExprType.toString());
-
       return null;
     }
 
@@ -208,13 +204,28 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitIf(If ifCmd) {
-    // TODO Auto-generated method stub
+    AbstractType exprType = (AbstractType) ifCmd.getExpression().accept(this);
+
+    if (exprType.match(boolType))
+      ifCmd.getScopeCommand().accept(this);
+    else
+      errorsLog.add("Command \"" + ifCmd.getName() + "\" does not apply to type " + exprType.toString());
+
     return null;
   }
 
   @Override
   public Object visitIfElse(IfElse ifElseCmd) {
-    // TODO Auto-generated method stub
+    AbstractType exprType = (AbstractType) ifElseCmd.getExpression().accept(this);
+
+    if (exprType.match(boolType)) {
+      ifElseCmd.getIfScopeCommand().accept(this);
+      ifElseCmd.getElseScopeCommand().accept(this);
+    }
+    else {
+      errorsLog.add("Command \"" + ifElseCmd.getName() + "\" does not apply to type " + exprType.toString());
+    }
+
     return null;
   }
 
@@ -226,7 +237,13 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitIterate(Iterate iterateCmd) {
-    // TODO Auto-generated method stub
+    AbstractType exprType = (AbstractType) iterateCmd.getExpression().accept(this);
+
+    if (exprType.match(intType))
+      return iterateCmd.getCommand().accept(this);
+    else
+      errorsLog.add("Command \"" + iterateCmd.getName() + "\" does not apply to type " + exprType.toString());
+
     return null;
   }
 
@@ -241,7 +258,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + lt.getSymbol() + "\" does not apply to types " +
                    leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 
@@ -257,7 +273,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + mod.getSymbol() + "\" does not apply to types " +
                    leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 
@@ -273,7 +288,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + mult.getSymbol() + "\" does not apply to types " +
                   leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 
@@ -319,7 +333,6 @@ public class TypeCheckVisitor extends AstVisitor {
         (!leftExprType.match(boolType) && rightExprType.match(boolType))) {
       errorsLog.add("Binary operator \"" + neq.getSymbol() + "\" does not apply to types " +
                      leftExprType.toString() + " and " + rightExprType.toString());
-
       return null;
     }
 
@@ -368,7 +381,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.add("Binary operator \"" + sub.getSymbol() + "\" does not apply to types " +
                    leftExprType.toString() + " and " + rightExprType.toString());
-
     return null;
   }
 }

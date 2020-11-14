@@ -45,7 +45,7 @@ public class AbstractExpressionVisitor extends AstVisitor {
     return c.getValue();
   }
 
-  public java.lang.Float visitFloatLiteral(lang.compiler.ast.literals.FloatLiteral f) {
+  public Float visitFloatLiteral(FloatLiteral f) {
     return f.getValue();
   }
 
@@ -289,7 +289,8 @@ public class AbstractExpressionVisitor extends AstVisitor {
         if (length == 0) {
           array.add(new New(arrayType.getType(), null).accept(this));
           return array;
-        } else {
+        }
+        else {
           for (int i = 0; i < length; i++) {
             // Recursive call to the type this array holds
             array.add(new New(arrayType.getType(), null).accept(this));
@@ -297,16 +298,20 @@ public class AbstractExpressionVisitor extends AstVisitor {
 
           return array;
         }
-      } else if (newCmd.getType() instanceof BoolType) {
+      }
+      else if (newCmd.getType() instanceof BoolType) {
         return length == 0 ? new BoolLiteral() : new ArrayList<BoolLiteral>(length);
-      } else if (newCmd.getType() instanceof CharType) {
+      }
+      else if (newCmd.getType() instanceof CharType) {
         return length == 0 ? new CharLiteral() : new ArrayList<CharLiteral>(length);
-      } else if (newCmd.getType() instanceof FloatType) {
-        return length == 0 ? new lang.compiler.ast.literals.FloatLiteral()
-            : new ArrayList<lang.compiler.ast.literals.FloatLiteral>(length);
-      } else if (newCmd.getType() instanceof IntType) {
+      }
+      else if (newCmd.getType() instanceof FloatType) {
+        return length == 0 ? new FloatLiteral() : new ArrayList<FloatLiteral>(length);
+      }
+      else if (newCmd.getType() instanceof IntType) {
         return length == 0 ? new IntLiteral() : new ArrayList<IntLiteral>(length);
-      } else { // TypeCustom
+      }
+      else { // TypeCustom
         // TODO
         return null;
       }

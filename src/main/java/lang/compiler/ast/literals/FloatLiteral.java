@@ -2,12 +2,12 @@ package lang.compiler.ast.literals;
 
 import lang.compiler.visitors.AstVisitor;
 
-public class FloatLiteral extends AbstractLiteral<java.lang.Float> {
+public class FloatLiteral extends AbstractLiteral<Float> {
   public FloatLiteral() {
     super();
   }
 
-  public FloatLiteral(java.lang.Float value) {
+  public FloatLiteral(Float value) {
     super(value);
   }
 

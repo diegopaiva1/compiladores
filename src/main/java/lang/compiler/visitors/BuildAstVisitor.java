@@ -227,8 +227,8 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitFloat(LangParser.FloatContext ctx) {
     String valueText = ctx.FLOAT().getText();
-    java.lang.Float value = java.lang.Float.parseFloat(valueText);
-    return new lang.compiler.ast.literals.FloatLiteral(value);
+    Float value = Float.parseFloat(valueText);
+    return new FloatLiteral(value);
   }
 
   @Override

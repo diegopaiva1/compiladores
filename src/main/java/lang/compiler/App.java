@@ -1,7 +1,7 @@
 package lang.compiler;
 
 import lang.compiler.parser.*;
-import lang.compiler.ast.*;
+import lang.compiler.ast.Program;
 
 public class App {
   // Recupera o nome base (sem extensão) de um arquivo.
