@@ -42,4 +42,9 @@ public class ArrayAccess extends AbstractLvalue {
   public Object accept(AstVisitor v) {
     return v.visitArrayAccess(this);
   }
+
+  @Override
+  public Identifier getIdentifier() {
+    return lvalue.getIdentifier();
+  }
 }

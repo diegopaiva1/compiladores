@@ -1,11 +1,10 @@
 main() {
-  x = new Int[][];
-  y = new Int[];
-  y = x[0];
+  dummy('a', 1)<x, y, z>;
+  print x;
 }
 
-dummy() : Char, Int {
-  return 'c', 1;
+dummy(x :: Char, y :: Int) : Char, Int {
+  return x, y;
 }
 
 {-

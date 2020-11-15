@@ -41,4 +41,9 @@ public class DataIdentifierAccess extends AbstractLvalue {
   public Object accept(AstVisitor v) {
     return v.visitDataIdentifierAccess(this);
   }
+
+  @Override
+  public Identifier getIdentifier() {
+    return id;
+  }
 }

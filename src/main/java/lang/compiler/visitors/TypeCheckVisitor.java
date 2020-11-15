@@ -157,7 +157,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitArrayType(ArrayType arrayType) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -207,12 +206,14 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitAssignment(Assignment assignment) {
-    // TODO: Funcionar pra todos lvalues
-    Identifier id = (Identifier) assignment.getLvalue();
+    Identifier lvalueIdentifier = assignment.getLvalue().getIdentifier();
     AbstractType actualType = (AbstractType) assignment.getExpression().accept(this);
 
-    if (!currentEnv.getVarsTypes().containsKey(id.getName())) {
-      currentEnv.getVarsTypes().put(id.getName(), actualType);
+    if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
+      if (assignment.getLvalue() instanceof ArrayAccess)
+        errorsLog.add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
+      else
+        currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
     }
     else {
       AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
@@ -232,13 +233,11 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitBoolType(BoolType boolType) {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public Object visitCharType(CharType charType) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -252,7 +251,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitCustomType(CustomType customType) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -305,7 +303,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitFloatType(FloatType floatType) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -348,7 +345,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitIntType(IntType intType) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -472,7 +468,23 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitRead(Read readCmd) {
-    // TODO Auto-generated method stub
+    Identifier lvalueIdentifier = readCmd.getLvalue().getIdentifier();
+    AbstractType actualType = intType;
+
+    if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
+      if (readCmd.getLvalue() instanceof ArrayAccess)
+        errorsLog.add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
+      else
+        currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
+    }
+    else {
+      AbstractType expectedType = (AbstractType) readCmd.getLvalue().accept(this);
+
+      if (!actualType.match(expectedType))
+        errorsLog.add("Can not assign value of type " + actualType.toString() +
+                      " to variable of type " + expectedType.toString());
+    }
+
     return null;
   }
 
@@ -488,7 +500,52 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitStaticFunctionCall(StaticFunctionCall fCall) {
-    // TODO Auto-generated method stub
+    LocalEnvironment localEnv = functionsEnv.get(fCall.getId().getName());
+
+    if (localEnv != null) {
+      if (fCall.getArgs().size() == localEnv.getParamsTypes().size()) {
+        for (int i = 0; i < localEnv.getParamsTypes().size(); i++) {
+          AbstractType actualType = (AbstractType) fCall.getArgs().get(i).accept(this);
+          AbstractType expectedType = localEnv.getParamsTypes().get(i);
+
+          if (!actualType.match(expectedType))
+            errorsLog.add("Param type (" + (i + 1) + ") " + actualType.toString() +
+                          " does not match expected type " + expectedType.toString() + "");
+        }
+
+        if (fCall.getLvalues().size() == localEnv.getReturnsTypes().size()) {
+          for (int i = 0; i < fCall.getLvalues().size(); i++) {
+            AbstractLvalue lvalue = fCall.getLvalues().get(i);
+            AbstractType expectedType = localEnv.getReturnsTypes().get(i);
+
+            if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
+              if (lvalue instanceof ArrayAccess)
+                errorsLog.add("Array \"" + lvalue.getIdentifier().getName() + "\" does not exist");
+              else
+                currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), expectedType);
+            }
+            else {
+              AbstractType actualType = (AbstractType) lvalue.accept(this);
+
+              if (!actualType.match(expectedType)) {
+                errorsLog.add("Can not assign value of type " + actualType.toString() +
+                              " to variable of type " + expectedType.toString() + "");
+              }
+            }
+          }
+        }
+        else {
+          errorsLog.add("Number of lvalues of function call \"" + fCall.getId().getName() +
+                      "\" incompatible with the function definition");
+        }
+      }
+      else
+        errorsLog.add("Number of arguments of function call \"" + fCall.getId().getName() +
+                      "\" incompatible with the function definition");
+    }
+    else
+      errorsLog.add("No function named \"" + fCall.getId().getName() + "\"");
+
     return null;
   }
 

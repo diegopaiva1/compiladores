@@ -31,4 +31,9 @@ public class Identifier extends AbstractLvalue {
   public Object accept(AstVisitor v) {
     return v.visitIdentifier(this);
   }
+
+  @Override
+  public Identifier getIdentifier() {
+    return this;
+  }
 }
