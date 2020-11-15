@@ -29,7 +29,7 @@ public class ArrayType extends AbstractType {
 
   @Override
   public String toString() {
-    return "Array of " + type.toString();
+    return type.toString() + "[]";
   }
 
   @Override

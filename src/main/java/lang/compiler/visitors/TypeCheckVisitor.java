@@ -1,8 +1,11 @@
 package lang.compiler.visitors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
 import lang.compiler.ast.lvalues.*;
@@ -18,6 +21,8 @@ public class TypeCheckVisitor extends AstVisitor {
   private FloatType floatType;
   private IntType intType;
   private List<String> errorsLog;
+  private Map<String, LocalEnvironment> functionsEnv;
+  private LocalEnvironment currentEnv;
 
   public TypeCheckVisitor() {
     this.boolType = new BoolType();
@@ -25,6 +30,7 @@ public class TypeCheckVisitor extends AstVisitor {
     this.floatType = new FloatType();
     this.intType = new IntType();
     this.errorsLog = new ArrayList<>();
+    this.functionsEnv = new HashMap<>();
   }
 
   public void printErrors() {
@@ -32,9 +38,60 @@ public class TypeCheckVisitor extends AstVisitor {
       System.err.println(error);
   }
 
+  public Object visitProgram(Program program) {
+    // Store all functions local environment
+    for (AbstractExpression expr : program.getExpressions()) {
+      if (expr instanceof Function) {
+        Function f = (Function) expr;
+        LocalEnvironment localEnv = new LocalEnvironment();
+
+        for (Parameter param : f.getParameters()) {
+          localEnv.addParameterType(param.getType());
+          localEnv.addVarType(param.getId().getName(), param.getType());
+        }
+
+        for (AbstractType returnType : f.getReturnTypes())
+          localEnv.addReturnType(returnType);
+
+        functionsEnv.put(f.getId().getName(), localEnv);
+      }
+    }
+
+    for (AbstractExpression expr : program.getExpressions())
+      if (expr instanceof Function)
+        expr.accept(this);
+
+    printErrors();
+
+    return null;
+  }
+
   public Object visitFunction(Function f) {
-    for (AbstractCommand cmd : f.getCommands())
-      cmd.accept(this);
+    currentEnv = functionsEnv.get(f.getId().getName());
+
+    for (AbstractCommand cmd : f.getCommands()) {
+      Object result = cmd.accept(this);
+
+      if (cmd instanceof Return) {
+        List<AbstractType> returnTypes = (List<AbstractType>) result;
+
+        if (returnTypes.size() == currentEnv.getReturnsTypes().size()) {
+          for (int i = 0; i < returnTypes.size(); i++) {
+            AbstractType actualType = returnTypes.get(i);
+            AbstractType expectedType = currentEnv.getReturnsTypes().get(i);
+
+            if (!actualType.match(expectedType)) {
+              errorsLog.add("Return type (" + (i + 1) + ") \"" + actualType.toString() +
+                            "\" does not match expected type \"" + expectedType.toString() + "\"");
+            }
+          }
+        }
+        else {
+          errorsLog.add("Number of returns of function \"" + f.getId().getName() +
+                        "\" incompatible with the function definition");
+        }
+      }
+    }
 
     return null;
   }
@@ -54,8 +111,7 @@ public class TypeCheckVisitor extends AstVisitor {
   }
 
   public Object visitPrint(Print printCmd) {
-    printCmd.getExpression().accept(this);
-    return null;
+    return printCmd.getExpression().accept(this);
   }
 
   public Object visitBoolLiteral(BoolLiteral b) {
@@ -89,7 +145,13 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitArrayAccess(ArrayAccess arrayAccess) {
-    // TODO Auto-generated method stub
+    if (arrayAccess.getExpression() instanceof IntLiteral) {
+      ArrayType array = (ArrayType) arrayAccess.getLvalue().accept(this);
+      return array.getType();
+    }
+    else
+      errorsLog.add("Can not determine access index of array");
+
     return null;
   }
 
@@ -101,20 +163,71 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitAssignableFunctionCall(AssignableFunctionCall fCall) {
-    // TODO Auto-generated method stub
+    LocalEnvironment localEnv = functionsEnv.get(fCall.getId().getName());
+
+    if (localEnv != null) {
+      if (fCall.getArgs().size() == localEnv.getParamsTypes().size()) {
+        for (int i = 0; i < localEnv.getParamsTypes().size(); i++) {
+          AbstractType actualType = (AbstractType) fCall.getArgs().get(i).accept(this);
+          AbstractType expectedType = localEnv.getParamsTypes().get(i);
+
+          if (!actualType.match(expectedType))
+            errorsLog.add("Param type (" + (i + 1) + ") " + actualType.toString() +
+                          " does not match expected type " + expectedType.toString() + "");
+        }
+
+        AbstractType indexType = (AbstractType) fCall.getIndex().accept(this);
+
+        if (indexType.match(intType)) {
+          if (fCall.getIndex() instanceof IntLiteral) {
+            int index = ((IntLiteral) fCall.getIndex()).getValue();
+
+            if (index < localEnv.getReturnsTypes().size())
+              return localEnv.getReturnsTypes().get(index);
+            else
+              errorsLog.add("Access index of function call \"" + fCall.getId().getName() +
+              "\" must be in range [0," + (localEnv.getReturnsTypes().size() - 1) + "]");
+          }
+          else
+            errorsLog.add("Can not determine access index of function call \"" + fCall.getId().getName() + "\"");
+        }
+        else
+          errorsLog.add("Access index of function call \"" + fCall.getId().getName() +
+                        "\" can not be of type " + indexType.toString());
+      }
+      else
+        errorsLog.add("Number of arguments of function call \"" + fCall.getId().getName() +
+                      "\" incompatible with the function definition");
+    }
+    else
+      errorsLog.add("No function named \"" + fCall.getId().getName() + "\"");
+
     return null;
   }
 
   @Override
   public Object visitAssignment(Assignment assignment) {
-    // TODO Auto-generated method stub
+    // TODO: Funcionar pra todos lvalues
+    Identifier id = (Identifier) assignment.getLvalue();
+    AbstractType actualType = (AbstractType) assignment.getExpression().accept(this);
+
+    if (!currentEnv.getVarsTypes().containsKey(id.getName())) {
+      currentEnv.getVarsTypes().put(id.getName(), actualType);
+    }
+    else {
+      AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
+
+      if (!actualType.match(expectedType))
+        errorsLog.add("Can not assign value of type " + actualType.toString() +
+                      " to variable of type " + expectedType.toString() + "");
+    }
+
     return null;
   }
 
   @Override
   public Object visitBalancedParentheses(BalancedParenthesesExpression balanced) {
-    balanced.getExpression().accept(this);
-    return null;
+    return balanced.getExpression().accept(this);
   }
 
   @Override
@@ -181,15 +294,13 @@ public class TypeCheckVisitor extends AstVisitor {
     AbstractType leftExprType = (AbstractType) eq.getLeft().accept(this);
     AbstractType rightExprType = (AbstractType) eq.getRight().accept(this);
 
-    // Bool can only compare to another bool
-    if ((leftExprType.match(boolType) && !rightExprType.match(boolType)) ||
-        (!leftExprType.match(boolType) && rightExprType.match(boolType))) {
-      errorsLog.add("Binary operator \"" + eq.getSymbol() + "\" does not apply to types " +
-                     leftExprType.toString() + " and " + rightExprType.toString());
-      return null;
-    }
+    // Can only compare expressions of same type
+    if (leftExprType.match(rightExprType))
+      return leftExprType;
 
-    return leftExprType;
+    errorsLog.add("Binary operator \"" + eq.getSymbol() + "\" does not apply to types " +
+                    leftExprType.toString() + " and " + rightExprType.toString());
+    return null;
   }
 
   @Override
@@ -200,7 +311,11 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitIdentifier(Identifier id) {
-    // TODO Auto-generated method stub
+    if (!currentEnv.getVarsTypes().containsKey(id.getName()))
+      errorsLog.add("Undefined variable \"" + id.getName() + "\"");
+    else
+      return currentEnv.getVarsTypes().get(id.getName());
+
     return null;
   }
 
@@ -308,7 +423,11 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitNew(New newCmd) {
-    // TODO Auto-generated method stub
+    if (newCmd.getExpression() instanceof IntLiteral || newCmd.getExpression() == null)
+      return newCmd.getType();
+    else
+      errorsLog.add("Can not determine size of array declaration");
+
     return null;
   }
 
@@ -330,15 +449,13 @@ public class TypeCheckVisitor extends AstVisitor {
     AbstractType leftExprType = (AbstractType) neq.getLeft().accept(this);
     AbstractType rightExprType = (AbstractType) neq.getRight().accept(this);
 
-    // Bool can only compare to another bool
-    if ((leftExprType.match(boolType) && !rightExprType.match(boolType)) ||
-        (!leftExprType.match(boolType) && rightExprType.match(boolType))) {
-      errorsLog.add("Binary operator \"" + neq.getSymbol() + "\" does not apply to types " +
-                     leftExprType.toString() + " and " + rightExprType.toString());
-      return null;
-    }
+    // Can only compare expressions of same type
+    if (leftExprType.match(rightExprType))
+      return leftExprType;
 
-    return leftExprType;
+    errorsLog.add("Binary operator \"" + neq.getSymbol() + "\" does not apply to types " +
+                   leftExprType.toString() + " and " + rightExprType.toString());
+    return null;
   }
 
   @Override
@@ -361,8 +478,12 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitReturn(Return returnCmd) {
-    // TODO Auto-generated method stub
-    return null;
+    List<AbstractType> returnTypes = new ArrayList<>();
+
+    for (AbstractExpression expr : returnCmd.getExpressions())
+      returnTypes.add((AbstractType) expr.accept(this));
+
+    return returnTypes;
   }
 
   @Override

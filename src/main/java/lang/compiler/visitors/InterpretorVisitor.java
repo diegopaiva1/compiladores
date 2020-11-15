@@ -29,12 +29,28 @@ public class InterpretorVisitor extends AstVisitor {
     this.functions = new HashMap<>();
   }
 
-  public void addFunction(Function f) {
-    functions.put(f.getId().getName(), f);
-  }
+  public Object visitProgram(Program program) {
+    // Store functions before evaluation
+    for (AbstractExpression expr : program.getExpressions()) {
+      if (expr instanceof Function) {
+        Function f = (Function) expr;
+        functions.put(f.getId().getName(), f);
+      }
+    }
 
-  public boolean hasFunction(String functionId) {
-    return functions.containsKey(functionId);
+    if (!functions.containsKey("main"))
+      throw new RuntimeException("function main does not exist");
+
+    for (AbstractExpression expr : program.getExpressions()) {
+      if (expr instanceof Function) {
+        Function f = (Function) expr;
+
+        if (f.getId().getName().equals("main"))
+          expr.accept(this);
+      }
+    }
+
+    return null;
   }
 
   public Boolean visitBoolLiteral(BoolLiteral b) {
@@ -236,14 +252,24 @@ public class InterpretorVisitor extends AstVisitor {
   }
 
   public Object visitCommandScope(CommandScope cmdScope) {
+    Map<String, Object> localEnv = new HashMap<>();
+
+    for (Map.Entry<String, Object> entry : env.peek().entrySet())
+      localEnv.put(entry.getKey(), entry.getValue());
+
+    env.push(localEnv);
+
     for (AbstractCommand cmd : cmdScope.getCommmands()) {
       Object result = cmd.accept(this);
 
       // The only command that returns a List is the 'Return' command
-      if (result instanceof List)
+      if (result instanceof List) {
+        env.pop();
         return (List<Object>) result;
+      }
     }
 
+    env.pop();
     return null;
   }
 

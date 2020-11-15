@@ -1,16 +1,14 @@
 main() {
-  x = 1;
-
-  if (true) {
-    if (true) {
-      x = 2;
-      print x;
-    }
-
-    print x;
-  }
+  x = new Int[][];
+  y = new Int[];
+  y = x[0];
 }
 
+dummy() : Char, Int {
+  return 'c', 1;
+}
+
+{-
 divmod(q :: Int, r :: Int) : Int {
   return q / r, q % r;
 }
@@ -23,3 +21,4 @@ fat(x :: Int) : Int {
     return x * fat(x - 1)[0];
   }
 }
+-}

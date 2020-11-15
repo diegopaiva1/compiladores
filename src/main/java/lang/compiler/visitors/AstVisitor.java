@@ -1,5 +1,6 @@
 package lang.compiler.visitors;
 
+import lang.compiler.ast.Program;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
 import lang.compiler.ast.lvalues.*;
@@ -10,6 +11,8 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public abstract class AstVisitor {
+  public abstract Object visitProgram(Program program);
+
   public abstract Object visitBoolLiteral(BoolLiteral b);
 
   public abstract Object visitCharLiteral(CharLiteral c);

@@ -3,8 +3,8 @@ package lang.compiler.ast.lvalues;
 import lang.compiler.visitors.AstVisitor;
 
 public class DataIdentifierAccess extends AbstractLvalue {
-  private AbstractLvalue lvalue;
   private Identifier id;
+  private AbstractLvalue lvalue;
 
   public DataIdentifierAccess(AbstractLvalue lvalue, Identifier id) {
     this.lvalue = lvalue;
