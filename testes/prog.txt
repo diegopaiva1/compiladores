@@ -1,3 +1,8 @@
+data Ponto {
+   x :: Float;
+   y :: Float;
+}
+
 main() {
   print x[0];
   print f12('a')[0];

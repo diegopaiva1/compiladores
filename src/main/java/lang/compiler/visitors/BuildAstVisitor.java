@@ -58,13 +58,15 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   public AbstractExpression visitData(LangParser.DataContext ctx) {
     int line = ctx.getStart().getLine();
     int column = ctx.getStart().getCharPositionInLine() + 1;
-    CustomType type = (CustomType) visit(ctx.TYPE_NAME());
     List<Declaration> decls = new ArrayList<>();
+    CustomType type = new CustomType(line, column, ctx.TYPE_NAME().getText());
 
-    for (LangParser.DeclContext declCtx : ctx.decl())
-      decls.add((Declaration) visit(declCtx));
+    for (LangParser.DeclContext declCtx : ctx.decl()){
+      Declaration decl = (Declaration) visit(declCtx);
+      type.addVarType(decl.getId().getName(), decl.getType());
+    }
 
-    return new Data(line, column, type, decls);
+    return new Data(line, column, type);
   }
 
   @Override

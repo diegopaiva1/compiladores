@@ -22,6 +22,7 @@ public class TypeCheckVisitor extends AstVisitor {
   private FloatType floatType;
   private IntType intType;
   private Map<String, List<String>> errorsLog;
+  private Map<String, CustomType> customTypes;
   private Map<String, LocalEnvironment> functionsEnv;
   private LocalEnvironment currentEnv;
 
@@ -31,6 +32,7 @@ public class TypeCheckVisitor extends AstVisitor {
     this.floatType = new FloatType(0, 0);
     this.intType = new IntType(0, 0);
     this.errorsLog = new LinkedHashMap<>();
+    this.customTypes = new HashMap<>();
     this.functionsEnv = new HashMap<>();
   }
 
@@ -65,6 +67,10 @@ public class TypeCheckVisitor extends AstVisitor {
         errorsLog.put(f.getId().getName(), log);
       }
     }
+
+    for (AbstractExpression expr : program.getExpressions())
+      if (expr instanceof Data)
+        expr.accept(this);
 
     for (AbstractExpression expr : program.getExpressions())
       if (expr instanceof Function)
@@ -169,8 +175,13 @@ public class TypeCheckVisitor extends AstVisitor {
 
     if (currentEnv.getVarsTypes().containsKey(name)) {
       if (arrayAccess.getExpression() instanceof IntLiteral) {
-        ArrayType array = (ArrayType) arrayAccess.getLvalue().accept(this);
-        return array.getType();
+        if (arrayAccess.getLvalue().accept(this) instanceof ArrayType)
+          return ((ArrayType) arrayAccess.getLvalue().accept(this)).getType();
+        else
+          errorsLog.get(currentEnv.getName()).add(
+            "\t" + arrayAccess.getLvalue().getLine() + ":" + arrayAccess.getLvalue().getColumn() +
+            "\"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not an Array"
+          );
       }
       else
         errorsLog.get(currentEnv.getName()).add(
@@ -268,13 +279,17 @@ public class TypeCheckVisitor extends AstVisitor {
     if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
       if (assignment.getLvalue() instanceof ArrayAccess)
         errorsLog.get(currentEnv.getName()).add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
+      else if (assignment.getLvalue() instanceof DataIdentifierAccess)
+        errorsLog.get(currentEnv.getName()).add("Custom type \"" + lvalueIdentifier.getName() + "\" was not declared");
+      else if (actualType == null)
+        errorsLog.get(currentEnv.getName()).add("Can not declare var as null");
       else
         currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
     }
     else {
       AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
 
-      if (actualType != null && !actualType.match(expectedType))
+      if (expectedType != null && actualType != null && !actualType.match(expectedType))
         errorsLog.get(currentEnv.getName()).add(
           "\t" + assignment.getLine() + ":" + assignment.getColumn() +
           ": Can not assign value of type " + actualType.toString() +
@@ -315,19 +330,43 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitData(Data data) {
-    // TODO Auto-generated method stub
+    if (!customTypes.containsKey(data.getType().toString()))
+      customTypes.put(data.getType().toString(), data.getType());
+    else
+      errorsLog.get(currentEnv.getName()).add(
+        "\t" + data.getLine() + ":" + data.getColumn() +
+        "Custom type \"" + data.getType().toString() + "\" was already defined"
+      );
+
     return null;
   }
 
   @Override
   public Object visitDataIdentifierAccess(DataIdentifierAccess dataIdentifierAccess) {
-    // TODO Auto-generated method stub
+    String name = dataIdentifierAccess.getLvalue().getIdentifier().getName();
+
+    if (currentEnv.getVarsTypes().containsKey(name)) {
+      CustomType customType = (CustomType) currentEnv.getVarsTypes().get(name);
+
+      if (customType.hasVar(dataIdentifierAccess.getId().getName()))
+        return customType.getVarType(dataIdentifierAccess.getId().getName());
+      else
+        errorsLog.get(currentEnv.getName()).add(
+          "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
+          "Custom type \"" + name + "\" does not have a var named \"" + dataIdentifierAccess.getId().getName() + "\""
+        );
+    }
+    else
+      errorsLog.get(currentEnv.getName()).add(
+        "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
+        "Custom type \"" + name + "\" was not declared"
+      );
+
     return null;
   }
 
   @Override
   public Object visitDeclaration(Declaration decl) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -510,8 +549,21 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitNew(New newCmd) {
-    if (newCmd.getExpression() instanceof IntLiteral || newCmd.getExpression() == null)
-      return newCmd.getType();
+    if (newCmd.getExpression() instanceof IntLiteral || newCmd.getExpression() == null) {
+      if (newCmd.getType() instanceof CustomType) {
+        CustomType customType = customTypes.get(newCmd.getType().toString());
+
+        if (customType != null)
+          return customType;
+        else
+          errorsLog.get(currentEnv.getName()).add(
+            "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
+            "Custom type \"" + newCmd.getType().toString() + "\" does not exist"
+          );
+      }
+      else
+        return newCmd.getType();
+    }
     else
       errorsLog.get(currentEnv.getName()).add(
         "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
@@ -557,7 +609,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitNullLiteral(NullLiteral n) {
-    // TODO Auto-generated method stub
     return null;
   }
 
