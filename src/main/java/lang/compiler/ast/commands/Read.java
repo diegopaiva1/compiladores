@@ -21,7 +21,7 @@ public class Read extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "Read";
+    return "read";
   }
 
   @Override

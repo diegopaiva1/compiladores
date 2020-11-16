@@ -1,6 +1,6 @@
 data Ponto {
-   x :: Float;
-   y :: Float;
+  x :: Float;
+  y :: Float;
 }
 
 main() {
@@ -17,6 +17,13 @@ main() {
   y = new Char[];
   read y;
 
+  wow[0] = 1;
+  teste.p = 1;
+
+  prim = null;
+  notNull = new Int;
+  notNull = null;
+
   divmod(true, 2)<q, r>;
   divmod(5, 2)<w[0], r>;
   boolean = new Bool;
@@ -24,10 +31,37 @@ main() {
   divmod(5, 2)<a, b, c>;
   divmod(5, 2, 4)<q, r>;
   ndef2()<a>;
+  ponto = new Ponto;
+  print ponto.color;
+  print uyq.c;
+
+  print   shjskhksd;
+
+  if (1) {
+
+  }
+
+  if (1) {
+
+  }
+  else {
+
+  }
 
   iterate (true) {
 
   }
+
+  teste = 5;
+  print teste[0];
+
+  var1 = new Int[];
+  print var1['c'];
+
+  print var2[0];
+
+  dosuadh = new Cat;
+  asdasads = new Int[-1];
 }
 
 f1() : Float {

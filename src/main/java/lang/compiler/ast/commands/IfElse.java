@@ -41,7 +41,7 @@ public class IfElse extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "If-Else";
+    return "if";
   }
 
   @Override

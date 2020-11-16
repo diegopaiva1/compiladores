@@ -252,24 +252,14 @@ public class InterpretorVisitor extends AstVisitor {
   }
 
   public Object visitCommandScope(CommandScope cmdScope) {
-    Map<String, Object> localEnv = new HashMap<>();
-
-    for (Map.Entry<String, Object> entry : env.peek().entrySet())
-      localEnv.put(entry.getKey(), entry.getValue());
-
-    env.push(localEnv);
-
     for (AbstractCommand cmd : cmdScope.getCommmands()) {
       Object result = cmd.accept(this);
 
       // The only command that returns a List is the 'Return' command
-      if (result instanceof List) {
-        env.pop();
+      if (result instanceof List)
         return (List<Object>) result;
-      }
     }
 
-    env.pop();
     return null;
   }
 

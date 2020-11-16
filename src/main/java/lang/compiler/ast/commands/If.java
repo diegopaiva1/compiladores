@@ -31,7 +31,7 @@ public class If extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "If";
+    return "if";
   }
 
   @Override

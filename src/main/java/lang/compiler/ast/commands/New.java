@@ -32,7 +32,7 @@ public class New extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "New";
+    return "new";
   }
 
   @Override

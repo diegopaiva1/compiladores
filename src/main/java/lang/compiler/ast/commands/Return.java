@@ -23,7 +23,7 @@ public class Return extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "Return";
+    return "return";
   }
 
   @Override

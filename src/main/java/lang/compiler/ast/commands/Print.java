@@ -21,7 +21,7 @@ public class Print extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "Print";
+    return "print";
   }
 
   @Override

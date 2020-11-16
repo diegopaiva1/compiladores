@@ -2,7 +2,7 @@ main() {
     n = 0;
 
     iterate (10) {
-        print n;
+        print fat(n)[0];
         n = n + 1;
     }
 }

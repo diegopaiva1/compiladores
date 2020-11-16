@@ -32,7 +32,7 @@ public class Assignment extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "Assignment";
+    return "assignment";
   }
 
   @Override

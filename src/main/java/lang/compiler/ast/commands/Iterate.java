@@ -31,7 +31,7 @@ public class Iterate extends AbstractCommand {
 
   @Override
   public String getName() {
-    return "Iterate";
+    return "iterate";
   }
 
   @Override

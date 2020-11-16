@@ -97,7 +97,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
             if (actualType != null && !actualType.match(expectedType)) {
               errorsLog.get(currentEnv.getName()).add(
-                "\t" + actualType.getLine() + ":" + actualType.getColumn() + ": Return type (" + (i + 1) + ") \"" +
+                "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Return type (" + (i + 1) + ") \"" +
                 actualType.toString() + "\" does not match expected type \"" + expectedType.toString() + "\""
               );
             }
@@ -105,7 +105,7 @@ public class TypeCheckVisitor extends AstVisitor {
         }
         else {
           errorsLog.get(currentEnv.getName()).add(
-            "\t" + f.getLine() + ":" + f.getColumn() + ": Number of returns of function \"" +
+            "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Number of returns of function \"" +
             f.getId().getName() + "\" incompatible with the function definition"
           );
         }
@@ -180,19 +180,19 @@ public class TypeCheckVisitor extends AstVisitor {
         else
           errorsLog.get(currentEnv.getName()).add(
             "\t" + arrayAccess.getLvalue().getLine() + ":" + arrayAccess.getLvalue().getColumn() +
-            "\"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not an Array"
+            ": \"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not of type Array"
           );
       }
-      else
+      else {
         errorsLog.get(currentEnv.getName()).add(
-          "\t" + arrayAccess.getLine() + ":" + arrayAccess.getColumn() +
-          ": Can not determine access index of array"
+          "\t" + arrayAccess.getExpression().getLine() + ":" + arrayAccess.getExpression().getColumn() +
+          ": Can not determine access index of variable \"" + arrayAccess.getLvalue().getIdentifier().getName() + "\""
         );
+      }
     }
     else {
       errorsLog.get(currentEnv.getName()).add(
-        "\t" + arrayAccess.getLine() + ":" + arrayAccess.getColumn() +
-        ": Array \"" + name + "\" does not exist"
+        "\t" + arrayAccess.getLine() + ":" + arrayAccess.getColumn() + ": Undefined variable \"" + name + "\""
       );
     }
 
@@ -277,23 +277,32 @@ public class TypeCheckVisitor extends AstVisitor {
     AbstractType actualType = (AbstractType) assignment.getExpression().accept(this);
 
     if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
-      if (assignment.getLvalue() instanceof ArrayAccess)
-        errorsLog.get(currentEnv.getName()).add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
-      else if (assignment.getLvalue() instanceof DataIdentifierAccess)
-        errorsLog.get(currentEnv.getName()).add("Custom type \"" + lvalueIdentifier.getName() + "\" was not declared");
+      if (assignment.getLvalue() instanceof ArrayAccess || assignment.getLvalue() instanceof DataIdentifierAccess)
+        errorsLog.get(currentEnv.getName()).add(
+          "\t" + assignment.getLvalue().getLine() + ":" + assignment.getLvalue().getColumn() +
+          ": Undefined variable \"" + lvalueIdentifier.getName() + "\""
+        );
       else if (actualType == null)
-        errorsLog.get(currentEnv.getName()).add("Can not declare var as null");
+        errorsLog.get(currentEnv.getName()).add(
+          "\t" + assignment.getLvalue().getLine() + ":" + assignment.getLvalue().getColumn() +
+          ": \"" + lvalueIdentifier.getName() + "\" cannot be declared as value of type \"null\""
+        );
       else
         currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
     }
     else {
       AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
 
-      if (expectedType != null && actualType != null && !actualType.match(expectedType))
+      if (actualType != null && !actualType.match(expectedType))
         errorsLog.get(currentEnv.getName()).add(
           "\t" + assignment.getLine() + ":" + assignment.getColumn() +
-          ": Can not assign value of type " + actualType.toString() +
-          " to variable of type " + expectedType.toString()
+          ": A value of type \"" + actualType.toString() + "\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
+        );
+      else if (!(expectedType instanceof ArrayType || expectedType instanceof CustomType))
+        // null can only be assigned to arrays and custom data types
+        errorsLog.get(currentEnv.getName()).add(
+          "\t" + assignment.getLine() + ":" + assignment.getColumn() +
+          ": A value of type \"null\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
         );
     }
 
@@ -335,7 +344,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else
       errorsLog.get(currentEnv.getName()).add(
         "\t" + data.getLine() + ":" + data.getColumn() +
-        "Custom type \"" + data.getType().toString() + "\" was already defined"
+        ": Custom type \"" + data.getType().toString() + "\" was already defined"
       );
 
     return null;
@@ -353,13 +362,13 @@ public class TypeCheckVisitor extends AstVisitor {
       else
         errorsLog.get(currentEnv.getName()).add(
           "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
-          "Custom type \"" + name + "\" does not have a var named \"" + dataIdentifierAccess.getId().getName() + "\""
+          ": Variable \"" + name + "\" does not have a property named \"" + dataIdentifierAccess.getId().getName() + "\""
         );
     }
     else
       errorsLog.get(currentEnv.getName()).add(
-        "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
-        "Custom type \"" + name + "\" was not declared"
+        "\t" + dataIdentifierAccess.getLvalue().getLine() + ":" + dataIdentifierAccess.getLvalue().getColumn() +
+        ": Undefined variable \"" + name + "\""
       );
 
     return null;
@@ -415,7 +424,10 @@ public class TypeCheckVisitor extends AstVisitor {
   @Override
   public Object visitIdentifier(Identifier id) {
     if (!currentEnv.getVarsTypes().containsKey(id.getName()))
-      errorsLog.get(currentEnv.getName()).add("Undefined variable \"" + id.getName() + "\"");
+      errorsLog.get(currentEnv.getName()).add(
+        "\t" + id.getLine() + ":" + id.getColumn() +
+        ": Undefined variable \"" + id.getName() + "\""
+      );
     else
       return currentEnv.getVarsTypes().get(id.getName());
 
@@ -431,7 +443,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else
       errorsLog.get(currentEnv.getName()).add(
         "\t" + ifCmd.getExpression().getLine() + ":" + ifCmd.getExpression().getColumn() +
-        ": Command \"" + ifCmd.getName() + "\" does not apply to type " + exprType.toString()
+        ": \"" + ifCmd.getName() + "\" expression cannot be of type \"" + exprType.toString() + "\""
       );
 
     return null;
@@ -448,7 +460,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else {
       errorsLog.get(currentEnv.getName()).add(
         "\t" + ifElseCmd.getExpression().getLine() + ":" + ifElseCmd.getExpression().getColumn() +
-        ": Command \"" + ifElseCmd.getName() + "\" does not apply to type " + exprType.toString()
+        ": \"" + ifElseCmd.getName() + "\" expression cannot be of type \"" + exprType.toString() + "\""
       );
     }
 
@@ -469,7 +481,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else
       errorsLog.get(currentEnv.getName()).add(
         "\t" + iterateCmd.getExpression().getLine() + ":" + iterateCmd.getExpression().getColumn() +
-        ": Command \"" + iterateCmd.getName() + "\" does not apply to type " + exprType.toString()
+        ": \"" + iterateCmd.getName() + "\" expression cannot be of type \"" + exprType.toString() + "\""
       );
 
     return null;
@@ -558,17 +570,19 @@ public class TypeCheckVisitor extends AstVisitor {
         else
           errorsLog.get(currentEnv.getName()).add(
             "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
-            "Custom type \"" + newCmd.getType().toString() + "\" does not exist"
+            ": Data type \"" + newCmd.getType().toString() + "\" was not defined"
           );
       }
-      else
+      else {
         return newCmd.getType();
+      }
     }
-    else
+    else {
       errorsLog.get(currentEnv.getName()).add(
         "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
         ": Can not determine size of array declaration"
       );
+    }
 
     return null;
   }
@@ -634,9 +648,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
       if (actualType != null && !actualType.match(expectedType))
         errorsLog.get(currentEnv.getName()).add(
-          "\t" + readCmd.getLvalue().getLine() + ":" + readCmd.getLvalue().getColumn() +
-          ": Can not assign value of type " + actualType.toString() +
-          " to variable of type " + expectedType.toString()
+          "\t" + readCmd.getLine() + ":" + readCmd.getColumn() +
+          ": A value of type \"" + actualType.toString() + "\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
         );
     }
 
@@ -667,7 +680,7 @@ public class TypeCheckVisitor extends AstVisitor {
           if (actualType != null && !actualType.match(expectedType))
             errorsLog.get(currentEnv.getName()).add(
               "\t" + arg.getLine() + ":" + arg.getColumn() +
-              ": Param type (" + (i + 1) + ") " + actualType.toString() +
+              ": Parameter type (" + (i + 1) + ") " + actualType.toString() +
               " does not match expected type " + expectedType.toString()
             );
         }
@@ -681,7 +694,7 @@ public class TypeCheckVisitor extends AstVisitor {
               if (lvalue instanceof ArrayAccess)
                 errorsLog.get(currentEnv.getName()).add(
                   "\t" + lvalue.getLine() + ":" + lvalue.getColumn() +
-                  ": Array \"" + lvalue.getIdentifier().getName() + "\" does not exist"
+                  ": Undefined variable \"" + lvalue.getIdentifier().getName() + "\""
                 );
               else
                 currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), expectedType);
@@ -692,8 +705,7 @@ public class TypeCheckVisitor extends AstVisitor {
               if (!actualType.match(expectedType)) {
                 errorsLog.get(currentEnv.getName()).add(
                   "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-                  ": Can not assign value of type " + expectedType.toString() +
-                  " to variable of type " + actualType.toString()
+                  ": A value of type \"" + expectedType.toString() + "\" cannot be assigned to an entity of type \"" + actualType.toString() + "\""
                 );
               }
             }
