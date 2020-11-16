@@ -137,7 +137,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + add.getLine() + ":" + add.getColumn() +  ": Binary operator \"" + add.getSymbol() +
-      "\" does not apply to types " + leftExprType.toString() + " and " + rightExprType.toString()
+      "\" does not apply to types \"" + leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -173,8 +173,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + and.getLine() + ":" + and.getColumn() +
-      ": Binary operator \"" + and.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + and.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -191,7 +191,7 @@ public class TypeCheckVisitor extends AstVisitor {
         else
           errorsLog.get(currentEnv.getName()).add(
             "\t" + arrayAccess.getLvalue().getLine() + ":" + arrayAccess.getLvalue().getColumn() +
-            ": \"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not of type Array"
+            ": \"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not an Array"
           );
       }
       else {
@@ -229,8 +229,8 @@ public class TypeCheckVisitor extends AstVisitor {
           if (actualType != null && !actualType.match(expectedType))
             errorsLog.get(currentEnv.getName()).add(
               "\t" + arg.getLine() + ":" + arg.getColumn() +
-              ": Parameter type (" + (i + 1) + ") " + actualType.toString() +
-              " does not match expected type " + expectedType.toString()
+              ": Parameter type (" + (i + 1) + ") \"" + actualType.toString() +
+              "\" does not match expected type \"" + expectedType.toString() + "\""
             );
         }
 
@@ -260,7 +260,7 @@ public class TypeCheckVisitor extends AstVisitor {
           errorsLog.get(currentEnv.getName()).add(
             "\t" + fCall.getIndex().getLine() + ":" + fCall.getIndex().getColumn() +
             ": Access index of function call \"" + fCall.getId().getName() +
-            "\" can not be of type " + indexType.toString()
+            "\" can not be of type \"" + indexType.toString() + "\""
           );
         }
       }
@@ -355,7 +355,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else
       errorsLog.get(currentEnv.getName()).add(
         "\t" + data.getLine() + ":" + data.getColumn() +
-        ": Custom type \"" + data.getType().toString() + "\" was already defined"
+        ": data \"" + data.getType().toString() + "\" already defined"
       );
 
     return null;
@@ -402,8 +402,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + div.getLine() + ":" + div.getColumn() +
-      ": Binary operator \"" + div.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + div.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -420,8 +420,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + eq.getLine() + ":" + eq.getColumn() +
-      ": Binary operator \"" + eq.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + eq.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -509,8 +509,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + lt.getLine() + ":" + lt.getColumn() +
-      ": Binary operator \"" + lt.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + lt.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -528,8 +528,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + mod.getLine() + ":" + mod.getColumn() +
-      ": Binary operator \"" + mod.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + mod.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -547,8 +547,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + mult.getLine() + ":" + mult.getColumn() +
-      ": Binary operator \"" + mult.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + mult.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -564,7 +564,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + neg.getLine() + ":" + neg.getColumn() +
-      ": Unary operator \"" + neg.getSymbol() + "\" does not apply to type " + exprType.toString()
+      ": Unary operator \"" + neg.getSymbol() + "\" does not apply to type \"" + exprType.toString() + "\""
     );
 
     return null;
@@ -581,7 +581,7 @@ public class TypeCheckVisitor extends AstVisitor {
         else
           errorsLog.get(currentEnv.getName()).add(
             "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
-            ": Data type \"" + newCmd.getType().toString() + "\" was not defined"
+            ": data \"" + newCmd.getType().toString() + "\" was not defined"
           );
       }
       else {
@@ -608,7 +608,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + not.getLine() + ":" + not.getColumn() +
-      ": Unary operator \"" + not.getSymbol() + "\" does not apply to type " + exprType.toString()
+      ": Unary operator \"" + not.getSymbol() + "\" does not apply to type \"" + exprType.toString() + "\""
     );
 
     return null;
@@ -625,8 +625,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + neq.getLine() + ":" + neq.getColumn() +
-      ": Binary operator \"" + neq.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + neq.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;
@@ -650,7 +650,10 @@ public class TypeCheckVisitor extends AstVisitor {
 
     if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
       if (readCmd.getLvalue() instanceof ArrayAccess)
-        errorsLog.get(currentEnv.getName()).add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
+        errorsLog.get(currentEnv.getName()).add(
+          "\t" + readCmd.getLvalue().getLine() + ":" + readCmd.getLvalue().getColumn() +
+          ": Undefined variable \"" + lvalueIdentifier.getName() + "\""
+        );
       else
         currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
     }
@@ -691,8 +694,8 @@ public class TypeCheckVisitor extends AstVisitor {
           if (actualType != null && !actualType.match(expectedType))
             errorsLog.get(currentEnv.getName()).add(
               "\t" + arg.getLine() + ":" + arg.getColumn() +
-              ": Parameter type (" + (i + 1) + ") " + actualType.toString() +
-              " does not match expected type " + expectedType.toString()
+              ": Parameter type (" + (i + 1) + ") \"" + actualType.toString() +
+              "\" does not match expected type \"" + expectedType.toString() + "\""
             );
         }
 
@@ -758,8 +761,8 @@ public class TypeCheckVisitor extends AstVisitor {
 
     errorsLog.get(currentEnv.getName()).add(
       "\t" + sub.getLine() + ":" + sub.getColumn() +
-      ": Binary operator \"" + sub.getSymbol() + "\" does not apply to types " +
-      leftExprType.toString() + " and " + rightExprType.toString()
+      ": Binary operator \"" + sub.getSymbol() + "\" does not apply to types \"" +
+      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
     );
 
     return null;

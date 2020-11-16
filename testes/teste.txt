@@ -1,5 +1,5 @@
 main() {
-    n = 0;
+    n = 0.0;
 
     iterate (10) {
         print fat(n)[0];
