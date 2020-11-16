@@ -91,7 +91,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
             if (actualType != null && !actualType.match(expectedType)) {
               errorsLog.get(currentEnv.getName()).add(
-                "\t" + f.getLine() + ":" + f.getColumn() + ": Return type (" + (i + 1) + ") \"" +
+                "\t" + actualType.getLine() + ":" + actualType.getColumn() + ": Return type (" + (i + 1) + ") \"" +
                 actualType.toString() + "\" does not match expected type \"" + expectedType.toString() + "\""
               );
             }
