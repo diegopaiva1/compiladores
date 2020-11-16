@@ -27,13 +27,16 @@ public class TypeCheckVisitor extends AstVisitor {
   private LocalEnvironment currentEnv;
 
   public TypeCheckVisitor() {
-    this.boolType = new BoolType(0, 0);
-    this.charType = new CharType(0, 0);
-    this.floatType = new FloatType(0, 0);
-    this.intType = new IntType(0, 0);
-    this.errorsLog = new LinkedHashMap<>();
-    this.customTypes = new HashMap<>();
-    this.functionsEnv = new HashMap<>();
+    boolType = new BoolType(0, 0);
+    charType = new CharType(0, 0);
+    floatType = new FloatType(0, 0);
+    intType = new IntType(0, 0);
+    errorsLog = new LinkedHashMap<>();
+    List<String> dataErrors = new ArrayList<>();
+    dataErrors.add("\u26A0");
+    errorsLog.put("data", dataErrors);
+    customTypes = new HashMap<>();
+    functionsEnv = new HashMap<>();
   }
 
   public boolean hasErrors() {
@@ -353,9 +356,8 @@ public class TypeCheckVisitor extends AstVisitor {
     if (!customTypes.containsKey(data.getType().toString()))
       customTypes.put(data.getType().toString(), data.getType());
     else
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + data.getLine() + ":" + data.getColumn() +
-        ": data \"" + data.getType().toString() + "\" already defined"
+      errorsLog.get("data").add(
+        data.getLine() + ":" + data.getColumn() + ": Redefinition of data \"" + data.getType().toString() + "\""
       );
 
     return null;

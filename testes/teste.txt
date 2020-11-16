@@ -1,5 +1,15 @@
+data Ponto {
+    x :: Int;
+    y :: Float;
+}
+
+data Ponto {
+    x :: Int;
+    y :: Float;
+}
+
 main() {
-    n = 0.0;
+    n = 0;
 
     iterate (10) {
         print fat(n)[0];
