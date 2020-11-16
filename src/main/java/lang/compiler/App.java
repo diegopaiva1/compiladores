@@ -59,10 +59,19 @@ public class App {
         // iv = new InteractiveInterpreterVisitor();
         // result.accept(iv);
       }
+      else if (args[0].equals("-ti")) {
+        prog.checkTypes();
+
+        if (prog.isWellTyped) {
+          prog.interpret();
+        }
+        else {
+          System.err.println("Aborting due to type error(s)");
+          System.exit(1);
+        }
+      }
       else if (args[0].equals("-tp")) {
         prog.checkTypes();
-        //iv = new TypeChecker();
-        //result.accept(iv);
       }
       else if (args[0].equals("-pp")) {
         // iv = new PPrint();

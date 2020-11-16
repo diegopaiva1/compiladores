@@ -36,15 +36,23 @@ public class TypeCheckVisitor extends AstVisitor {
     this.functionsEnv = new HashMap<>();
   }
 
-  public void printErrors() {
+  public boolean hasErrors() {
     for (List<String> errors : errorsLog.values())
       // First line of errors is the header
+      if (errors.size() > 1)
+        return true;
+
+    return false;
+  }
+
+  public void printErrors() {
+    for (List<String> errors : errorsLog.values())
       if (errors.size() > 1)
         for (String error : errors)
           System.err.println(error);
   }
 
-  public Object visitProgram(Program program) {
+  public Boolean visitProgram(Program program) {
     // Store all functions local environment
     for (AbstractExpression expr : program.getExpressions()) {
       if (expr instanceof Function) {
@@ -76,9 +84,12 @@ public class TypeCheckVisitor extends AstVisitor {
       if (expr instanceof Function)
         expr.accept(this);
 
-    printErrors();
+    if (hasErrors()) {
+      printErrors();
+      return false;
+    }
 
-    return null;
+    return true;
   }
 
   public Object visitFunction(Function f) {
@@ -298,7 +309,7 @@ public class TypeCheckVisitor extends AstVisitor {
           "\t" + assignment.getLine() + ":" + assignment.getColumn() +
           ": A value of type \"" + actualType.toString() + "\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
         );
-      else if (!(expectedType instanceof ArrayType || expectedType instanceof CustomType))
+      else if (actualType == null && !(expectedType instanceof ArrayType || expectedType instanceof CustomType))
         // null can only be assigned to arrays and custom data types
         errorsLog.get(currentEnv.getName()).add(
           "\t" + assignment.getLine() + ":" + assignment.getColumn() +

@@ -11,9 +11,11 @@ import lang.compiler.visitors.InterpretorVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
+  public boolean isWellTyped;
   private List<AbstractExpression> exprs;
 
   public Program() {
+    isWellTyped = false;
     exprs = new ArrayList<>();
   }
 
@@ -30,6 +32,6 @@ public class Program {
   }
 
   public void checkTypes() {
-    new TypeCheckVisitor().visitProgram(this);
+    isWellTyped = new TypeCheckVisitor().visitProgram(this);
   }
 }
