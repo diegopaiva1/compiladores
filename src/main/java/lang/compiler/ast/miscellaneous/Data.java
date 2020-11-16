@@ -10,7 +10,8 @@ public class Data extends AbstractExpression {
   private CustomType type;
   private List<Declaration> decls;
 
-  public Data(CustomType type, List<Declaration> decls) {
+  public Data(int line, int column, CustomType type, List<Declaration> decls) {
+    super(line, column);
     this.type = type;
     this.decls = decls;
   }

@@ -3,12 +3,8 @@ package lang.compiler.ast.literals;
 import lang.compiler.visitors.AstVisitor;
 
 public class IntLiteral extends AbstractLiteral<Integer> {
-  public IntLiteral() {
-    super();
-  }
-
-  public IntLiteral(Integer value) {
-    super(value);
+  public IntLiteral(int line, int column, Integer value) {
+    super(line, column, value);
   }
 
   @Override

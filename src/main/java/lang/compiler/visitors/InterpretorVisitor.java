@@ -312,30 +312,32 @@ public class InterpretorVisitor extends AstVisitor {
         ArrayType arrayType = (ArrayType) newCmd.getType();
         List<Object> array = new ArrayList<Object>();
 
+        // TODO: Parametros do New
         if (length == 0) {
-          array.add(new New(arrayType.getType(), null).accept(this));
+          array.add(new New(0, 0, arrayType.getType(), null).accept(this));
           return array;
         }
         else {
           for (int i = 0; i < length; i++) {
             // Recursive call to the type this array holds
-            array.add(new New(arrayType.getType(), null).accept(this));
+            array.add(new New(0, 0, arrayType.getType(), null).accept(this));
           }
 
           return array;
         }
       }
+      // TODO: Parametros do literal
       else if (newCmd.getType() instanceof BoolType) {
-        return length == 0 ? new BoolLiteral() : new ArrayList<BoolLiteral>(length);
+        return length == 0 ? new BoolLiteral(0, 0, false) : new ArrayList<BoolLiteral>(length);
       }
       else if (newCmd.getType() instanceof CharType) {
-        return length == 0 ? new CharLiteral() : new ArrayList<CharLiteral>(length);
+        return length == 0 ? new CharLiteral(0, 0, 'a') : new ArrayList<CharLiteral>(length);
       }
       else if (newCmd.getType() instanceof FloatType) {
-        return length == 0 ? new FloatLiteral() : new ArrayList<FloatLiteral>(length);
+        return length == 0 ? new FloatLiteral(0, 0, 0.0f) : new ArrayList<FloatLiteral>(length);
       }
       else if (newCmd.getType() instanceof IntType) {
-        return length == 0 ? new IntLiteral() : new ArrayList<IntLiteral>(length);
+        return length == 0 ? new IntLiteral(0, 0, 0) : new ArrayList<IntLiteral>(length);
       }
       else { // TypeCustom
         // TODO

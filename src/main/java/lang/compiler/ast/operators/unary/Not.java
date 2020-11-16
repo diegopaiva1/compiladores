@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Not extends AbstractUnaryOperator {
-  public Not(AbstractExpression expr) {
-    super(expr);
+  public Not(int line, int column, AbstractExpression expr) {
+    super(line, column, expr);
   }
 
   @Override

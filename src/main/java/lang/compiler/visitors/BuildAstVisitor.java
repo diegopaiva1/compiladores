@@ -2,6 +2,7 @@ package lang.compiler.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.text.StringEscapeUtils;
 
 import lang.compiler.ast.*;
@@ -19,7 +20,11 @@ import lang.compiler.LangParser;
 public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   @Override
   public AbstractExpression visitFunction(LangParser.FunctionContext ctx) {
-    Identifier id = new Identifier(ctx.ID().getText());
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    Identifier id = new Identifier(
+      ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine() + 1, ctx.ID().getText()
+    );
     List<AbstractCommand> cmds = new ArrayList<>();
     List<Parameter> params = new ArrayList<>();
     List<AbstractType> returnTypes = new ArrayList<>();
@@ -35,68 +40,64 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
     }
 
     if (ctx.params() != null) {
-      /**
-       *          ----------
-       *          | PARAMS |
-       *          ----------
-       *         /    |     \
-       *        ID    ::   type
-       *        0     1     2
-       */
-      AbstractType paramType = (AbstractType) visit(ctx.params().getChild(2));
-      Identifier paramId = new Identifier(ctx.params().getChild(0).getText());
-      params.add(new Parameter(paramId, paramType));
+      for (int i = 0 ; i < ctx.params().ID().size(); i++) {
+        int paramIdLine = ctx.params().ID(i).getSymbol().getLine();
+        int paramIdColumn = ctx.params().ID(i).getSymbol().getCharPositionInLine() + 1;
+        Identifier paramId = new Identifier(paramIdLine, paramIdColumn, ctx.params().ID(i).getText());
 
-      /**
-       *      ----------------------------------------------
-       *      |                   PARAMS                   |
-       *      ----------------------------------------------
-       *     /    |     |     |      |     |     |     |    \
-       *    ID    ::  type    ,     ID     ::   type   ,    ...
-       *    0     1     2     3      4      5    6     7     n
-       */
-      for (int i = 4; i < ctx.params().getChildCount(); i += 4) {
-        paramId = new Identifier(ctx.params().getChild(i).getText());
-        paramType = (AbstractType) visit(ctx.params().getChild(i + 2));
-        params.add(new Parameter(paramId, paramType));
+        AbstractType paramType = (AbstractType) visit(ctx.params().type(i));
+
+        params.add(new Parameter(paramIdLine, paramIdColumn, paramId, paramType));
       }
     }
 
-    return new Function(id, params, returnTypes, cmds);
+    return new Function(line, column, id, params, returnTypes, cmds);
   }
 
   @Override
   public AbstractExpression visitData(LangParser.DataContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     CustomType type = (CustomType) visit(ctx.TYPE_NAME());
     List<Declaration> decls = new ArrayList<>();
 
     for (LangParser.DeclContext declCtx : ctx.decl())
       decls.add((Declaration) visit(declCtx));
 
-    return new Data(type, decls);
+    return new Data(line, column, type, decls);
   }
 
   @Override
   public AbstractExpression visitDeclaration(LangParser.DeclarationContext ctx) {
-    Identifier id = new Identifier(ctx.ID().getText());
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    Identifier id = new Identifier(
+      ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine() + 1,ctx.ID().getText()
+    );
     AbstractType type = (AbstractType) visit(ctx.type());
-    return new Declaration(id, type);
+    return new Declaration(line, column, id, type);
   }
 
   @Override
   public AbstractExpression visitPrint(LangParser.PrintContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.exp());
-    return new Print(expr);
+    return new Print(line, column, expr);
   }
 
   @Override
   public AbstractExpression visitRead(LangParser.ReadContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
-    return new Read(lvalue);
+    return new Read(line, column, lvalue);
   }
 
   @Override
   public AbstractExpression visitReturn(LangParser.ReturnContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     List<AbstractExpression> exprs = new ArrayList<>();
 
     for (LangParser.ExpContext expCtx : ctx.exp()) {
@@ -104,214 +105,264 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
       exprs.add(expr);
     }
 
-    return new Return(exprs);
+    return new Return(line, column, exprs);
   }
 
   @Override
   public AbstractExpression visitIf(LangParser.IfContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.exp());
     AbstractCommand scopeCmd = (AbstractCommand) visit(ctx.cmd());
-    return new If(expr, scopeCmd);
+    return new If(line, column, expr, scopeCmd);
   }
 
   @Override
   public AbstractExpression visitIfElse(LangParser.IfElseContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.exp());
     AbstractCommand ifScopeCmd = (AbstractCommand) visit(ctx.cmd(0));
     AbstractCommand elseScopeCmd = (AbstractCommand) visit(ctx.cmd(1));
-    return new IfElse(expr, ifScopeCmd, elseScopeCmd);
+    return new IfElse(line, column, expr, ifScopeCmd, elseScopeCmd);
   }
 
   @Override
   public AbstractExpression visitIterate(LangParser.IterateContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.exp());
     AbstractCommand cmd = (AbstractCommand) visit(ctx.cmd());
-    return new Iterate(expr, cmd);
+    return new Iterate(line, column, expr, cmd);
   }
 
   @Override
   public AbstractExpression visitAnd(LangParser.AndContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.exp(0));
     AbstractExpression right = visit(ctx.exp(1));
-    return new And(left, right);
+    return new And(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitLessThan(LangParser.LessThanContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.aexp(0));
     AbstractExpression right = visit(ctx.aexp(1));
-    return new LessThan(left, right);
+    return new LessThan(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitEqual(LangParser.EqualContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.rexp());
     AbstractExpression right = visit(ctx.aexp());
-    return new Equal(left, right);
+    return new Equal(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitNotEqual(LangParser.NotEqualContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.rexp());
     AbstractExpression right = visit(ctx.aexp());
-    return new NotEqual(left, right);
+    return new NotEqual(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitAddition(LangParser.AdditionContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.aexp());
     AbstractExpression right = visit(ctx.mexp());
-    return new Addition(left, right);
+    return new Addition(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitSubtraction(LangParser.SubtractionContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.aexp());
     AbstractExpression right = visit(ctx.mexp());
-    return new Subtraction(left, right);
+    return new Subtraction(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitMultiplication(LangParser.MultiplicationContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.mexp());
     AbstractExpression right = visit(ctx.sexp());
-    return new Multiplication(left, right);
+    return new Multiplication(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitDivision(LangParser.DivisionContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.mexp());
     AbstractExpression right = visit(ctx.sexp());
-    return new Division(left, right);
+    return new Division(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitModule(LangParser.ModuleContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression left = visit(ctx.mexp());
     AbstractExpression right = visit(ctx.sexp());
-    return new Module(left, right);
+    return new Module(line, column, left, right);
   }
 
   @Override
   public AbstractExpression visitNot(LangParser.NotContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.sexp());
-    return new Not(expr);
+    return new Not(line, column, expr);
   }
 
   @Override
   public AbstractExpression visitNegate(LangParser.NegateContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.sexp());
-    return new Negate(expr);
+    return new Negate(line, column, expr);
   }
 
   @Override
   public AbstractExpression visitTrue(LangParser.TrueContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     Boolean value = Boolean.parseBoolean(ctx.getText());
-    return new BoolLiteral(value);
+    return new BoolLiteral(line, column, value);
   }
 
   @Override
   public AbstractExpression visitFalse(LangParser.FalseContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     Boolean value = Boolean.parseBoolean(ctx.getText());
-    return new BoolLiteral(value);
+    return new BoolLiteral(line, column, value);
   }
 
   @Override
   public AbstractExpression visitChar(LangParser.CharContext ctx) {
+    int line = ctx.CHAR().getSymbol().getLine();
+    int column = ctx.CHAR().getSymbol().getCharPositionInLine() + 1;
     String valueText = ctx.CHAR().getText();
     valueText = valueText.substring(1, valueText.length() - 1); // Pick string inside simple quotes ''
     Character value = StringEscapeUtils.unescapeJava(valueText).charAt(0); // If special char, unscape it
-    return new CharLiteral(value);
+    return new CharLiteral(line, column, value);
   }
 
   @Override
   public AbstractExpression visitFloat(LangParser.FloatContext ctx) {
+    int line = ctx.FLOAT().getSymbol().getLine();
+    int column = ctx.FLOAT().getSymbol().getCharPositionInLine() + 1;
     String valueText = ctx.FLOAT().getText();
     Float value = Float.parseFloat(valueText);
-    return new FloatLiteral(value);
+    return new FloatLiteral(line, column, value);
   }
 
   @Override
   public AbstractExpression visitInt(LangParser.IntContext ctx) {
+    int line = ctx.INT().getSymbol().getLine();
+    int column = ctx.INT().getSymbol().getCharPositionInLine() + 1;
     String valueText = ctx.INT().getText();
     Integer value = Integer.parseInt(valueText);
-    return new IntLiteral(value);
+    return new IntLiteral(line, column, value);
   }
 
   @Override
   public AbstractExpression visitNull(LangParser.NullContext ctx) {
-    return new NullLiteral(null);
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new NullLiteral(line, column, null);
   }
 
   @Override
   public AbstractExpression visitAssignableFunctionCall(LangParser.AssignableFunctionCallContext ctx) {
-    Identifier id = new Identifier(ctx.ID().getText());
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    Identifier id = new Identifier(
+      ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine() + 1, ctx.ID().getText()
+    );
     List<AbstractExpression> args = new ArrayList<>();
     AbstractExpression index = visit(ctx.exp());
 
-    if (ctx.exps() != null) {
-      /**
-       *          --------------------
-       *          |       EXPS       |
-       *          --------------------
-       *         /    |     |    |    \
-       *        exp   ,    exp   ,    ...
-       *        0     1     2    3     n
-       */
-      for (int i = 0; i < ctx.exps().getChildCount(); i += 2) {
-        AbstractExpression arg = visit(ctx.exps().getChild(i));
-        args.add(arg);
-      }
-    }
+    if (ctx.exps() != null)
+      for (LangParser.ExpContext expCtx : ctx.exps().exp())
+        args.add(visit(expCtx));
 
-    return new AssignableFunctionCall(id, args, index);
+    return new AssignableFunctionCall(line, column, id, args, index);
   }
 
   @Override
   public AbstractExpression visitInstantiation(LangParser.InstantiationContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractType type = (AbstractType) visit(ctx.type());
     AbstractExpression expr = ctx.exp() != null ? visit(ctx.exp()) : null;
-    return new New(type, expr);
+    return new New(line, column, type, expr);
   }
 
   @Override
   public AbstractExpression visitBalancedParenthesesExpression(LangParser.BalancedParenthesesExpressionContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractExpression expr = visit(ctx.exp());
-    return new BalancedParenthesesExpression(expr);
+    return new BalancedParenthesesExpression(line, column, expr);
   }
 
   @Override
   public AbstractExpression visitCommandScope(LangParser.CommandScopeContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     List<AbstractCommand> cmds = new ArrayList<>();
 
     for (LangParser.CmdContext cmdCtx : ctx.cmd())
       cmds.add((AbstractCommand) visit(cmdCtx));
 
-    return new CommandScope(cmds);
+    return new CommandScope(line, column, cmds);
   }
 
   @Override
   public AbstractExpression visitArrayAccess(LangParser.ArrayAccessContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
     AbstractExpression expr = visit(ctx.exp());
-    return new ArrayAccess(lvalue, expr);
+    return new ArrayAccess(line, column, lvalue, expr);
   }
 
   @Override
   public AbstractExpression visitIdentifier(LangParser.IdentifierContext ctx) {
-    return new Identifier(ctx.ID().getText());
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new Identifier(line, column, ctx.ID().getText());
   }
 
   @Override
   public AbstractExpression visitDataIdentifierAccess(LangParser.DataIdentifierAccessContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
-    Identifier id = new Identifier(ctx.ID().getText());
-    return new DataIdentifierAccess(lvalue, id);
+    // TODO: FIX LINE COL.
+    Identifier id = new Identifier(0, 0, ctx.ID().getText());
+    return new DataIdentifierAccess(line, column, lvalue, id);
   }
 
   @Override
   public AbstractExpression visitStaticFunctionCall(LangParser.StaticFunctionCallContext ctx) {
-    Identifier id = new Identifier(ctx.ID().getText());
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    Identifier id = new Identifier(
+      ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine() + 1, ctx.ID().getText()
+    );
     List<AbstractLvalue> lvalues = new ArrayList<>();
     List<AbstractExpression> args = new ArrayList<>();
 
@@ -336,43 +387,57 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
       }
     }
 
-    return new StaticFunctionCall(id, args, lvalues);
+    return new StaticFunctionCall(line, column, id, args, lvalues);
   }
 
   @Override
   public AbstractExpression visitAssignment(LangParser.AssignmentContext ctx) {
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
     AbstractLvalue lvalue = (AbstractLvalue) visit(ctx.lvalue());
     AbstractExpression expr = visit(ctx.exp());
-    return new Assignment(lvalue, expr);
+    return new Assignment(line, column, lvalue, expr);
   }
 
   @Override
   public AbstractExpression visitBoolType(LangParser.BoolTypeContext ctx) {
-    return new BoolType();
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new BoolType(line, column);
   }
 
   @Override
   public AbstractExpression visitCharType(LangParser.CharTypeContext ctx) {
-    return new CharType();
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new CharType(line, column);
   }
 
   @Override
   public AbstractExpression visitFloatType(LangParser.FloatTypeContext ctx) {
-    return new FloatType();
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new FloatType(line, column);
   }
 
   @Override
   public AbstractExpression visitIntType(LangParser.IntTypeContext ctx) {
-    return new IntType();
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new IntType(line, column);
   }
 
   @Override
   public AbstractExpression visitArrayType(LangParser.ArrayTypeContext ctx) {
-    return new ArrayType((AbstractType) visit(ctx.type()));
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new ArrayType(line, column, (AbstractType) visit(ctx.type()));
   }
 
   @Override
   public AbstractExpression visitCustomType(LangParser.CustomTypeContext ctx) {
-    return new CustomType(ctx.TYPE_NAME().getText());
+    int line = ctx.getStart().getLine();
+    int column = ctx.getStart().getCharPositionInLine() + 1;
+    return new CustomType(line, column, ctx.TYPE_NAME().getText());
   }
 }

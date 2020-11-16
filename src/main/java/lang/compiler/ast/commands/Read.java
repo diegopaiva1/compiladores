@@ -6,7 +6,8 @@ import lang.compiler.ast.lvalues.AbstractLvalue;
 public class Read extends AbstractCommand {
   private AbstractLvalue lvalue;
 
-  public Read(AbstractLvalue lvalue) {
+  public Read(int line, int column, AbstractLvalue lvalue) {
+    super(line, column);
     this.lvalue = lvalue;
   }
 

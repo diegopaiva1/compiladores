@@ -9,7 +9,8 @@ public class Parameter extends AbstractExpression {
   private Identifier id;
   private AbstractType type;
 
-  public Parameter(Identifier id, AbstractType type) {
+  public Parameter(int line, int column, Identifier id, AbstractType type) {
+    super(line, column);
     this.id = id;
     this.type = type;
   }

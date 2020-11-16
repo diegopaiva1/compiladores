@@ -6,7 +6,8 @@ public class DataIdentifierAccess extends AbstractLvalue {
   private Identifier id;
   private AbstractLvalue lvalue;
 
-  public DataIdentifierAccess(AbstractLvalue lvalue, Identifier id) {
+  public DataIdentifierAccess(int line, int column, AbstractLvalue lvalue, Identifier id) {
+    super(line, column);
     this.lvalue = lvalue;
     this.id = id;
   }

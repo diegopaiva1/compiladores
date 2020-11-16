@@ -4,8 +4,8 @@ import lang.compiler.ast.AbstractExpression;
 import lang.compiler.visitors.AstVisitor;
 
 public class Negate extends AbstractUnaryOperator {
-  public Negate(AbstractExpression expr) {
-    super(expr);
+  public Negate(int line, int column, AbstractExpression expr) {
+    super(line, column,expr);
   }
 
   @Override

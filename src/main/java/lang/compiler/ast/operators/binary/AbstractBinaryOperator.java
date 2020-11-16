@@ -7,7 +7,8 @@ public abstract class AbstractBinaryOperator extends AbstractOperator {
   private AbstractExpression left;
   private AbstractExpression right;
 
-  public AbstractBinaryOperator(AbstractExpression left, AbstractExpression right) {
+  public AbstractBinaryOperator(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column);
     this.left = left;
     this.right = right;
   }

@@ -1,0 +1,17 @@
+main() {
+    n = 0;
+
+    iterate (10) {
+        print n;
+        n = n + 1;
+    }
+}
+
+fat(x :: Int) : Int {
+    if (x < 1) {
+        return 1;
+    }
+    else {
+        return x * fat(x - 1)[0];
+    }
+}

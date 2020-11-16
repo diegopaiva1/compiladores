@@ -5,7 +5,8 @@ import lang.compiler.visitors.AstVisitor;
 public class CustomType extends AbstractType {
   private String name;
 
-  public CustomType(String name) {
+  public CustomType(int line, int column, String name) {
+    super(line, column);
     this.name = name;
   }
 

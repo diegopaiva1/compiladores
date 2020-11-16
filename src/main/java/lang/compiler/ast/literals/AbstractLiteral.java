@@ -5,10 +5,8 @@ import lang.compiler.ast.AbstractExpression;
 public abstract class AbstractLiteral<T> extends AbstractExpression {
   private T value;
 
-  public AbstractLiteral() {
-  }
-
-  public AbstractLiteral(T value) {
+  public AbstractLiteral(int line, int column, T value) {
+    super(line, column);
     this.value = value;
   }
 

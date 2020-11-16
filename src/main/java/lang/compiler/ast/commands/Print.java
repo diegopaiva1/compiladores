@@ -6,7 +6,8 @@ import lang.compiler.ast.AbstractExpression;
 public class Print extends AbstractCommand {
   private AbstractExpression expr;
 
-  public Print(AbstractExpression expr) {
+  public Print(int line, int column, AbstractExpression expr) {
+    super(line, column);
     this.expr = expr;
   }
 

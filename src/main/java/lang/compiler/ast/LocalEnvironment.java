@@ -8,11 +8,13 @@ import java.util.Map;
 import lang.compiler.ast.types.AbstractType;
 
 public class LocalEnvironment {
+  private String name;
   private List<AbstractType> paramsTypes;
   private List<AbstractType> returnsTypes;
   private Map<String, AbstractType> varsTypes;
 
-  public LocalEnvironment() {
+  public LocalEnvironment(String name) {
+    this.name = name;
     this.paramsTypes = new ArrayList<>();
     this.returnsTypes = new ArrayList<>();
     this.varsTypes = new HashMap<>();
@@ -52,5 +54,13 @@ public class LocalEnvironment {
 
   public void setVarsTypes(Map<String, AbstractType> varsTypes) {
     this.varsTypes = varsTypes;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

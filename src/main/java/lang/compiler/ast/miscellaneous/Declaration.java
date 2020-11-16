@@ -9,7 +9,8 @@ public class Declaration extends AbstractExpression {
   private Identifier id;
   private AbstractType type;
 
-  public Declaration(Identifier id, AbstractType type) {
+  public Declaration(int line, int column, Identifier id, AbstractType type) {
+    super(line, column);
     this.id = id;
     this.type = type;
   }

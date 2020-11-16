@@ -3,12 +3,8 @@ package lang.compiler.ast.literals;
 import lang.compiler.visitors.AstVisitor;
 
 public class FloatLiteral extends AbstractLiteral<Float> {
-  public FloatLiteral() {
-    super();
-  }
-
-  public FloatLiteral(Float value) {
-    super(value);
+  public FloatLiteral(int line, int column, Float value) {
+    super(line, column, value);
   }
 
   @Override

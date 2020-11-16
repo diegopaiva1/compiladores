@@ -12,7 +12,8 @@ public class StaticFunctionCall extends AbstractCommand {
   private List<AbstractExpression> args;
   private List<AbstractLvalue> lvalues;
 
-  public StaticFunctionCall(Identifier id, List<AbstractExpression> args, List<AbstractLvalue> lvalues) {
+  public StaticFunctionCall(int line, int column, Identifier id, List<AbstractExpression> args, List<AbstractLvalue> lvalues) {
+    super(line, column);
     this.id = id;
     this.args = args;
     this.lvalues = lvalues;

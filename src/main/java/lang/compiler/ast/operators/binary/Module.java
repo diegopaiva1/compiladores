@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Module extends AbstractBinaryOperator {
-  public Module(AbstractExpression left, AbstractExpression right) {
-    super(left, right);
+  public Module(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column, left, right);
   }
 
   @Override

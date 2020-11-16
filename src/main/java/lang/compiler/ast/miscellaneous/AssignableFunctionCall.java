@@ -11,7 +11,8 @@ public class AssignableFunctionCall extends AbstractExpression {
   private List<AbstractExpression> args;
   private AbstractExpression index;
 
-  public AssignableFunctionCall(Identifier id, List<AbstractExpression> args, AbstractExpression index) {
+  public AssignableFunctionCall(int line, int column, Identifier id, List<AbstractExpression> args, AbstractExpression index) {
+    super(line, column);
     this.id = id;
     this.args = args;
     this.index = index;

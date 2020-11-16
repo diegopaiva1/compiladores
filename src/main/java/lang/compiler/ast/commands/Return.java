@@ -8,7 +8,8 @@ import lang.compiler.visitors.AstVisitor;
 public class Return extends AbstractCommand {
   private List<AbstractExpression> exprs;
 
-  public Return(List<AbstractExpression> exprs) {
+  public Return(int line, int column, List<AbstractExpression> exprs) {
+    super(line, column);
     this.exprs = exprs;
   }
 

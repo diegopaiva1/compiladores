@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class LessThan extends AbstractBinaryOperator {
-  public LessThan(AbstractExpression left, AbstractExpression right) {
-    super(left, right);
+  public LessThan(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column, left, right);
   }
 
   @Override

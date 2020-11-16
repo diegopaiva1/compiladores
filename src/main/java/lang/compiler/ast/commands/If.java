@@ -7,7 +7,8 @@ public class If extends AbstractCommand {
   private AbstractExpression expr;
   private AbstractCommand scopeCmd;
 
-  public If(AbstractExpression expr, AbstractCommand scopeCmd) {
+  public If(int line, int column, AbstractExpression expr, AbstractCommand scopeCmd) {
+    super(line, column);
     this.expr = expr;
     this.scopeCmd = scopeCmd;
   }

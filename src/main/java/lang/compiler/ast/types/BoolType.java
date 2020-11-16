@@ -3,7 +3,8 @@ package lang.compiler.ast.types;
 import lang.compiler.visitors.AstVisitor;
 
 public class BoolType extends AbstractType {
-  public BoolType() {
+  public BoolType(int line, int column) {
+    super(line, column);
   }
 
   @Override

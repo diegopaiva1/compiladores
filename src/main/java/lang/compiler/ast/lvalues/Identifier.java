@@ -5,7 +5,8 @@ import lang.compiler.visitors.AstVisitor;
 public class Identifier extends AbstractLvalue {
   private String name;
 
-  public Identifier(String name) {
+  public Identifier(int line, int column, String name) {
+    super(line, column);
     this.name = name;
   }
 

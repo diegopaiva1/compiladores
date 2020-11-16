@@ -8,7 +8,8 @@ public class New extends AbstractCommand {
   private AbstractType type;
   private AbstractExpression expr;
 
-  public New(AbstractType type, AbstractExpression expr) {
+  public New(int line, int column, AbstractType type, AbstractExpression expr) {
+    super(line, column);
     this.type = type;
     this.expr = expr;
   }

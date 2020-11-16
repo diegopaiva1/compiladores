@@ -5,8 +5,8 @@ import javax.lang.model.type.NullType;
 import lang.compiler.visitors.AstVisitor;
 
 public class NullLiteral extends AbstractLiteral<NullType> {
-  public NullLiteral(NullType value) {
-    super(value);
+  public NullLiteral(int line, int column, NullType value) {
+    super(line, column, value);
   }
 
   @Override

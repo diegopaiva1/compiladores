@@ -3,7 +3,8 @@ package lang.compiler.ast.types;
 import lang.compiler.visitors.AstVisitor;
 
 public class CharType extends AbstractType {
-  public CharType() {
+  public CharType(int line, int column) {
+    super(line, column);
   }
 
   @Override

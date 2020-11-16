@@ -14,7 +14,9 @@ public class Function extends AbstractExpression {
   private List<AbstractType> returnTypes;
   private List<AbstractCommand> cmds;
 
-  public Function(Identifier id, List<Parameter> params, List<AbstractType> returnTypes, List<AbstractCommand> cmds) {
+  public Function(int line, int column, Identifier id, List<Parameter> params, List<AbstractType> returnTypes,
+                  List<AbstractCommand> cmds) {
+    super(line, column);
     this.id = id;
     this.params = params;
     this.returnTypes = returnTypes;

@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Division extends AbstractBinaryOperator {
-  public Division(AbstractExpression left, AbstractExpression right) {
-    super(left, right);
+  public Division(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column, left, right);
   }
 
   @Override

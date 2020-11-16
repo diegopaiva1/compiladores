@@ -7,7 +7,8 @@ public class Iterate extends AbstractCommand {
   private AbstractExpression expr;
   private AbstractCommand cmd;
 
-  public Iterate(AbstractExpression expr, AbstractCommand cmd) {
+  public Iterate(int line, int column, AbstractExpression expr, AbstractCommand cmd) {
+    super(line, column);
     this.expr = expr;
     this.cmd = cmd;
   }

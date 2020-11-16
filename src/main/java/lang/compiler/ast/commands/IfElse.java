@@ -8,7 +8,8 @@ public class IfElse extends AbstractCommand {
   private AbstractCommand ifScopeCmd;
   private AbstractCommand elseScopeCmd;
 
-  public IfElse(AbstractExpression expr, AbstractCommand ifScopeCmd, AbstractCommand elseScopeCmd) {
+  public IfElse(int line, int column, AbstractExpression expr, AbstractCommand ifScopeCmd, AbstractCommand elseScopeCmd) {
+    super(line, column);
     this.expr = expr;
     this.ifScopeCmd = ifScopeCmd;
     this.elseScopeCmd = elseScopeCmd;

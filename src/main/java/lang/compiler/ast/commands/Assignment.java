@@ -8,7 +8,8 @@ public class Assignment extends AbstractCommand {
   private AbstractLvalue lvalue;
   private AbstractExpression expr;
 
-  public Assignment(AbstractLvalue lvalue, AbstractExpression expr) {
+  public Assignment(int line, int column, AbstractLvalue lvalue, AbstractExpression expr) {
+    super(line, column);
     this.lvalue = lvalue;
     this.expr = expr;
   }

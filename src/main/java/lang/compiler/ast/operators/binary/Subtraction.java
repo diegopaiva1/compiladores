@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Subtraction extends AbstractBinaryOperator {
-  public Subtraction(AbstractExpression left, AbstractExpression right) {
-    super(left, right);
+  public Subtraction(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column, left, right);
   }
 
   @Override

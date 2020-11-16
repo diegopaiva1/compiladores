@@ -6,7 +6,8 @@ import lang.compiler.visitors.AstVisitor;
 public class BalancedParenthesesExpression extends AbstractExpression {
   private AbstractExpression expr;
 
-  public BalancedParenthesesExpression(AbstractExpression expr) {
+  public BalancedParenthesesExpression(int line, int column, AbstractExpression expr) {
+    super(line, column);
     this.expr = expr;
   }
 

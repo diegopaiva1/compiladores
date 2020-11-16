@@ -5,7 +5,8 @@ import lang.compiler.visitors.AstVisitor;
 public class ArrayType extends AbstractType {
   private AbstractType type;
 
-  public ArrayType(AbstractType type) {
+  public ArrayType(int line, int column, AbstractType type) {
+    super(line, column);
     this.type = type;
   }
 

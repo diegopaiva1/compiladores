@@ -7,7 +7,8 @@ public class ArrayAccess extends AbstractLvalue {
   private AbstractLvalue lvalue;
   private AbstractExpression expr;
 
-  public ArrayAccess(AbstractLvalue lvalue, AbstractExpression expr) {
+  public ArrayAccess(int line, int column, AbstractLvalue lvalue, AbstractExpression expr) {
+    super(line, column);
     this.lvalue = lvalue;
     this.expr = expr;
   }

@@ -3,7 +3,8 @@ package lang.compiler.ast.types;
 import lang.compiler.visitors.AstVisitor;
 
 public class IntType extends AbstractType {
-  public IntType() {
+  public IntType(int line, int column) {
+    super(line, column);
   }
 
   @Override

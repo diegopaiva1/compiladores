@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class Equal extends AbstractBinaryOperator {
-  public Equal(AbstractExpression left, AbstractExpression right) {
-    super(left, right);
+  public Equal(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column, left, right);
   }
 
   @Override

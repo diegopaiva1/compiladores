@@ -4,8 +4,8 @@ import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
 
 public class NotEqual extends AbstractBinaryOperator {
-  public NotEqual(AbstractExpression left, AbstractExpression right) {
-    super(left, right);
+  public NotEqual(int line, int column, AbstractExpression left, AbstractExpression right) {
+    super(line, column, left, right);
   }
 
   @Override

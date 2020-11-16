@@ -3,12 +3,8 @@ package lang.compiler.ast.literals;
 import lang.compiler.visitors.AstVisitor;
 
 public class BoolLiteral extends AbstractLiteral<Boolean> {
-  public BoolLiteral() {
-    super();
-  }
-
-  public BoolLiteral(Boolean value) {
-    super(value);
+  public BoolLiteral(int line, int column, Boolean value) {
+    super(line, column, value);
   }
 
   @Override

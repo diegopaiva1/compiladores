@@ -3,7 +3,8 @@ package lang.compiler.ast.types;
 import lang.compiler.visitors.AstVisitor;
 
 public class FloatType extends AbstractType {
-  public FloatType() {
+  public FloatType(int line, int column) {
+    super(line, column);
   }
 
   @Override

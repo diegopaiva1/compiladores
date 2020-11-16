@@ -7,7 +7,8 @@ import lang.compiler.visitors.AstVisitor;
 public class CommandScope extends AbstractCommand {
   private List<AbstractCommand> cmds;
 
-  public CommandScope(List<AbstractCommand> cmds) {
+  public CommandScope(int line, int column, List<AbstractCommand> cmds) {
+    super(line, column);
     this.cmds = cmds;
   }
 
