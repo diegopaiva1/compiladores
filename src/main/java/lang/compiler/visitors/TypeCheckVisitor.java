@@ -20,6 +20,7 @@ public class TypeCheckVisitor extends AstVisitor {
   private CharType charType;
   private FloatType floatType;
   private IntType intType;
+  private Map<String, CustomType> customTypes;
   private List<String> errorsLog;
   private Map<String, LocalEnvironment> functionsEnv;
   private LocalEnvironment currentEnv;
@@ -29,6 +30,7 @@ public class TypeCheckVisitor extends AstVisitor {
     this.charType = new CharType();
     this.floatType = new FloatType();
     this.intType = new IntType();
+    this.customTypes = new HashMap<>();
     this.errorsLog = new ArrayList<>();
     this.functionsEnv = new HashMap<>();
   }
@@ -56,6 +58,10 @@ public class TypeCheckVisitor extends AstVisitor {
         functionsEnv.put(f.getId().getName(), localEnv);
       }
     }
+
+    for (AbstractExpression expr : program.getExpressions())
+      if (expr instanceof Data)
+        expr.accept(this);
 
     for (AbstractExpression expr : program.getExpressions())
       if (expr instanceof Function)
@@ -212,6 +218,8 @@ public class TypeCheckVisitor extends AstVisitor {
     if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
       if (assignment.getLvalue() instanceof ArrayAccess)
         errorsLog.add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
+      else if(assignment.getLvalue() instanceof DataIdentifierAccess)
+        errorsLog.add("Custom type \"" + lvalueIdentifier.getName() + "\" does not exist");
       else
         currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
     }
@@ -256,19 +264,30 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitData(Data data) {
-    // TODO Auto-generated method stub
+    if (!customTypes.containsKey(data.getType().toString()))
+      customTypes.put(data.getType().toString(), data.getType());
+    else
+      errorsLog.add("Custom type \"" + data.getType().toString() + "\" was already defined");
     return null;
   }
 
   @Override
   public Object visitDataIdentifierAccess(DataIdentifierAccess dataIdentifierAccess) {
-    // TODO Auto-generated method stub
+    String name = dataIdentifierAccess.getLvalue().getIdentifier().getName();
+    if (currentEnv.getVarsTypes().containsKey(name)) {
+      CustomType customType = (CustomType) currentEnv.getVarsTypes().get(name);
+      if (customType.hasVar(dataIdentifierAccess.getId().getName()))
+        return customType.getVarType(dataIdentifierAccess.getId().getName());
+      else
+        errorsLog.add("Custom type \"" + name + "\" does not have a var named \"" + dataIdentifierAccess.getId() + "\"");
+    }
+    else
+      errorsLog.add("Custom type \"" + name + "\" does not exist");
     return null;
   }
 
   @Override
   public Object visitDeclaration(Declaration decl) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -419,8 +438,17 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitNew(New newCmd) {
-    if (newCmd.getExpression() instanceof IntLiteral || newCmd.getExpression() == null)
-      return newCmd.getType();
+    if (newCmd.getExpression() instanceof IntLiteral || newCmd.getExpression() == null) {
+      if(newCmd.getType() instanceof CustomType) {
+        CustomType customType = customTypes.get(newCmd.getType().toString());
+        if (customType != null)
+          return customType;
+        else
+          errorsLog.add("Custom type \"" + newCmd.getType().toString() + "\" does not exist");
+      }
+      else
+        return newCmd.getType();
+    }
     else
       errorsLog.add("Can not determine size of array declaration");
 

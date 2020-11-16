@@ -1,12 +1,29 @@
 package lang.compiler.ast.types;
 
+import java.util.*;
+
+import lang.compiler.ast.lvalues.Identifier;
 import lang.compiler.visitors.AstVisitor;
 
 public class CustomType extends AbstractType {
   private String name;
+  private Map<String, AbstractType> varsTypes;
 
   public CustomType(String name) {
     this.name = name;
+    this.varsTypes = new HashMap<>();
+  }
+
+  public void addVarType (String id, AbstractType type) {
+    varsTypes.put(id, type);
+  }
+
+  public AbstractType getVarType (String id) {
+    return varsTypes.get(id);
+  }
+
+  public Boolean hasVar (String id) {
+    return varsTypes.containsKey(id);
   }
 
   @Override

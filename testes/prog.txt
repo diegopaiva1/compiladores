@@ -1,6 +1,15 @@
+data Ponto {
+   x :: Float;
+   y :: Float;
+}
+
 main() {
-  dummy('a', 1)<x, y, z>;
-  print x;
+  --dummy('a', 1)<x, y, z>;
+  --print x.a;
+  --x.a = 1.0;
+  x = new Ponto;
+  x.y = 2.0;
+  --x[0] = 1.0;
 }
 
 dummy(x :: Char, y :: Int) : Char, Int {
