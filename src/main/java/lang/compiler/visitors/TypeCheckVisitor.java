@@ -152,8 +152,10 @@ public class TypeCheckVisitor extends AstVisitor {
   @Override
   public Object visitArrayAccess(ArrayAccess arrayAccess) {
     if (arrayAccess.getExpression() instanceof IntLiteral) {
-      ArrayType array = (ArrayType) arrayAccess.getLvalue().accept(this);
-      return array.getType();
+      if (arrayAccess.getLvalue().accept(this) instanceof ArrayType)
+        return ((ArrayType) arrayAccess.getLvalue().accept(this)).getType();
+      else
+        errorsLog.add("\"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not an Array");
     }
     else
       errorsLog.add("Can not determine access index of array");
@@ -218,17 +220,19 @@ public class TypeCheckVisitor extends AstVisitor {
     if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
       if (assignment.getLvalue() instanceof ArrayAccess)
         errorsLog.add("Array \"" + lvalueIdentifier.getName() + "\" does not exist");
-      else if(assignment.getLvalue() instanceof DataIdentifierAccess)
-        errorsLog.add("Custom type \"" + lvalueIdentifier.getName() + "\" does not exist");
+      else if (assignment.getLvalue() instanceof DataIdentifierAccess)
+        errorsLog.add("Custom type \"" + lvalueIdentifier.getName() + "\" was not declared");
+      else if (actualType == null)
+        errorsLog.add("Can not declare var as null");
       else
         currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
     }
     else {
       AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
 
-      if (!actualType.match(expectedType))
+      if (expectedType != null && actualType != null && !actualType.match(expectedType))
         errorsLog.add("Can not assign value of type " + actualType.toString() +
-                      " to variable of type " + expectedType.toString() + "");
+                      " to variable of type " + expectedType.toString());
     }
 
     return null;
@@ -279,10 +283,10 @@ public class TypeCheckVisitor extends AstVisitor {
       if (customType.hasVar(dataIdentifierAccess.getId().getName()))
         return customType.getVarType(dataIdentifierAccess.getId().getName());
       else
-        errorsLog.add("Custom type \"" + name + "\" does not have a var named \"" + dataIdentifierAccess.getId() + "\"");
+        errorsLog.add("Custom type \"" + name + "\" does not have a var named \"" + dataIdentifierAccess.getId().getName() + "\"");
     }
     else
-      errorsLog.add("Custom type \"" + name + "\" does not exist");
+      errorsLog.add("Custom type \"" + name + "\" was not declared");
     return null;
   }
 
@@ -484,7 +488,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitNullLiteral(NullLiteral n) {
-    // TODO Auto-generated method stub
     return null;
   }
 

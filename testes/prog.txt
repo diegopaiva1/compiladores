@@ -7,8 +7,12 @@ main() {
   --dummy('a', 1)<x, y, z>;
   --print x.a;
   --x.a = 1.0;
-  x = new Ponto;
-  x.y = 2.0;
+  --x = new Int;
+  x = null;
+  --print x[0];
+  --x.y = 2.0;
+  --x.a = 1.0;
+  --print a.a;
   --x[0] = 1.0;
 }
 
