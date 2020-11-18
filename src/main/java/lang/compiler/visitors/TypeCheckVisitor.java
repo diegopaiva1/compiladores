@@ -23,7 +23,7 @@ public class TypeCheckVisitor extends AstVisitor {
   private IntType intType;
   private Map<String, List<String>> errorsLog;
   private Map<String, CustomType> customTypes;
-  private Map<String, LocalEnvironment> functionsEnv;
+  private Map<Function, LocalEnvironment> functionsEnv;
   private LocalEnvironment currentEnv;
 
   public TypeCheckVisitor() {
@@ -70,7 +70,7 @@ public class TypeCheckVisitor extends AstVisitor {
         for (AbstractType returnType : f.getReturnTypes())
           localEnv.addReturnType(returnType);
 
-        functionsEnv.put(f.getId().getName(), localEnv);
+        functionsEnv.put(f, localEnv);
 
         // Add error log with default header for function
         List<String> log = new ArrayList<>();
@@ -96,7 +96,7 @@ public class TypeCheckVisitor extends AstVisitor {
   }
 
   public Object visitFunction(Function f) {
-    currentEnv = functionsEnv.get(f.getId().getName());
+    currentEnv = functionsEnv.get(f);
 
     for (AbstractCommand cmd : f.getCommands()) {
       Object result = cmd.accept(this);
@@ -111,16 +111,17 @@ public class TypeCheckVisitor extends AstVisitor {
 
             if (actualType != null && !actualType.match(expectedType)) {
               errorsLog.get(currentEnv.getName()).add(
-                "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Return type (" + (i + 1) + ") \"" +
-                actualType.toString() + "\" does not match expected type \"" + expectedType.toString() + "\""
+                "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": " +
+                "\"" + ((Return) cmd).getExpressions().get(i).toString() + "\" does not match expected type \""
+                + expectedType.toString() + "\""
               );
             }
           }
         }
         else {
           errorsLog.get(currentEnv.getName()).add(
-            "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Number of returns of function \"" +
-            f.getId().getName() + "\" incompatible with the function definition"
+            "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Command \"" + cmd.toString() + "\"" +
+            " incompatible with the function definition \"" + f.toString() + "\""
           );
         }
       }
@@ -220,65 +221,66 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitAssignableFunctionCall(AssignableFunctionCall fCall) {
-    LocalEnvironment localEnv = functionsEnv.get(fCall.getId().getName());
+    Function callee = null;
 
-    if (localEnv != null) {
-      if (fCall.getArgs().size() == localEnv.getParamsTypes().size()) {
-        for (int i = 0; i < localEnv.getParamsTypes().size(); i++) {
-          AbstractExpression arg = fCall.getArgs().get(i);
-          AbstractType expectedType = localEnv.getParamsTypes().get(i);
-          AbstractType actualType = (AbstractType) arg.accept(this);
+    for (Function f : functionsEnv.keySet()) {
+      if (f.getId().getName().equals(fCall.getId().getName())) {
+        if (fCall.getArgs().size() == f.getParameters().size()) {
+          boolean match = true;
 
-          if (actualType != null && !actualType.match(expectedType))
-            errorsLog.get(currentEnv.getName()).add(
-              "\t" + arg.getLine() + ":" + arg.getColumn() +
-              ": Parameter type (" + (i + 1) + ") \"" + actualType.toString() +
-              "\" does not match expected type \"" + expectedType.toString() + "\""
-            );
+          // Check parameters compatibility
+          for (int i = 0; i < f.getParameters().size(); i++) {
+            AbstractType argType = (AbstractType) fCall.getArgs().get(i).accept(this);
+            AbstractType parameterType = (AbstractType) functionsEnv.get(f).getParamsTypes().get(i);
+
+            // Incompatible types
+            if (argType != null && !argType.match(parameterType))
+              match = false;
+          }
+
+          if (match)
+            callee = f;
         }
+      }
+    }
 
-        AbstractType indexType = (AbstractType) fCall.getIndex().accept(this);
+    if (callee != null) {
+      LocalEnvironment localEnv = functionsEnv.get(callee);
+      AbstractType indexType = (AbstractType) fCall.getIndex().accept(this);
 
-        if (indexType.match(intType)) {
-          if (fCall.getIndex() instanceof IntLiteral) {
-            IntLiteral index = (IntLiteral) fCall.getIndex();
+      if (indexType.match(intType)) {
+        if (fCall.getIndex() instanceof IntLiteral) {
+          IntLiteral index = (IntLiteral) fCall.getIndex();
 
-            if (index.getValue() < localEnv.getReturnsTypes().size())
-              return localEnv.getReturnsTypes().get(index.getValue());
-            else
-              errorsLog.get(currentEnv.getName()).add(
-                "\t" + index.getLine() + ":" + index.getColumn() +
-                ": Access index of function call \"" + fCall.getId().getName() +
-                "\" must be in range [0," + (localEnv.getReturnsTypes().size() - 1) + "]"
-              );
-          }
-          else {
+          if (index.getValue() < localEnv.getReturnsTypes().size())
+            return localEnv.getReturnsTypes().get(index.getValue());
+          else
             errorsLog.get(currentEnv.getName()).add(
-              "\t" + fCall.getIndex().getLine() + ":" + fCall.getIndex().getColumn() +
-              ": Can not determine access index of function call \"" + fCall.getId().getName() + "\""
+              "\t" + index.getLine() + ":" + index.getColumn() +
+              ": Access index of function call must be in range [0," + (localEnv.getReturnsTypes().size() - 1) + "]\n" +
+              "\tsrc: \"" + fCall.toString() + "\""
             );
-          }
         }
         else {
           errorsLog.get(currentEnv.getName()).add(
             "\t" + fCall.getIndex().getLine() + ":" + fCall.getIndex().getColumn() +
-            ": Access index of function call \"" + fCall.getId().getName() +
-            "\" can not be of type \"" + indexType.toString() + "\""
+            ": Cannot determine access index of function call\n" +
+            "\tsrc: \"" + fCall.toString() + "\""
           );
         }
       }
       else {
         errorsLog.get(currentEnv.getName()).add(
-          "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-          ": Number of arguments of function call \"" + fCall.getId().getName() +
-          "\" incompatible with the function definition"
+          "\t" + fCall.getIndex().getLine() + ":" + fCall.getIndex().getColumn() +
+          ": Access index of function call cannot be of type \"" + indexType.toString() + "\"\n" +
+          "\tsrc: \"" + fCall.toString() + "\""
         );
       }
     }
     else {
       errorsLog.get(currentEnv.getName()).add(
         "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-        ": No function named \"" + fCall.getId().getName() + "\""
+        ": Cannot resolve function call \"" + fCall.toString() + "\""
       );
     }
 
@@ -684,69 +686,72 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitStaticFunctionCall(StaticFunctionCall fCall) {
-    LocalEnvironment localEnv = functionsEnv.get(fCall.getId().getName());
+    Function callee = null;
 
-    if (localEnv != null) {
-      if (fCall.getArgs().size() == localEnv.getParamsTypes().size()) {
-        for (int i = 0; i < localEnv.getParamsTypes().size(); i++) {
-          AbstractExpression arg = fCall.getArgs().get(i);
-          AbstractType actualType = (AbstractType) arg.accept(this);
-          AbstractType expectedType = localEnv.getParamsTypes().get(i);
+    for (Function f : functionsEnv.keySet()) {
+      if (f.getId().getName().equals(fCall.getId().getName())) {
+        if (fCall.getArgs().size() == f.getParameters().size()) {
+          boolean match = true;
 
-          if (actualType != null && !actualType.match(expectedType))
-            errorsLog.get(currentEnv.getName()).add(
-              "\t" + arg.getLine() + ":" + arg.getColumn() +
-              ": Parameter type (" + (i + 1) + ") \"" + actualType.toString() +
-              "\" does not match expected type \"" + expectedType.toString() + "\""
-            );
+          // Check parameters compatibility
+          for (int i = 0; i < f.getParameters().size(); i++) {
+            AbstractType argType = (AbstractType) fCall.getArgs().get(i).accept(this);
+            AbstractType parameterType = functionsEnv.get(f).getParamsTypes().get(i);
+
+            // Incompatible types
+            if (argType != null && !argType.match(parameterType))
+              match = false;
+          }
+
+          if (match)
+            callee = f;
         }
+      }
+    }
 
-        if (fCall.getLvalues().size() == localEnv.getReturnsTypes().size()) {
-          for (int i = 0; i < fCall.getLvalues().size(); i++) {
-            AbstractLvalue lvalue = fCall.getLvalues().get(i);
-            AbstractType expectedType = localEnv.getReturnsTypes().get(i);
+    if (callee != null) {
+      LocalEnvironment localEnv = functionsEnv.get(callee);
 
-            if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
-              if (lvalue instanceof ArrayAccess)
-                errorsLog.get(currentEnv.getName()).add(
-                  "\t" + lvalue.getLine() + ":" + lvalue.getColumn() +
-                  ": Undefined variable \"" + lvalue.getIdentifier().getName() + "\""
-                );
-              else
-                currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), expectedType);
-            }
-            else {
-              AbstractType actualType = (AbstractType) lvalue.accept(this);
+      if (fCall.getLvalues().size() == localEnv.getReturnsTypes().size()) {
+        for (int i = 0; i < fCall.getLvalues().size(); i++) {
+          AbstractLvalue lvalue = fCall.getLvalues().get(i);
+          AbstractType expectedType = localEnv.getReturnsTypes().get(i);
 
-              if (!actualType.match(expectedType)) {
-                errorsLog.get(currentEnv.getName()).add(
-                  "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-                  ": A value of type \"" + expectedType.toString() + "\" cannot be assigned to an entity of type \"" + actualType.toString() + "\""
-                );
-              }
+          if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
+            if (lvalue instanceof ArrayAccess)
+              errorsLog.get(currentEnv.getName()).add(
+                "\t" + lvalue.getLine() + ":" + lvalue.getColumn() +
+                ": Undefined variable \"" + lvalue.getIdentifier().getName() + "\""
+              );
+            else
+              currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), expectedType);
+          }
+          else {
+            AbstractType actualType = (AbstractType) lvalue.accept(this);
+
+            if (!actualType.match(expectedType)) {
+              errorsLog.get(currentEnv.getName()).add(
+                "\t" + fCall.getLine() + ":" + fCall.getColumn() +
+                ": A value of type \"" + expectedType.toString() + "\" cannot be assigned to an entity of type \"" + actualType.toString() + "\""
+              );
             }
           }
         }
-        else {
-          errorsLog.get(currentEnv.getName()).add(
-            "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-            ": Number of lvalues of function call \"" + fCall.getId().getName() +
-            "\" incompatible with the function definition"
-          );
-        }
       }
-      else
+      else {
         errorsLog.get(currentEnv.getName()).add(
           "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-          ": Number of arguments of function call \"" + fCall.getId().getName() +
+          ": Number of lvalues of function call \"" + fCall.getId().getName() +
           "\" incompatible with the function definition"
         );
+      }
     }
-    else
+    else {
       errorsLog.get(currentEnv.getName()).add(
         "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-        ": No function named \"" + fCall.getId().getName() + "\""
+        ": Cannot resolve function call \"" + fCall.toString() + "\""
       );
+    }
 
     return null;
   }

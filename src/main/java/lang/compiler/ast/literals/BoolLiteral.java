@@ -11,4 +11,9 @@ public class BoolLiteral extends AbstractLiteral<Boolean> {
   public Object accept(AstVisitor v) {
     return v.visitBoolLiteral(this) ;
   }
+
+  @Override
+  public String toString() {
+    return getValue().toString();
+  }
 }

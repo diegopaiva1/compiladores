@@ -38,4 +38,10 @@ public class Iterate extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitIterate(this);
   }
+
+  @Override
+  public String toString() {
+    return "iterate (" + expr.toString() + ")" +
+              cmd.toString();
+  }
 }

@@ -37,4 +37,9 @@ public class Identifier extends AbstractLvalue {
   public Identifier getIdentifier() {
     return this;
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }

@@ -11,4 +11,9 @@ public class CharLiteral extends AbstractLiteral<Character> {
   public Object accept(AstVisitor v) {
     return v.visitCharLiteral(this);
   }
+
+  @Override
+  public String toString() {
+    return "\'" + getValue() + "\'";
+  }
 }

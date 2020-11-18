@@ -24,4 +24,9 @@ public class Data extends AbstractExpression {
   public Object accept(AstVisitor v) {
     return v.visitData(this);
   }
+
+  @Override
+  public String toString() {
+    return "data " + type.toString();
+  }
 }

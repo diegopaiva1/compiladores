@@ -38,4 +38,10 @@ public class If extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitIf(this);
   }
+
+  @Override
+  public String toString() {
+    return "if (" + expr.toString() + ") " +
+              scopeCmd.toString();
+  }
 }

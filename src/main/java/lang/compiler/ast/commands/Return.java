@@ -30,4 +30,17 @@ public class Return extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitReturn(this);
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("return ");
+
+    for (int i = 0; i < exprs.size(); i++)
+      if (i == exprs.size() - 1)
+        sb.append(exprs.get(i).toString());
+      else
+        sb.append(exprs.get(i).toString() + ", ");
+
+    return sb.toString();
+  }
 }

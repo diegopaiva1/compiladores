@@ -18,4 +18,9 @@ public abstract class AbstractUnaryOperator extends AbstractOperator {
   public void setExpression(AbstractExpression expr) {
     this.expr = expr;
   }
+
+  @Override
+  public String toString() {
+    return getSymbol().toString() + expr.toString();
+  }
 }

@@ -48,4 +48,12 @@ public class IfElse extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitIfElse(this);
   }
+
+  @Override
+  public String toString() {
+    return "if (" + expr.toString() + ") " +
+              ifScopeCmd.toString() +
+           "else " +
+              elseScopeCmd.toString();
+  }
 }

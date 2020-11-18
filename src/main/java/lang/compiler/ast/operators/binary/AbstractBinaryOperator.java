@@ -28,4 +28,9 @@ public abstract class AbstractBinaryOperator extends AbstractOperator {
   public void setRight(AbstractExpression right) {
     this.right = right;
   }
+
+  @Override
+  public String toString() {
+    return left.toString() + " " + getSymbol() + " " + right.toString();
+  }
 }

@@ -32,4 +32,7 @@ public abstract class AbstractExpression {
   }
 
   public abstract Object accept(AstVisitor v);
+
+  @Override
+  public abstract String toString();
 }

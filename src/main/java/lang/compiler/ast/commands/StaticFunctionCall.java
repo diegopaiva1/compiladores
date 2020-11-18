@@ -52,4 +52,27 @@ public class StaticFunctionCall extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitStaticFunctionCall(this);
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder(id.toString() + "(");
+
+    for (int i = 0; i < args.size(); i++)
+      if (i == args.size() - 1)
+        sb.append(args.get(i).toString() + ")");
+      else
+        sb.append(args.get(i).toString() + ", ");
+
+    if (lvalues.size() > 0) {
+      sb.append("<");
+
+      for (int i = 0; i < lvalues.size(); i++)
+        if (i == lvalues.size() - 1)
+          sb.append(lvalues.get(i).toString() + ">");
+        else
+          sb.append(lvalues.get(i).toString() + ", ");
+    }
+
+    return sb.toString();
+  }
 }

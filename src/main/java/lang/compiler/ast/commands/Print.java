@@ -28,4 +28,9 @@ public class Print extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitPrint(this);
   }
+
+  @Override
+  public String toString() {
+    return "print " + expr.toString();
+  }
 }

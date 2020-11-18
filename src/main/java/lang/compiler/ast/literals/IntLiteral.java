@@ -11,4 +11,9 @@ public class IntLiteral extends AbstractLiteral<Integer> {
   public Object accept(AstVisitor v) {
     return v.visitIntLiteral(this);
   }
+
+  @Override
+  public String toString() {
+    return getValue().toString();
+  }
 }

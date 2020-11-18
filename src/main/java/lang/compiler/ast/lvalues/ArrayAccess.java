@@ -48,4 +48,9 @@ public class ArrayAccess extends AbstractLvalue {
   public Identifier getIdentifier() {
     return lvalue.getIdentifier();
   }
+
+  @Override
+  public String toString() {
+    return lvalue.toString() + "[" + expr.toString() + "]";
+  }
 }

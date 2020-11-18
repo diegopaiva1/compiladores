@@ -47,4 +47,9 @@ public class DataIdentifierAccess extends AbstractLvalue {
   public Identifier getIdentifier() {
     return lvalue.getIdentifier();
   }
+
+  @Override
+  public String toString() {
+    return lvalue.toString() + "." + id.toString();
+  }
 }

@@ -11,4 +11,9 @@ public class FloatLiteral extends AbstractLiteral<Float> {
   public Object accept(AstVisitor v) {
     return v.visitFloatLiteral(this);
   }
+
+  @Override
+  public String toString() {
+    return getValue().toString();
+  }
 }

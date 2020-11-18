@@ -23,4 +23,9 @@ public class BalancedParenthesesExpression extends AbstractExpression {
   public Object accept(AstVisitor v) {
     return v.visitBalancedParentheses(this);
   }
+
+  @Override
+  public String toString() {
+    return "(" + expr.toString() + ")";
+  }
 }

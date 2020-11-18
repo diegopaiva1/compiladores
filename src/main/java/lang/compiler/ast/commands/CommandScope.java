@@ -29,4 +29,15 @@ public class CommandScope extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitCommandScope(this);
   }
+
+  @Override
+  public String toString() {
+    String cmdScopeString = "{\n";
+
+    for (AbstractCommand cmd : cmds)
+      cmdScopeString.concat(cmd.toString() + "\n");
+
+    cmdScopeString.concat("}\n");
+    return cmdScopeString;
+  }
 }

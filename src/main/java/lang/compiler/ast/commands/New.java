@@ -39,4 +39,9 @@ public class New extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitNew(this);
   }
+
+  @Override
+  public String toString() {
+    return "new" + type.toString() + "[" + expr.toString() + "]";
+  }
 }

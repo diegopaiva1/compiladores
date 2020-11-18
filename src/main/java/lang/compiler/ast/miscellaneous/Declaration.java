@@ -35,4 +35,9 @@ public class Declaration extends AbstractExpression {
   public Object accept(AstVisitor v) {
     return v.visitDeclaration(this);
   }
+
+  @Override
+  public String toString() {
+    return id.toString() + " :: " + type.toString();
+  }
 }

@@ -59,4 +59,25 @@ public class Function extends AbstractExpression {
   public Object accept(AstVisitor v) {
     return v.visitFunction(this);
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder(id.toString() + "(");
+
+    for (int i = 0; i < params.size(); i++)
+      if (i == params.size() - 1)
+        sb.append(params.get(i).toString() + ")");
+      else
+        sb.append(params.get(i).toString() + ", ");
+
+    sb.append(" : ");
+
+    for (int i = 0; i < returnTypes.size(); i++)
+      if (i == returnTypes.size() - 1)
+        sb.append(returnTypes.get(i).toString());
+      else
+        sb.append(returnTypes.get(i).toString() + ", ");
+
+    return sb.toString();
+  }
 }

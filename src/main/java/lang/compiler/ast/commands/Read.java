@@ -28,4 +28,9 @@ public class Read extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitRead(this);
   }
+
+  @Override
+  public String toString() {
+    return "read " + lvalue.toString();
+  }
 }

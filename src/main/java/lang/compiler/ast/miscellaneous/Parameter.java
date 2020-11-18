@@ -35,4 +35,9 @@ public class Parameter extends AbstractExpression {
   public Object accept(AstVisitor v) {
     return v.visitParameter(this);
   }
+
+  @Override
+  public String toString() {
+    return id.toString() + " :: " + type.toString();
+  }
 }

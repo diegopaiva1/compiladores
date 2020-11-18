@@ -13,4 +13,9 @@ public class NullLiteral extends AbstractLiteral<NullType> {
   public Object accept(AstVisitor v) {
     return v.visitNullLiteral(this);
   }
+
+  @Override
+  public String toString() {
+    return getValue().toString();
+  }
 }

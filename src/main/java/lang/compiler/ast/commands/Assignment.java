@@ -39,4 +39,9 @@ public class Assignment extends AbstractCommand {
   public Object accept(AstVisitor v) {
     return v.visitAssignment(this);
   }
+
+  @Override
+  public String toString() {
+    return lvalue.toString() + " = " + expr.toString();
+  }
 }
