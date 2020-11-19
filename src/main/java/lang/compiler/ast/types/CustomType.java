@@ -27,6 +27,15 @@ public class CustomType extends AbstractType {
     return varsTypes.containsKey(id);
   }
 
+  public List<AbstractType> getAllTypes () {
+    List<AbstractType> types = new ArrayList<>();
+
+    for (AbstractType type : varsTypes.values())
+      types.add(type);
+
+    return types;
+  }
+
   @Override
   public boolean match(AbstractType type) {
     if (type instanceof CustomType) {

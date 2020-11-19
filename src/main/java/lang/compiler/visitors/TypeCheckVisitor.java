@@ -98,34 +98,38 @@ public class TypeCheckVisitor extends AstVisitor {
   public Object visitFunction(Function f) {
     currentEnv = functionsEnv.get(f);
 
-    for (AbstractCommand cmd : f.getCommands()) {
-      Object result = cmd.accept(this);
+    if (!f.getId().getName().equals("main") || f.getParameters().size() == 0) {
+      for (AbstractCommand cmd : f.getCommands()) {
+        Object result = cmd.accept(this);
 
-      if (cmd instanceof Return) {
-        List<AbstractType> returnTypes = (List<AbstractType>) result;
+        if (cmd instanceof Return) {
+          List<AbstractType> returnTypes = (List<AbstractType>) result;
 
-        if (returnTypes.size() == currentEnv.getReturnsTypes().size()) {
-          for (int i = 0; i < returnTypes.size(); i++) {
-            AbstractType actualType = returnTypes.get(i);
-            AbstractType expectedType = currentEnv.getReturnsTypes().get(i);
+          if (returnTypes.size() == currentEnv.getReturnsTypes().size()) {
+            for (int i = 0; i < returnTypes.size(); i++) {
+              AbstractType actualType = returnTypes.get(i);
+              AbstractType expectedType = currentEnv.getReturnsTypes().get(i);
 
-            if (actualType != null && !actualType.match(expectedType)) {
-              errorsLog.get(currentEnv.getName()).add(
-                "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": " +
-                "\"" + ((Return) cmd).getExpressions().get(i).toString() + "\" does not match expected type \""
-                + expectedType.toString() + "\""
-              );
+              if (actualType != null && !actualType.match(expectedType)) {
+                errorsLog.get(currentEnv.getName()).add(
+                  "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": " +
+                  "\"" + ((Return) cmd).getExpressions().get(i).toString() + "\" does not match expected type \""
+                  + expectedType.toString() + "\""
+                );
+              }
             }
           }
-        }
-        else {
-          errorsLog.get(currentEnv.getName()).add(
-            "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Command \"" + cmd.toString() + "\"" +
-            " incompatible with the function definition \"" + f.toString() + "\""
-          );
+          else {
+            errorsLog.get(currentEnv.getName()).add(
+              "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Command \"" + cmd.toString() + "\"" +
+              " incompatible with the function definition \"" + f.toString() + "\""
+            );
+          }
         }
       }
     }
+    else
+      errorsLog.get(currentEnv.getName()).add("Function main can not contain parameters");
 
     return null;
   }
@@ -355,8 +359,20 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitData(Data data) {
-    if (!customTypes.containsKey(data.getType().toString()))
-      customTypes.put(data.getType().toString(), data.getType());
+    boolean hasInvalidType = false;
+    if (!customTypes.containsKey(data.getType().toString())) {
+      for(AbstractType type : data.getType().getAllTypes()) {
+        if (!(type.match(intType) || type.match(floatType) ||
+              type.match(boolType) || type.match(charType))){
+          hasInvalidType = true;
+          errorsLog.get("data").add(
+            data.getLine() + ":" + data.getColumn() + ": Invalid type \"" + type.toString() +
+            "\" found on custom data \"" + data.getType().toString() + "\"");
+        }
+      }
+      if(!hasInvalidType)
+        customTypes.put(data.getType().toString(), data.getType());
+    }
     else
       errorsLog.get("data").add(
         data.getLine() + ":" + data.getColumn() + ": Redefinition of data \"" + data.getType().toString() + "\""
