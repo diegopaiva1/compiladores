@@ -31,7 +31,7 @@ public class ArrayAccess extends AbstractLvalue {
 
   @Override
   public String getLabel() {
-    return "ArrayAccess";
+    return "array";
   }
 
   @Override

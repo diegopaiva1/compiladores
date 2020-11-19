@@ -5,16 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.ast.types.AbstractType;
 
 public class LocalEnvironment {
-  private String name;
+  private Function function;
   private List<AbstractType> paramsTypes;
   private List<AbstractType> returnsTypes;
   private Map<String, AbstractType> varsTypes;
 
-  public LocalEnvironment(String name) {
-    this.name = name;
+  public LocalEnvironment(Function function) {
+    this.function = function;
     this.paramsTypes = new ArrayList<>();
     this.returnsTypes = new ArrayList<>();
     this.varsTypes = new HashMap<>();
@@ -56,11 +57,11 @@ public class LocalEnvironment {
     this.varsTypes = varsTypes;
   }
 
-  public String getName() {
-    return name;
+  public Function getFunction() {
+    return function;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFunction(Function function) {
+    this.function = function;
   }
 }

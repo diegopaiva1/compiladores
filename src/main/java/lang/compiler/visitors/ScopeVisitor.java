@@ -1,10 +1,5 @@
 package lang.compiler.visitors;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
 import lang.compiler.ast.literals.*;
@@ -16,29 +11,13 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public class ScopeVisitor extends AstVisitor {
-  private Map<Function, List<String>> errorsLog;
+  private ErrorLogger logger;
   private Function currentFunction;
   private ScopeTable table;
 
-  public boolean hasErrors() {
-    for (List<String> errors : errorsLog.values())
-      // First line of errors is the header
-      if (errors.size() > 1)
-        return true;
-
-    return false;
-  }
-
-  public void printErrors() {
-    for (List<String> errors : errorsLog.values())
-      if (errors.size() > 1)
-        for (String error : errors)
-          System.err.println(error);
-  }
-
-  public ScopeVisitor() {
-    errorsLog = new LinkedHashMap<>();
-    table = new ScopeTable();
+  public ScopeVisitor(ErrorLogger logger) {
+    this.logger = logger;
+    this.table = new ScopeTable();
   }
 
   @Override
@@ -186,9 +165,7 @@ public class ScopeVisitor extends AstVisitor {
     Object object = table.search(id.getName());
 
     if (object == null)
-      errorsLog.get(currentFunction).add(
-        "\t" + id.getLine() + ":" + id.getColumn() + ": Undefined variable \"" + id.getName() + "\""
-      );
+      logger.addUndefinedLvalueError(currentFunction, id);
 
     return null;
   }
@@ -254,7 +231,9 @@ public class ScopeVisitor extends AstVisitor {
 
   @Override
   public Void visitNew(New newCmd) {
-    newCmd.getExpression().accept(this);
+    if (newCmd.getExpression() != null)
+      newCmd.getExpression().accept(this);
+
     return null;
   }
 
@@ -288,26 +267,11 @@ public class ScopeVisitor extends AstVisitor {
   }
 
   @Override
-  public Boolean visitProgram(Program program) {
-    for (AbstractExpression expr : program.getExpressions()) {
-      if (expr instanceof Function) {
-        Function f = (Function) expr;
+  public Void visitProgram(Program program) {
+    for (Function f : program.getFunctionSet())
+      f.accept(this);
 
-        // Add error log with default header for function
-        List<String> log = new ArrayList<>();
-        log.add("In function \"" + f.toString() + "\":");
-        errorsLog.put(f, log);
-      }
-
-      expr.accept(this);
-    }
-
-    if (hasErrors()) {
-      printErrors();
-      return false;
-    }
-
-    return true;
+    return null;
   }
 
   @Override

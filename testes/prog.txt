@@ -3,6 +3,11 @@ data Ponto {
   y :: Float;
 }
 
+data Ponto {
+  x :: Float;
+  y :: Float;
+}
+
 main() {
   a = 3;
   b = 3;
@@ -17,7 +22,6 @@ main() {
     l = 1;
     print l;
   }
-
 
   if (true) {
     j = 3;

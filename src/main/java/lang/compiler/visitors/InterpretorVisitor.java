@@ -31,24 +31,15 @@ public class InterpretorVisitor extends AstVisitor {
 
   public Object visitProgram(Program program) {
     // Store functions before evaluation
-    for (AbstractExpression expr : program.getExpressions()) {
-      if (expr instanceof Function) {
-        Function f = (Function) expr;
-        functions.put(f.getId().getName(), f);
-      }
-    }
+    for (Function f : program.getFunctionSet())
+      functions.put(f.getId().getName(), f);
 
     if (!functions.containsKey("main"))
       throw new RuntimeException("function main does not exist");
 
-    for (AbstractExpression expr : program.getExpressions()) {
-      if (expr instanceof Function) {
-        Function f = (Function) expr;
-
-        if (f.getId().getName().equals("main"))
-          expr.accept(this);
-      }
-    }
+    for (Function f : program.getFunctionSet())
+      if (f.getId().getName().equals("main"))
+        f.accept(this);
 
     return null;
   }

@@ -30,7 +30,7 @@ public class DataIdentifierAccess extends AbstractLvalue {
 
   @Override
   public String getLabel() {
-    return "DataIdentifierAccess";
+    return "data";
   }
 
   @Override

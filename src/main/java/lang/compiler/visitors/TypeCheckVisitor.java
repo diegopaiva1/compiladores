@@ -2,7 +2,6 @@ package lang.compiler.visitors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,115 +20,77 @@ public class TypeCheckVisitor extends AstVisitor {
   private CharType charType;
   private FloatType floatType;
   private IntType intType;
-  private Map<String, List<String>> errorsLog;
+  private ErrorLogger logger;
   private Map<String, CustomType> customTypes;
   private Map<Function, LocalEnvironment> functionsEnv;
   private LocalEnvironment currentEnv;
 
-  public TypeCheckVisitor() {
-    boolType = new BoolType(0, 0);
-    charType = new CharType(0, 0);
-    floatType = new FloatType(0, 0);
-    intType = new IntType(0, 0);
-    errorsLog = new LinkedHashMap<>();
-    List<String> dataErrors = new ArrayList<>();
-    dataErrors.add("\u26A0");
-    errorsLog.put("data", dataErrors);
-    customTypes = new HashMap<>();
-    functionsEnv = new HashMap<>();
+  public TypeCheckVisitor(ErrorLogger logger) {
+    this.boolType = new BoolType(0, 0);
+    this.charType = new CharType(0, 0);
+    this.floatType = new FloatType(0, 0);
+    this.intType = new IntType(0, 0);
+    this.logger = logger;
+    this.customTypes = new HashMap<>();
+    this.functionsEnv = new HashMap<>();
   }
 
-  public boolean hasErrors() {
-    for (List<String> errors : errorsLog.values())
-      // First line of errors is the header
-      if (errors.size() > 1)
-        return true;
-
-    return false;
-  }
-
-  public void printErrors() {
-    for (List<String> errors : errorsLog.values())
-      if (errors.size() > 1)
-        for (String error : errors)
-          System.err.println(error);
-  }
-
-  public Boolean visitProgram(Program program) {
+  public Void visitProgram(Program program) {
     // Store all functions local environment
-    for (AbstractExpression expr : program.getExpressions()) {
-      if (expr instanceof Function) {
-        Function f = (Function) expr;
-        LocalEnvironment localEnv = new LocalEnvironment(f.getId().getName());
+    for (Function f : program.getFunctionSet()) {
+      LocalEnvironment localEnv = new LocalEnvironment(f);
 
-        for (Parameter param : f.getParameters()) {
-          localEnv.addParameterType(param.getType());
-          localEnv.addVarType(param.getId().getName(), param.getType());
-        }
-
-        for (AbstractType returnType : f.getReturnTypes())
-          localEnv.addReturnType(returnType);
-
-        functionsEnv.put(f, localEnv);
-
-        // Add error log with default header for function
-        List<String> log = new ArrayList<>();
-        log.add("In function \"" + f.getId().getName() + "\":");
-        errorsLog.put(f.getId().getName(), log);
+      for (Parameter param : f.getParameters()) {
+        localEnv.addParameterType(param.getType());
+        localEnv.addVarType(param.getId().getName(), param.getType());
       }
+
+      for (AbstractType returnType : f.getReturnTypes())
+        localEnv.addReturnType(returnType);
+
+      functionsEnv.put(f, localEnv);
     }
 
-    for (AbstractExpression expr : program.getExpressions())
-      if (expr instanceof Data)
-        expr.accept(this);
+    for (Data d : program.getDataSet())
+      d.accept(this);
 
-    for (AbstractExpression expr : program.getExpressions())
-      if (expr instanceof Function)
-        expr.accept(this);
+    for (Function f : program.getFunctionSet())
+      f.accept(this);
 
-    if (hasErrors()) {
-      printErrors();
-      return false;
-    }
-
-    return true;
+    return null;
   }
 
   public Object visitFunction(Function f) {
     currentEnv = functionsEnv.get(f);
 
-    if (!f.getId().getName().equals("main") || f.getParameters().size() == 0) {
-      for (AbstractCommand cmd : f.getCommands()) {
-        Object result = cmd.accept(this);
+    if (f.getId().getName().equals("main") && f.getParameters().size() > 0)
+      logger.addGenericError(f,
+        "\t" + f.getLine() + ":" + f.getColumn() + ": Function \"main\" cannot contain parameters"
+      );
 
-        if (cmd instanceof Return) {
-          List<AbstractType> returnTypes = (List<AbstractType>) result;
+    for (AbstractCommand cmd : f.getCommands()) {
+      Object result = cmd.accept(this);
 
-          if (returnTypes.size() == currentEnv.getReturnsTypes().size()) {
-            for (int i = 0; i < returnTypes.size(); i++) {
-              AbstractType actualType = returnTypes.get(i);
-              AbstractType expectedType = currentEnv.getReturnsTypes().get(i);
+      if (cmd instanceof Return) {
+        List<AbstractType> returnTypes = (List<AbstractType>) result;
 
-              if (actualType != null && !actualType.match(expectedType)) {
-                errorsLog.get(currentEnv.getName()).add(
-                  "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": " +
-                  "\"" + ((Return) cmd).getExpressions().get(i).toString() + "\" does not match expected type \""
-                  + expectedType.toString() + "\""
-                );
-              }
+        if (returnTypes.size() == currentEnv.getReturnsTypes().size()) {
+          for (int i = 0; i < returnTypes.size(); i++) {
+            AbstractType actualType = returnTypes.get(i);
+            AbstractType expectedType = currentEnv.getReturnsTypes().get(i);
+
+            if (actualType != null && !actualType.match(expectedType)) {
+              logger.addInvalidExpressionTypeError(
+                currentEnv.getFunction(), ((Return) cmd).getExpressions().get(i), expectedType
+              );
             }
           }
-          else {
-            errorsLog.get(currentEnv.getName()).add(
-              "\t" + cmd.getLine() + ":" + cmd.getColumn() + ": Command \"" + cmd.toString() + "\"" +
-              " incompatible with the function definition \"" + f.toString() + "\""
-            );
-          }
+        }
+        else {
+          logger.addIncompatibleReturnSizesError(f, (Return) cmd);
         }
       }
     }
-    else
-      errorsLog.get(currentEnv.getName()).add("Function main can not contain parameters");
 
     return null;
   }
@@ -143,11 +104,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + add.getLine() + ":" + add.getColumn() +  ": Binary operator \"" + add.getSymbol() +
-      "\" does not apply to types \"" + leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), add, leftExprType, rightExprType);
     return null;
   }
 
@@ -179,40 +136,22 @@ public class TypeCheckVisitor extends AstVisitor {
     if (leftExprType.match(boolType) && rightExprType.match(boolType))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + and.getLine() + ":" + and.getColumn() +
-      ": Binary operator \"" + and.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), and, leftExprType, rightExprType);
     return null;
   }
 
   @Override
   public Object visitArrayAccess(ArrayAccess arrayAccess) {
-    String name = arrayAccess.getLvalue().getIdentifier().getName();
+    if (arrayAccess.getExpression() instanceof IntLiteral) {
+      AbstractType type = (AbstractType) arrayAccess.getLvalue().accept(this);
 
-    if (currentEnv.getVarsTypes().containsKey(name)) {
-      if (arrayAccess.getExpression() instanceof IntLiteral) {
-        if (arrayAccess.getLvalue().accept(this) instanceof ArrayType)
-          return ((ArrayType) arrayAccess.getLvalue().accept(this)).getType();
-        else
-          errorsLog.get(currentEnv.getName()).add(
-            "\t" + arrayAccess.getLvalue().getLine() + ":" + arrayAccess.getLvalue().getColumn() +
-            ": \"" + arrayAccess.getLvalue().getIdentifier().getName() + "\" is not an Array"
-          );
-      }
-      else {
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + arrayAccess.getExpression().getLine() + ":" + arrayAccess.getExpression().getColumn() +
-          ": Can not determine access index of variable \"" + arrayAccess.getLvalue().getIdentifier().getName() + "\""
-        );
-      }
+      if (type instanceof ArrayType)
+        return ((ArrayType) type).getType();
+      else
+        logger.addUndefinedLvalueError(currentEnv.getFunction(), arrayAccess);
     }
     else {
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + arrayAccess.getLine() + ":" + arrayAccess.getColumn() + ": Undefined variable \"" + name + "\""
-      );
+      logger.addUndefinedIndexError(currentEnv.getFunction(), arrayAccess.getExpression());
     }
 
     return null;
@@ -252,40 +191,20 @@ public class TypeCheckVisitor extends AstVisitor {
       LocalEnvironment localEnv = functionsEnv.get(callee);
       AbstractType indexType = (AbstractType) fCall.getIndex().accept(this);
 
-      if (indexType.match(intType)) {
-        if (fCall.getIndex() instanceof IntLiteral) {
-          IntLiteral index = (IntLiteral) fCall.getIndex();
+      if (indexType.match(intType) && fCall.getIndex() instanceof IntLiteral) {
+        IntLiteral index = (IntLiteral) fCall.getIndex();
 
-          if (index.getValue() < localEnv.getReturnsTypes().size())
-            return localEnv.getReturnsTypes().get(index.getValue());
-          else
-            errorsLog.get(currentEnv.getName()).add(
-              "\t" + index.getLine() + ":" + index.getColumn() +
-              ": Access index of function call must be in range [0," + (localEnv.getReturnsTypes().size() - 1) + "]\n" +
-              "\tsrc: \"" + fCall.toString() + "\""
-            );
-        }
-        else {
-          errorsLog.get(currentEnv.getName()).add(
-            "\t" + fCall.getIndex().getLine() + ":" + fCall.getIndex().getColumn() +
-            ": Cannot determine access index of function call\n" +
-            "\tsrc: \"" + fCall.toString() + "\""
-          );
-        }
+        if (index.getValue() < localEnv.getReturnsTypes().size())
+          return localEnv.getReturnsTypes().get(index.getValue());
+        else
+          logger.addIndexOutOfRangeError(currentEnv.getFunction(), fCall.getIndex());
       }
       else {
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + fCall.getIndex().getLine() + ":" + fCall.getIndex().getColumn() +
-          ": Access index of function call cannot be of type \"" + indexType.toString() + "\"\n" +
-          "\tsrc: \"" + fCall.toString() + "\""
-        );
+        logger.addUndefinedIndexError(currentEnv.getFunction(), fCall.getIndex());
       }
     }
     else {
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-        ": Cannot resolve function call \"" + fCall.toString() + "\""
-      );
+      logger.addInvalidFunctionCallError(currentEnv.getFunction(), fCall);
     }
 
     return null;
@@ -293,37 +212,25 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitAssignment(Assignment assignment) {
-    Identifier lvalueIdentifier = assignment.getLvalue().getIdentifier();
-    AbstractType actualType = (AbstractType) assignment.getExpression().accept(this);
+    AbstractLvalue lvalue = assignment.getLvalue();
+    AbstractType assignedType = (AbstractType) assignment.getExpression().accept(this);
 
-    if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
-      if (assignment.getLvalue() instanceof ArrayAccess || assignment.getLvalue() instanceof DataIdentifierAccess)
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + assignment.getLvalue().getLine() + ":" + assignment.getLvalue().getColumn() +
-          ": Undefined variable \"" + lvalueIdentifier.getName() + "\""
-        );
-      else if (actualType == null)
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + assignment.getLvalue().getLine() + ":" + assignment.getLvalue().getColumn() +
-          ": \"" + lvalueIdentifier.getName() + "\" cannot be declared as value of type \"null\""
+    if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
+      if (lvalue instanceof ArrayAccess || lvalue instanceof DataIdentifierAccess)
+        logger.addUndefinedLvalueError(currentEnv.getFunction(), lvalue.getIdentifier());
+      else if (assignedType == null)
+        logger.addInvalidAssignmentError(
+          currentEnv.getFunction(), assignment, assignedType, (AbstractType) lvalue.accept(this)
         );
       else
-        currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
+        currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), assignedType);
     }
     else {
       AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
 
-      if (actualType != null && !actualType.match(expectedType))
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + assignment.getLine() + ":" + assignment.getColumn() +
-          ": A value of type \"" + actualType.toString() + "\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
-        );
-      else if (actualType == null && !(expectedType instanceof ArrayType || expectedType instanceof CustomType))
-        // null can only be assigned to arrays and custom data types
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + assignment.getLine() + ":" + assignment.getColumn() +
-          ": A value of type \"null\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
-        );
+      if ((assignedType != null && !assignedType.match(expectedType)) ||
+          (assignedType == null && !(expectedType instanceof ArrayType || expectedType instanceof CustomType)))
+        logger.addInvalidAssignmentError(currentEnv.getFunction(), assignment, assignedType, expectedType);
     }
 
     return null;
@@ -365,7 +272,7 @@ public class TypeCheckVisitor extends AstVisitor {
         if (!(type.match(intType) || type.match(floatType) ||
               type.match(boolType) || type.match(charType))){
           hasInvalidType = true;
-          errorsLog.get("data").add(
+          logger.addGenericError(data.getType(),
             data.getLine() + ":" + data.getColumn() + ": Invalid type \"" + type.toString() +
             "\" found on custom data \"" + data.getType().toString() + "\"");
         }
@@ -374,7 +281,7 @@ public class TypeCheckVisitor extends AstVisitor {
         customTypes.put(data.getType().toString(), data.getType());
     }
     else
-      errorsLog.get("data").add(
+      logger.addGenericError(data.getType(),
         data.getLine() + ":" + data.getColumn() + ": Redefinition of data \"" + data.getType().toString() + "\""
       );
 
@@ -384,22 +291,14 @@ public class TypeCheckVisitor extends AstVisitor {
   @Override
   public Object visitDataIdentifierAccess(DataIdentifierAccess dataIdentifierAccess) {
     String name = dataIdentifierAccess.getLvalue().getIdentifier().getName();
+    CustomType customType = (CustomType) currentEnv.getVarsTypes().get(name);
 
-    if (currentEnv.getVarsTypes().containsKey(name)) {
-      CustomType customType = (CustomType) currentEnv.getVarsTypes().get(name);
-
-      if (customType.hasVar(dataIdentifierAccess.getId().getName()))
-        return customType.getVarType(dataIdentifierAccess.getId().getName());
-      else
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
-          ": Variable \"" + name + "\" does not have a property named \"" + dataIdentifierAccess.getId().getName() + "\""
-        );
-    }
+    if (customType.hasVar(dataIdentifierAccess.getId().getName()))
+      return customType.getVarType(dataIdentifierAccess.getId().getName());
     else
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + dataIdentifierAccess.getLvalue().getLine() + ":" + dataIdentifierAccess.getLvalue().getColumn() +
-        ": Undefined variable \"" + name + "\""
+      logger.addGenericError(currentEnv.getFunction(),
+        "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
+        ": Variable \"" + name + "\" does not have a property named \"" + dataIdentifierAccess.getId().getName() + "\""
       );
 
     return null;
@@ -420,12 +319,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + div.getLine() + ":" + div.getColumn() +
-      ": Binary operator \"" + div.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), div, leftExprType, rightExprType);
     return null;
   }
 
@@ -438,12 +332,7 @@ public class TypeCheckVisitor extends AstVisitor {
     if (leftExprType.match(rightExprType))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + eq.getLine() + ":" + eq.getColumn() +
-      ": Binary operator \"" + eq.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), eq, leftExprType, rightExprType);
     return null;
   }
 
@@ -454,15 +343,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitIdentifier(Identifier id) {
-    if (!currentEnv.getVarsTypes().containsKey(id.getName()))
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + id.getLine() + ":" + id.getColumn() +
-        ": Undefined variable \"" + id.getName() + "\""
-      );
-    else
-      return currentEnv.getVarsTypes().get(id.getName());
-
-    return null;
+    return currentEnv.getVarsTypes().get(id.getName());
   }
 
   @Override
@@ -472,10 +353,7 @@ public class TypeCheckVisitor extends AstVisitor {
     if (exprType.match(boolType))
       ifCmd.getScopeCommand().accept(this);
     else
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + ifCmd.getExpression().getLine() + ":" + ifCmd.getExpression().getColumn() +
-        ": \"" + ifCmd.getName() + "\" expression cannot be of type \"" + exprType.toString() + "\""
-      );
+      logger.addInvalidExpressionTypeError(currentEnv.getFunction(), ifCmd.getExpression(), boolType);
 
     return null;
   }
@@ -489,10 +367,7 @@ public class TypeCheckVisitor extends AstVisitor {
       ifElseCmd.getElseScopeCommand().accept(this);
     }
     else {
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + ifElseCmd.getExpression().getLine() + ":" + ifElseCmd.getExpression().getColumn() +
-        ": \"" + ifElseCmd.getName() + "\" expression cannot be of type \"" + exprType.toString() + "\""
-      );
+      logger.addInvalidExpressionTypeError(currentEnv.getFunction(), ifElseCmd.getExpression(), boolType);
     }
 
     return null;
@@ -508,12 +383,9 @@ public class TypeCheckVisitor extends AstVisitor {
     AbstractType exprType = (AbstractType) iterateCmd.getExpression().accept(this);
 
     if (exprType.match(intType))
-      return iterateCmd.getCommand().accept(this);
+      iterateCmd.getCommand().accept(this);
     else
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + iterateCmd.getExpression().getLine() + ":" + iterateCmd.getExpression().getColumn() +
-        ": \"" + iterateCmd.getName() + "\" expression cannot be of type \"" + exprType.toString() + "\""
-      );
+      logger.addInvalidExpressionTypeError(currentEnv.getFunction(), iterateCmd.getExpression(), intType);
 
     return null;
   }
@@ -527,12 +399,7 @@ public class TypeCheckVisitor extends AstVisitor {
         (rightExprType.match(intType) || rightExprType.match(charType)))
       return boolType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + lt.getLine() + ":" + lt.getColumn() +
-      ": Binary operator \"" + lt.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), lt, leftExprType, rightExprType);
     return null;
   }
 
@@ -546,12 +413,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + mod.getLine() + ":" + mod.getColumn() +
-      ": Binary operator \"" + mod.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), mod, leftExprType, rightExprType);
     return null;
   }
 
@@ -565,12 +427,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + mult.getLine() + ":" + mult.getColumn() +
-      ": Binary operator \"" + mult.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), mult, leftExprType, rightExprType);
     return null;
   }
 
@@ -582,37 +439,27 @@ public class TypeCheckVisitor extends AstVisitor {
     if (!exprType.match(boolType) && !exprType.match(charType))
       return exprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + neg.getLine() + ":" + neg.getColumn() +
-      ": Unary operator \"" + neg.getSymbol() + "\" does not apply to type \"" + exprType.toString() + "\""
-    );
-
+    logger.addUnaryOperatorError(currentEnv.getFunction(), neg, exprType);
     return null;
   }
 
   @Override
   public Object visitNew(New newCmd) {
-    if (newCmd.getExpression() instanceof IntLiteral || newCmd.getExpression() == null) {
+    if (newCmd.getExpression() == null || newCmd.getExpression() instanceof IntLiteral) {
       if (newCmd.getType() instanceof CustomType) {
         CustomType customType = customTypes.get(newCmd.getType().toString());
 
         if (customType != null)
           return customType;
         else
-          errorsLog.get(currentEnv.getName()).add(
-            "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
-            ": data \"" + newCmd.getType().toString() + "\" was not defined"
-          );
+          logger.addUndefinedDataError(customType);
       }
       else {
         return newCmd.getType();
       }
     }
     else {
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
-        ": Can not determine size of array declaration"
-      );
+      logger.addUndefinedArraySizeDeclarationError(currentEnv.getFunction(), newCmd.getExpression());
     }
 
     return null;
@@ -626,11 +473,7 @@ public class TypeCheckVisitor extends AstVisitor {
     if (exprType.match(boolType))
       return exprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + not.getLine() + ":" + not.getColumn() +
-      ": Unary operator \"" + not.getSymbol() + "\" does not apply to type \"" + exprType.toString() + "\""
-    );
-
+    logger.addUnaryOperatorError(currentEnv.getFunction(), not, exprType);
     return null;
   }
 
@@ -643,12 +486,7 @@ public class TypeCheckVisitor extends AstVisitor {
     if (leftExprType.match(rightExprType))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + neq.getLine() + ":" + neq.getColumn() +
-      ": Binary operator \"" + neq.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), neq, leftExprType, rightExprType);
     return null;
   }
 
@@ -665,26 +503,20 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitRead(Read readCmd) {
-    Identifier lvalueIdentifier = readCmd.getLvalue().getIdentifier();
-    AbstractType actualType = intType;
+    AbstractLvalue lvalue = readCmd.getLvalue();
+    AbstractType assignedType = intType;
 
-    if (!currentEnv.getVarsTypes().containsKey(lvalueIdentifier.getName())) {
+    if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
       if (readCmd.getLvalue() instanceof ArrayAccess)
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + readCmd.getLvalue().getLine() + ":" + readCmd.getLvalue().getColumn() +
-          ": Undefined variable \"" + lvalueIdentifier.getName() + "\""
-        );
+        logger.addUndefinedLvalueError(currentEnv.getFunction(), lvalue.getIdentifier());
       else
-        currentEnv.getVarsTypes().put(lvalueIdentifier.getName(), actualType);
+        currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), assignedType);
     }
     else {
-      AbstractType expectedType = (AbstractType) readCmd.getLvalue().accept(this);
+      AbstractType lvalueType = (AbstractType) lvalue.accept(this);
 
-      if (actualType != null && !actualType.match(expectedType))
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + readCmd.getLine() + ":" + readCmd.getColumn() +
-          ": A value of type \"" + actualType.toString() + "\" cannot be assigned to an entity of type \"" + expectedType.toString() + "\""
-        );
+      if (assignedType != null && !assignedType.match(lvalueType))
+        logger.addInvalidAssignmentError(currentEnv.getFunction(), readCmd, assignedType, lvalueType);
     }
 
     return null;
@@ -728,45 +560,26 @@ public class TypeCheckVisitor extends AstVisitor {
     if (callee != null) {
       LocalEnvironment localEnv = functionsEnv.get(callee);
 
-      if (fCall.getLvalues().size() == localEnv.getReturnsTypes().size()) {
-        for (int i = 0; i < fCall.getLvalues().size(); i++) {
-          AbstractLvalue lvalue = fCall.getLvalues().get(i);
-          AbstractType expectedType = localEnv.getReturnsTypes().get(i);
+      for (int i = 0; i < fCall.getLvalues().size() && i < localEnv.getReturnsTypes().size(); i++) {
+        AbstractLvalue lvalue = fCall.getLvalues().get(i);
+        AbstractType expectedType = localEnv.getReturnsTypes().get(i);
 
-          if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
-            if (lvalue instanceof ArrayAccess)
-              errorsLog.get(currentEnv.getName()).add(
-                "\t" + lvalue.getLine() + ":" + lvalue.getColumn() +
-                ": Undefined variable \"" + lvalue.getIdentifier().getName() + "\""
-              );
-            else
-              currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), expectedType);
-          }
-          else {
-            AbstractType actualType = (AbstractType) lvalue.accept(this);
-
-            if (!actualType.match(expectedType)) {
-              errorsLog.get(currentEnv.getName()).add(
-                "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-                ": A value of type \"" + expectedType.toString() + "\" cannot be assigned to an entity of type \"" + actualType.toString() + "\""
-              );
-            }
-          }
+        if (!currentEnv.getVarsTypes().containsKey(lvalue.getIdentifier().getName())) {
+          if (lvalue instanceof ArrayAccess)
+            logger.addUndefinedLvalueError(currentEnv.getFunction(), lvalue.getIdentifier());
+          else
+            currentEnv.getVarsTypes().put(lvalue.getIdentifier().getName(), expectedType);
         }
-      }
-      else {
-        errorsLog.get(currentEnv.getName()).add(
-          "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-          ": Number of lvalues of function call \"" + fCall.getId().getName() +
-          "\" incompatible with the function definition"
-        );
+        else {
+          AbstractType actualType = (AbstractType) lvalue.accept(this);
+
+          if (!actualType.match(expectedType))
+            logger.addInvalidAssignmentError(currentEnv.getFunction(), fCall, expectedType, actualType);
+        }
       }
     }
     else {
-      errorsLog.get(currentEnv.getName()).add(
-        "\t" + fCall.getLine() + ":" + fCall.getColumn() +
-        ": Cannot resolve function call \"" + fCall.toString() + "\""
-      );
+      logger.addInvalidFunctionCallError(currentEnv.getFunction(), fCall);
     }
 
     return null;
@@ -782,12 +595,7 @@ public class TypeCheckVisitor extends AstVisitor {
     else if (leftExprType.match(floatType) && (rightExprType.match(intType) || rightExprType.match(floatType)))
       return leftExprType;
 
-    errorsLog.get(currentEnv.getName()).add(
-      "\t" + sub.getLine() + ":" + sub.getColumn() +
-      ": Binary operator \"" + sub.getSymbol() + "\" does not apply to types \"" +
-      leftExprType.toString() + "\" and \"" + rightExprType.toString() + "\""
-    );
-
+    logger.addBinaryOperatorError(currentEnv.getFunction(), sub, leftExprType, rightExprType);
     return null;
   }
 }

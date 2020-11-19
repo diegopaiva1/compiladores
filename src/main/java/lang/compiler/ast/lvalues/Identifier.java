@@ -20,7 +20,7 @@ public class Identifier extends AbstractLvalue {
 
   @Override
   public String getLabel() {
-    return "Identifier";
+    return "identifier";
   }
 
   @Override

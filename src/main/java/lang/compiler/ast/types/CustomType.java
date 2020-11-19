@@ -2,7 +2,6 @@ package lang.compiler.ast.types;
 
 import java.util.*;
 
-import lang.compiler.ast.lvalues.Identifier;
 import lang.compiler.visitors.AstVisitor;
 
 public class CustomType extends AbstractType {

@@ -4,28 +4,42 @@
 
 package lang.compiler.ast;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
+import lang.compiler.ast.miscellaneous.Data;
+import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.visitors.InterpretorVisitor;
 import lang.compiler.visitors.ScopeVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
+  private ErrorLogger logger;
+  private Set<Function> functionSet;
+  private Set<Data> dataSet;
   public boolean isWellTyped;
-  private List<AbstractExpression> exprs;
 
   public Program() {
+    logger = new ErrorLogger();
+    functionSet = new HashSet<>();
+    dataSet = new HashSet<>();
     isWellTyped = false;
-    exprs = new ArrayList<>();
   }
 
-  public void addExpression(AbstractExpression expr) {
-    exprs.add(expr);
+  public void addFunction(Function f) {
+    functionSet.add(f);
   }
 
-  public List<AbstractExpression> getExpressions() {
-    return exprs;
+  public void addData(Data d) {
+    dataSet.add(d);
+  }
+
+  public Set<Function> getFunctionSet() {
+    return functionSet;
+  }
+
+  public Set<Data> getDataSet() {
+    return dataSet;
   }
 
   public void interpret() {
@@ -33,10 +47,17 @@ public class Program {
   }
 
   public void checkTypes() {
-    isWellTyped = new TypeCheckVisitor().visitProgram(this);
+    new ScopeVisitor(logger).visitProgram(this);
+
+    if (logger.isEmpty())
+      new TypeCheckVisitor(logger).visitProgram(this);
+
+    if (!logger.isEmpty())
+      logger.printErrors();
   }
 
   public void checkScopes() {
-    new ScopeVisitor().visitProgram(this);
+    new ScopeVisitor(logger).visitProgram(this);
+    logger.printErrors();
   }
 }
