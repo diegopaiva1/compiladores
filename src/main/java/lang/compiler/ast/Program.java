@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import lang.compiler.visitors.InterpretorVisitor;
+import lang.compiler.visitors.ScopeVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
@@ -33,5 +34,9 @@ public class Program {
 
   public void checkTypes() {
     isWellTyped = new TypeCheckVisitor().visitProgram(this);
+  }
+
+  public void checkScopes() {
+    new ScopeVisitor().visitProgram(this);
   }
 }

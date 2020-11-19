@@ -1,9 +1,54 @@
+data Ponto {
+  x :: Float;
+  y :: Float;
+}
+
 main() {
-  f1(1)<x[0]>;
+  a = 3;
+  b = 3;
+  dummy(a, b)<x, y>;
+  read z;
+  w = 8;
+  my_obj = new Char[-1];
+  my_var = dummy(1, 1)[0];
+  print my_var;
+
+  iterate (w) {
+    l = 1;
+    print l;
+  }
+
+
+  if (true) {
+    j = 3;
+    print j;
+  }
+  else {
+    j = 4;
+    print j;
+  }
+
+  print y;
+
+  {
+    y = 2;
+
+    {
+      a = 10;
+      x = a;
+      print x;
+
+      {
+        z = 4;
+      }
+    }
+
+    print x;
+  }
+
   print x;
 }
 
-f1(x :: Int) : Int {
-  return x;
+dummy(x :: Int, y :: Int) : Int, Int {
+  return a, b;
 }
-

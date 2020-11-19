@@ -66,17 +66,21 @@ public class Function extends AbstractExpression {
 
     for (int i = 0; i < params.size(); i++)
       if (i == params.size() - 1)
-        sb.append(params.get(i).toString() + ")");
+        sb.append(params.get(i).toString());
       else
         sb.append(params.get(i).toString() + ", ");
 
-    sb.append(" : ");
+    sb.append(")");
 
-    for (int i = 0; i < returnTypes.size(); i++)
-      if (i == returnTypes.size() - 1)
-        sb.append(returnTypes.get(i).toString());
-      else
-        sb.append(returnTypes.get(i).toString() + ", ");
+    if (returnTypes.size() > 0) {
+      sb.append(" : ");
+
+      for (int i = 0; i < returnTypes.size(); i++)
+        if (i == returnTypes.size() - 1)
+          sb.append(returnTypes.get(i).toString());
+        else
+          sb.append(returnTypes.get(i).toString() + ", ");
+    }
 
     return sb.toString();
   }

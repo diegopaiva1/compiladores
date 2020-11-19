@@ -74,9 +74,7 @@ public class App {
         prog.checkTypes();
       }
       else if (args[0].equals("-pp")) {
-        // iv = new PPrint();
-        //result.accept(iv);
-        //((PPrint)iv).print();
+        prog.checkScopes();
       }
     } catch (Exception e) {
       e.printStackTrace();
