@@ -101,7 +101,7 @@ public class ScopeVisitor extends AstVisitor {
   }
 
   @Override
-  public Void visitCustomType(CustomType customType) {
+  public Void visitDataType(DataType dataType) {
     return null;
   }
 

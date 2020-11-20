@@ -394,7 +394,7 @@ public class InterpretorVisitor extends AstVisitor {
     return null;
   }
 
-  public Void visitCustomType(CustomType customType) {
+  public Void visitDataType(DataType dataType) {
     return null;
   }
 

@@ -1,7 +1,9 @@
 package lang.compiler.visitors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -60,33 +62,22 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitData(LangParser.DataContext ctx) {
-    CustomType type = new CustomType(
-      ctx.TYPE_NAME().getSymbol().getLine(),
-      ctx.TYPE_NAME().getSymbol().getCharPositionInLine() + 1,
-      ctx.TYPE_NAME().getText()
-    );
+    Map<String, AbstractType> properties = new HashMap<>();
 
-    for (LangParser.DeclContext declCtx : ctx.decl()){
-      Declaration decl = (Declaration) visit(declCtx);
-      type.addVarType(decl.getId().getName(), decl.getType());
+    for (LangParser.DeclContext declCtx : ctx.decl()) {
+      String propertyName = declCtx.ID().getText();
+      AbstractType propertyType = (AbstractType) visit(declCtx.type());
+      properties.put(propertyName, propertyType);
     }
 
-    int line = ctx.getStart().getLine();
-    int column = ctx.getStart().getCharPositionInLine() + 1;
-    return new Data(line, column, type);
-  }
-
-  @Override
-  public AbstractExpression visitDeclaration(LangParser.DeclarationContext ctx) {
-    Identifier id = new Identifier(
-      ctx.ID().getSymbol().getLine(),
-      ctx.ID().getSymbol().getCharPositionInLine() + 1,
-      ctx.ID().getText()
+    DataType type = new DataType(
+      ctx.TYPE_NAME().getSymbol().getLine(),
+      ctx.TYPE_NAME().getSymbol().getCharPositionInLine() + 1,
+      ctx.TYPE_NAME().toString()
     );
-    AbstractType type = (AbstractType) visit(ctx.type());
     int line = ctx.getStart().getLine();
     int column = ctx.getStart().getCharPositionInLine() + 1;
-    return new Declaration(line, column, id, type);
+    return new Data(line, column, type, properties);
   }
 
   @Override
@@ -440,9 +431,9 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
   }
 
   @Override
-  public AbstractExpression visitCustomType(LangParser.CustomTypeContext ctx) {
+  public AbstractExpression visitDataType(LangParser.DataTypeContext ctx) {
     int line = ctx.getStart().getLine();
     int column = ctx.getStart().getCharPositionInLine() + 1;
-    return new CustomType(line, column, ctx.TYPE_NAME().getText());
+    return new DataType(line, column, ctx.TYPE_NAME().getText());
   }
 }

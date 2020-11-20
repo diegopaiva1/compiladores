@@ -5,7 +5,7 @@ prog : data* func* EOF # Program
      ;
 data : 'data' TYPE_NAME '{' decl* '}'
      ;
-decl : ID '::' type ';' # Declaration
+decl : ID '::' type ';'
      ;
 func : ID '(' params? ')' (':' type (',' type)*)? '{' cmd* '}' # Function
      ;
@@ -18,7 +18,7 @@ btype : 'Int'     # IntType
       | 'Char'    # CharType
       | 'Bool'    # BoolType
       | 'Float'   # FloatType
-      | TYPE_NAME # CustomType
+      | TYPE_NAME # DataType
       ;
 cmd : '{' cmd* '}'                                         # CommandScope
     | 'if' '(' exp ')' cmd                                 # If

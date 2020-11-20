@@ -87,7 +87,7 @@ public abstract class AstVisitor {
 
   public abstract Object visitIntType(IntType intType);
 
-  public abstract Object visitCustomType(CustomType customType);
+  public abstract Object visitDataType(DataType dataType);
 
   public abstract Object visitData(Data data);
 

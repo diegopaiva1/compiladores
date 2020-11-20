@@ -49,7 +49,7 @@ public class Program {
     new TypeCheckVisitor(logger).visitProgram(this);
 
     if (!logger.isEmpty()) {
-      logger.printErrors();
+      System.err.println(logger.toString());
       return false;
     }
 
@@ -63,11 +63,11 @@ public class Program {
       new TypeCheckVisitor(logger).visitProgram(this);
 
     if (!logger.isEmpty())
-      logger.printErrors();
+      System.err.println(logger.toString());
   }
 
   public void checkScopes() {
     new ScopeVisitor(logger).visitProgram(this);
-    logger.printErrors();
+    System.err.println(logger.toString());
   }
 }

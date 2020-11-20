@@ -21,7 +21,7 @@ public class TypeCheckVisitor extends AstVisitor {
   private FloatType floatType;
   private IntType intType;
   private ErrorLogger logger;
-  private Map<String, CustomType> customTypes;
+  private Map<String, Data> dataTypes;
   private Map<Function, LocalEnvironment> functionsEnv;
   private LocalEnvironment currentEnv;
 
@@ -31,7 +31,7 @@ public class TypeCheckVisitor extends AstVisitor {
     this.floatType = new FloatType(0, 0);
     this.intType = new IntType(0, 0);
     this.logger = logger;
-    this.customTypes = new HashMap<>();
+    this.dataTypes = new HashMap<>();
     this.functionsEnv = new HashMap<>();
   }
 
@@ -232,7 +232,7 @@ public class TypeCheckVisitor extends AstVisitor {
       AbstractType expectedType = (AbstractType) assignment.getLvalue().accept(this);
 
       if ((assignedType != null && !assignedType.match(expectedType)) ||
-          (assignedType == null && !(expectedType instanceof ArrayType || expectedType instanceof CustomType)))
+          (assignedType == null && !(expectedType instanceof ArrayType || expectedType instanceof DataType)))
         logger.addInvalidAssignmentError(currentEnv.getFunction(), assignment, assignedType, expectedType);
     }
 
@@ -263,30 +263,29 @@ public class TypeCheckVisitor extends AstVisitor {
   }
 
   @Override
-  public Object visitCustomType(CustomType customType) {
+  public Object visitDataType(DataType dataType) {
     return null;
   }
 
   @Override
   public Object visitData(Data data) {
-    boolean hasInvalidType = false;
-    if (!customTypes.containsKey(data.getType().toString())) {
-      for(AbstractType type : data.getType().getAllTypes()) {
-        if (!(type.match(intType) || type.match(floatType) ||
-              type.match(boolType) || type.match(charType))){
-          hasInvalidType = true;
-          logger.addGenericError(data.getType(),
-            data.getLine() + ":" + data.getColumn() + ": Invalid type \"" + type.toString() +
-            "\" found on custom data \"" + data.getType().toString() + "\"");
-        }
+    if (!dataTypes.containsKey(data.getType().toString())) {
+      dataTypes.put(data.getType().toString(), data);
+
+      for (Map.Entry<String, AbstractType> properties : data.getProperties().entrySet()) {
+        String name = properties.getKey();
+        AbstractType type = properties.getValue();
+
+       /* Parser guarantees that properties have one of the primitive types or a user defined type.
+        * Thus we only need to check if in case it's a user defined type it has already been declared.
+        */
+        if (type instanceof DataType && !dataTypes.containsKey(type.toString()))
+          logger.addInvalidPropertyTypeError(data, name, type);
       }
-      if(!hasInvalidType)
-        customTypes.put(data.getType().toString(), data.getType());
     }
-    else
-      logger.addGenericError(data.getType(),
-        data.getLine() + ":" + data.getColumn() + ": Redefinition of data \"" + data.getType().toString() + "\""
-      );
+    else {
+      logger.addDataRedefinitionError(data);
+    }
 
     return null;
   }
@@ -299,14 +298,15 @@ public class TypeCheckVisitor extends AstVisitor {
     while (type instanceof ArrayType)
       type = ((ArrayType) currentEnv.getVarsTypes().get(name)).getType();
 
-    CustomType customType = customTypes.get(type.toString());
+    Data data = dataTypes.get(type.toString());
+    String propertyName = dataIdentifierAccess.getId().getName();
 
-    if (customType.hasVar(dataIdentifierAccess.getId().getName()))
-      return customType.getVarType(dataIdentifierAccess.getId().getName());
+    if (data.getProperties().containsKey(propertyName))
+      return data.getProperties().get(propertyName);
     else
       logger.addGenericError(currentEnv.getFunction(),
         "\t" + dataIdentifierAccess.getLine() + ":" + dataIdentifierAccess.getColumn() +
-        ": Variable \"" + name + "\" does not have a property named \"" + dataIdentifierAccess.getId().getName() + "\""
+        ": Variable \"" + name + "\" does not have a property named \"" + propertyName + "\""
       );
 
     return null;
@@ -454,11 +454,11 @@ public class TypeCheckVisitor extends AstVisitor {
   @Override
   public Object visitNew(New newCmd) {
     if (newCmd.getExpression() == null || newCmd.getExpression() instanceof IntLiteral) {
-      if (newCmd.getType() instanceof CustomType) {
-        CustomType customType = customTypes.get(newCmd.getType().toString());
+      if (newCmd.getType() instanceof DataType) {
+        Data data = dataTypes.get(newCmd.getType().toString());
 
-        if (customType != null)
-          return customType;
+        if (data != null)
+          return data.getType();
         else
           logger.addGenericError(currentEnv.getFunction(),
             "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +

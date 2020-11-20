@@ -1,6 +1,6 @@
 data Ponto {
-    x :: Float;
-    y :: Float;
+    x :: AAA;
+    y :: Ponto;
 }
 
 data Ponto {

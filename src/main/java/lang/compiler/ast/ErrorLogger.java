@@ -14,15 +14,14 @@ import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.ast.operators.binary.AbstractBinaryOperator;
 import lang.compiler.ast.operators.unary.AbstractUnaryOperator;
 import lang.compiler.ast.types.AbstractType;
-import lang.compiler.ast.types.CustomType;
 
 public class ErrorLogger {
   private Map<Function, List<String>> functionsLogs;
-  private Map<CustomType, List<String>> dataLogs;
+  private List<String> dataLogs;
 
   public ErrorLogger() {
     functionsLogs = new LinkedHashMap<>();
-    dataLogs = new LinkedHashMap<>();
+    dataLogs = new ArrayList<>();
   }
 
   public void addBinaryOperatorError(Function caller, AbstractBinaryOperator op,
@@ -146,11 +145,17 @@ public class ErrorLogger {
     functionsLogs.get(caller).add(error);
   }
 
-  public void addGenericError(CustomType data, String error) {
-    if (!dataLogs.containsKey(data))
-      dataLogs.put(data, new ArrayList<String>());
+  public void addInvalidPropertyTypeError(Data data, String propertyName, AbstractType propertyType) {
+    dataLogs.add(
+      data.getLine() + ":" + data.getColumn() +
+      ": Invalid type \"" + propertyType + "\" for property \"" + propertyName + "\""
+    );
+  }
 
-    dataLogs.get(data).add(error);
+  public void addDataRedefinitionError(Data data) {
+    dataLogs.add(
+      data.getLine() + ":" + data.getColumn() + ": Redefinition of data \"" + data.getType().toString() + "\""
+    );
   }
 
   private void addFunctionHeader(Function caller) {
@@ -170,21 +175,20 @@ public class ErrorLogger {
     return functionsLogs.isEmpty() && dataLogs.isEmpty();
   }
 
-  public void printErrors() {
-    System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ERROR(S) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("<<<<<<<<<<<<<<<<<<<<<<<<<< ERROR(S) >>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 
-    for (List<String> errors : dataLogs.values()) {
-      System.out.println();
-
-      for (String error : errors)
-        System.err.println(error);
-    }
+    for (String error : dataLogs)
+      sb.append(error + "\n");
 
     for (List<String> errors : functionsLogs.values()) {
-      System.out.println();
+      sb.append("\n");
 
       for (String error : errors)
-        System.err.println(error);
+        sb.append(error + "\n");
     }
+
+    return sb.toString();
   }
 }
