@@ -3,22 +3,13 @@ data Ponto {
     y :: Float;
 }
 
-data Ponto{
+data Ponto {
 
 }
 
 main(x :: Int) {
     print 3 + false;
-    print 3 && false;
-    print 3 / false;
-    print 3 == false;
-    print 3 < false;
-    print 3 % false;
-    print 3 * false;
-    print 3 != false;
-    print 3 - false;
     print !1;
-    print -true;
     x = true;
     dummy(3);
 

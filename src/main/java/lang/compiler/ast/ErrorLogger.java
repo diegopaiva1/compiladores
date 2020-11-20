@@ -105,7 +105,7 @@ public class ErrorLogger {
 
     functionsLogs.get(caller).add(
       "\t" + sizeExpr.getLine() + ":" + sizeExpr.getColumn() +
-      ": Can not determine size \"" + sizeExpr.toString() + "\" of array declaration"
+      ": Cannot determine size \"" + sizeExpr.toString() + "\" of array declaration"
     );
   }
 
