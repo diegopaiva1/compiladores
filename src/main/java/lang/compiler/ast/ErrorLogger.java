@@ -153,15 +153,6 @@ public class ErrorLogger {
     dataLogs.get(data).add(error);
   }
 
-  public void addUndefinedDataError(CustomType data) {
-    if (!dataLogs.containsKey(data))
-      dataLogs.put(data, new ArrayList<String>());
-
-    dataLogs.get(data).add(
-      "\t" + data.getLine() + ":" + data.getColumn() + ": Undefined data \"" + data.toString() + "\""
-    );
-  }
-
   private void addFunctionHeader(Function caller) {
     List<String> logs = new ArrayList<>();
     logs.add("In function \"" + caller.toString() + "\":");

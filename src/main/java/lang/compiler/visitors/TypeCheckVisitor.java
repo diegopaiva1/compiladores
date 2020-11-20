@@ -68,6 +68,9 @@ public class TypeCheckVisitor extends AstVisitor {
         "\t" + f.getLine() + ":" + f.getColumn() + ": Function \"main\" cannot contain parameters"
       );
 
+    for (Parameter param : f.getParameters())
+      param.accept(this);
+
     for (AbstractCommand cmd : f.getCommands()) {
       Object result = cmd.accept(this);
 
@@ -291,7 +294,12 @@ public class TypeCheckVisitor extends AstVisitor {
   @Override
   public Object visitDataIdentifierAccess(DataIdentifierAccess dataIdentifierAccess) {
     String name = dataIdentifierAccess.getLvalue().getIdentifier().getName();
-    CustomType customType = (CustomType) currentEnv.getVarsTypes().get(name);
+    AbstractType type = currentEnv.getVarsTypes().get(name);
+
+    while (type instanceof ArrayType)
+      type = ((ArrayType) currentEnv.getVarsTypes().get(name)).getType();
+
+    CustomType customType = customTypes.get(type.toString());
 
     if (customType.hasVar(dataIdentifierAccess.getId().getName()))
       return customType.getVarType(dataIdentifierAccess.getId().getName());
@@ -452,7 +460,10 @@ public class TypeCheckVisitor extends AstVisitor {
         if (customType != null)
           return customType;
         else
-          logger.addUndefinedDataError(customType);
+          logger.addGenericError(currentEnv.getFunction(),
+            "\t" + newCmd.getLine() + ":" + newCmd.getColumn() +
+            ": Undefined data \"" + newCmd.getType().toString() + "\""
+          );
       }
       else {
         return newCmd.getType();
@@ -497,7 +508,6 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitParameter(Parameter param) {
-    // TODO Auto-generated method stub
     return null;
   }
 
