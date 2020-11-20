@@ -60,9 +60,7 @@ public class App {
         // result.accept(iv);
       }
       else if (args[0].equals("-ti")) {
-        prog.checkTypes();
-
-        if (prog.isWellTyped) {
+        if (prog.good()) {
           prog.interpret();
         }
         else {
@@ -71,7 +69,10 @@ public class App {
         }
       }
       else if (args[0].equals("-tp")) {
-        prog.checkTypes();
+        if (!prog.good()) {
+          System.err.println("Aborting due to type error(s)");
+          System.exit(1);
+        }
       }
       else if (args[0].equals("-pp")) {
         prog.checkScopes();

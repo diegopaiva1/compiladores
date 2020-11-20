@@ -17,13 +17,11 @@ public class Program {
   private ErrorLogger logger;
   private Set<Function> functionSet;
   private Set<Data> dataSet;
-  public boolean isWellTyped;
 
   public Program() {
     logger = new ErrorLogger();
     functionSet = new HashSet<>();
     dataSet = new HashSet<>();
-    isWellTyped = false;
   }
 
   public void addFunction(Function f) {
@@ -44,6 +42,18 @@ public class Program {
 
   public void interpret() {
     new InterpretorVisitor().visitProgram(this);
+  }
+
+  public boolean good() {
+    new ScopeVisitor(logger).visitProgram(this);
+    new TypeCheckVisitor(logger).visitProgram(this);
+
+    if (!logger.isEmpty()) {
+      logger.printErrors();
+      return false;
+    }
+
+    return true;
   }
 
   public void checkTypes() {

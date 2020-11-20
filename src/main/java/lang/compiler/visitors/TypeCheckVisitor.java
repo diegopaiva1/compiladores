@@ -330,7 +330,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
     // Can only compare expressions of same type
     if (leftExprType.match(rightExprType))
-      return leftExprType;
+      return boolType;
 
     logger.addBinaryOperatorError(currentEnv.getFunction(), eq, leftExprType, rightExprType);
     return null;
@@ -484,7 +484,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
     // Can only compare expressions of same type
     if (leftExprType.match(rightExprType))
-      return leftExprType;
+      return boolType;
 
     logger.addBinaryOperatorError(currentEnv.getFunction(), neq, leftExprType, rightExprType);
     return null;
