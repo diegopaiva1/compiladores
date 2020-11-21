@@ -268,8 +268,25 @@ public class ScopeVisitor extends AstVisitor {
 
   @Override
   public Void visitProgram(Program program) {
-    for (Function f : program.getFunctionSet())
+    int mainFunctionDefinitions = 0;
+
+    for (Function f : program.getFunctionSet()) {
       f.accept(this);
+
+      if (f.getId().getName().equals("main")) {
+        mainFunctionDefinitions++;
+
+        if (mainFunctionDefinitions > 1) {
+          System.err.println("Error: multiple definitions of \"main\" function");
+          System.exit(1);
+        }
+      }
+    }
+
+    if (mainFunctionDefinitions == 0) {
+      System.err.println("Error: \"main\" function not provided");
+      System.exit(1);
+    }
 
     return null;
   }
