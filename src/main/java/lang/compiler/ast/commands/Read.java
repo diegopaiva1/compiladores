@@ -20,11 +20,6 @@ public class Read extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "read";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitRead(this);
   }

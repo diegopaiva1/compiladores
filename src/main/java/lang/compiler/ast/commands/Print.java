@@ -20,11 +20,6 @@ public class Print extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "print";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitPrint(this);
   }

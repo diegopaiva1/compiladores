@@ -31,11 +31,6 @@ public class Assignment extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "assignment";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitAssignment(this);
   }

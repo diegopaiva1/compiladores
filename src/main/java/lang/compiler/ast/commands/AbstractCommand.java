@@ -6,6 +6,4 @@ public abstract class AbstractCommand extends AbstractExpression {
   public AbstractCommand(int line, int column) {
     super(line, column);
   }
-
-  public abstract String getName();
 }

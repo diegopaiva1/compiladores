@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable {
-  protected Map<String, Object> map;
+  private Map<String, Object> map;
 
   public SymbolTable() {
     map = new HashMap<>();

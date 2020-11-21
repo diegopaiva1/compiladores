@@ -22,11 +22,6 @@ public class Return extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "return";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitReturn(this);
   }

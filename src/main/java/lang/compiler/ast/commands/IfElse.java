@@ -40,11 +40,6 @@ public class IfElse extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "if";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitIfElse(this);
   }

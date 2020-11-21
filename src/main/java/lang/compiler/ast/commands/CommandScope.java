@@ -21,11 +21,6 @@ public class CommandScope extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "CmdScope";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitCommandScope(this);
   }

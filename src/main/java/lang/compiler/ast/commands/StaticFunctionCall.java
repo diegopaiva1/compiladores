@@ -44,11 +44,6 @@ public class StaticFunctionCall extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "Static Function Call";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitStaticFunctionCall(this);
   }

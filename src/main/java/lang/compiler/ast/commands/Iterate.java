@@ -30,11 +30,6 @@ public class Iterate extends AbstractCommand {
   }
 
   @Override
-  public String getName() {
-    return "iterate";
-  }
-
-  @Override
   public Object accept(AstVisitor v) {
     return v.visitIterate(this);
   }
