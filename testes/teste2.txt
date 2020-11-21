@@ -1,48 +1,9 @@
-data Ponto {
-    x :: AAA;
-    y :: Ponto;
-}
+main() {
+    x = 3;
 
-data Ponto {
-
-}
-
-main(x :: Int) {
-    print 3 + false;
-    print !1;
-    x = true;
-    dummy(3);
-
-    print x[0];
-    ponto1 = new Int[];
-    ponto1 = null;
-
-    if ((2 + 3) * 4) {
-        print 1;
+    {
+        y = 2;
     }
 
-    if (2) {
-        print 2;
-    }
-    else {
-        print 1;
-    }
-
-    iterate (true) {
-        print true;
-    }
-
-    print dummy(2)[-3];
-    read wz[0];
-
-    dummy(3)<teste[3], a>;
-
-    print x[0];
-    errado = new Int[2 * 4];
-
-    print dummy('c')[0];
-}
-
-dummy(x :: Int) : Int {
-    return 3, x;
+    print y;
 }

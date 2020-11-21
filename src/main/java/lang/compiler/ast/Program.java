@@ -14,14 +14,34 @@ import lang.compiler.visitors.ScopeVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
-  private ErrorLogger logger;
   private Set<Function> functionSet;
   private Set<Data> dataSet;
+  private ErrorLogger logger;
+  private ScopeTable scopeTable;
 
   public Program() {
+    scopeTable = new ScopeTable();
     logger = new ErrorLogger();
     functionSet = new HashSet<>();
     dataSet = new HashSet<>();
+  }
+
+  public void interpret() {
+    new InterpretorVisitor().visitProgram(this);
+  }
+
+  public boolean good() {
+    new ScopeVisitor().visitProgram(this);
+
+    if (logger.isEmpty())
+      new TypeCheckVisitor(logger).visitProgram(this);
+
+    if (!logger.isEmpty()) {
+      System.err.println(logger.toString());
+      return false;
+    }
+
+    return true;
   }
 
   public void addFunction(Function f) {
@@ -40,34 +60,20 @@ public class Program {
     return dataSet;
   }
 
-  public void interpret() {
-    new InterpretorVisitor().visitProgram(this);
+
+  public ErrorLogger getLogger() {
+    return logger;
   }
 
-  public boolean good() {
-    new ScopeVisitor(logger).visitProgram(this);
-    new TypeCheckVisitor(logger).visitProgram(this);
-
-    if (!logger.isEmpty()) {
-      System.err.println(logger.toString());
-      return false;
-    }
-
-    return true;
+  public void setLogger(ErrorLogger logger) {
+    this.logger = logger;
   }
 
-  public void checkTypes() {
-    new ScopeVisitor(logger).visitProgram(this);
-
-    if (logger.isEmpty())
-      new TypeCheckVisitor(logger).visitProgram(this);
-
-    if (!logger.isEmpty())
-      System.err.println(logger.toString());
+  public ScopeTable getScopeTable() {
+    return scopeTable;
   }
 
-  public void checkScopes() {
-    new ScopeVisitor(logger).visitProgram(this);
-    System.err.println(logger.toString());
+  public void setScopeTable(ScopeTable scopeTable) {
+    this.scopeTable = scopeTable;
   }
 }

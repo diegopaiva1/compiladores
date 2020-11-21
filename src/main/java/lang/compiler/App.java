@@ -1,5 +1,7 @@
 package lang.compiler;
 
+import org.stringtemplate.v4.ST;
+
 import lang.compiler.parser.*;
 import lang.compiler.ast.Program;
 
@@ -75,7 +77,9 @@ public class App {
         }
       }
       else if (args[0].equals("-pp")) {
-        prog.checkScopes();
+        ST hello = new ST("Hello, <name>");
+        hello.add("name", "World");
+        System.out.println(hello.render());
       }
     } catch (Exception e) {
       e.printStackTrace();

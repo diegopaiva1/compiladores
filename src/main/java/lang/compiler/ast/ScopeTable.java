@@ -17,41 +17,49 @@ public class ScopeTable {
     return scopeLevel;
   }
 
-  public void setScopeLevel(int scopeLevel) {
-    this.scopeLevel = scopeLevel;
+  public void put(String key, Symbol symbol) {
+    scopes.get(scopeLevel).put(key, symbol);
   }
 
-  public void put(String key, Object object) {
-    scopes.get(scopeLevel).put(key, object);
-  }
-
-  public int push(SymbolTable symbolTable) {
+  public void push(SymbolTable symbolTable) {
     scopes.add(symbolTable);
     scopeLevel++;
-    return scopeLevel;
   }
 
-  public int pop() throws RuntimeException {
+  public void pop() throws RuntimeException {
     if (scopeLevel == 0)
       throw new RuntimeException("Attempted to pop level-0 scope");
 
     scopes.remove(scopeLevel);
     scopeLevel--;
-    return scopeLevel;
   }
 
-  public Object search(String key) {
+  public Symbol search(String key) {
     int level = scopeLevel;
 
     while (level >= 0) {
-      Object object = scopes.get(level).get(key);
+      Symbol symbol = scopes.get(level).lookup(key);
 
-      if (object != null)
-        return object;
+      if (symbol != null)
+        return symbol;
 
       level--;
     }
 
     return null;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+
+    for (int level = 0; level < scopeLevel; level++) {
+      for (int i = 0; i < level; i++)
+        sb.append("\t");
+
+      sb.append(scopes.get(level).toString());
+    }
+
+    return sb.toString();
   }
 }
