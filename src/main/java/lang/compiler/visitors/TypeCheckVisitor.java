@@ -35,7 +35,7 @@ public class TypeCheckVisitor extends AstVisitor {
     this.functionsEnv = new HashMap<>();
   }
 
-  public Void visitProgram(Program program) {
+  public Map<Function, LocalEnvironment> visitProgram(Program program) {
     // Store all functions local environment
     for (Function f : program.getFunctionSet()) {
       LocalEnvironment localEnv = new LocalEnvironment(f);
@@ -57,7 +57,7 @@ public class TypeCheckVisitor extends AstVisitor {
     for (Function f : program.getFunctionSet())
       f.accept(this);
 
-    return null;
+    return functionsEnv;
   }
 
   public Object visitFunction(Function f) {
@@ -71,10 +71,13 @@ public class TypeCheckVisitor extends AstVisitor {
     for (Parameter param : f.getParameters())
       param.accept(this);
 
+    boolean hasReturnCmd = false;
+
     for (AbstractCommand cmd : f.getCommands()) {
       Object result = cmd.accept(this);
 
       if (cmd instanceof Return) {
+        hasReturnCmd = true;
         List<AbstractType> returnTypes = (List<AbstractType>) result;
 
         if (returnTypes.size() == currentEnv.getReturnsTypes().size()) {
@@ -94,6 +97,9 @@ public class TypeCheckVisitor extends AstVisitor {
         }
       }
     }
+
+    if (f.getReturnTypes().size() > 0 && !hasReturnCmd)
+      logger.addNoReturnCommandError(f);
 
     return null;
   }

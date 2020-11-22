@@ -118,6 +118,15 @@ public class ErrorLogger {
     );
   }
 
+  public void addNoReturnCommandError(Function callee) {
+    if (!functionsLogs.containsKey(callee))
+      addFunctionHeader(callee);
+
+    functionsLogs.get(callee).add(
+      "\t" + callee.getLine() + ":" + callee.getColumn() + ": This method must return a result"
+    );
+  }
+
   public void addInvalidFunctionCallError(Function caller, AssignableFunctionCall callee) {
     if (!functionsLogs.containsKey(caller))
       addFunctionHeader(caller);

@@ -1,9 +1,46 @@
-main() {
-    x = 3;
+data Ponto {
+    x :: Int[];
+    y :: Int[];
+}
 
-    {
-        y = 2;
+main() : Int, Int {
+    x = new Int[][];
+    a = new Ponto;
+    b = 2.0;
+    c = 'c';
+    d = true;
+    print 3 + 3;
+    print true && false;
+    print 3/3;
+    print 3 == 3;
+    print 3 < 3;
+    print ((3 % 3) * (4 + 2));
+    print 3 * 3;
+    print 3 != 3;
+    print 3 - 3;
+    print -3;
+    print !true;
+    var = new Int;
+    z1 = dummy(1, 2)[0];
+    z2 = dummy(1, 2)[1];
+    dummy(1, 2)<s1, s2>;
+    return 4, 3;
+}
+
+teste1(ponto :: Ponto, p :: Int, q :: Float) {
+    iterate (3) {
+        print 2;
+        print 3;
     }
 
-    print y;
+    if (true) {
+        print 3;
+    }
+    else {
+        print 4;
+    }
+}
+
+dummy(x :: Int, y :: Int) : Int, Int {
+    return x, y;
 }

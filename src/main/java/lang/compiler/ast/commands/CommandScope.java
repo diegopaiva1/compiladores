@@ -27,12 +27,12 @@ public class CommandScope extends AbstractCommand {
 
   @Override
   public String toString() {
-    String cmdScopeString = "{\n";
+    StringBuilder sb = new StringBuilder("{\n");
 
     for (AbstractCommand cmd : cmds)
-      cmdScopeString.concat(cmd.toString() + "\n");
+      sb.append(cmd.toString() + ";\n");
 
-    cmdScopeString.concat("}\n");
-    return cmdScopeString;
+    sb.append("}\n");
+    return sb.toString();
   }
 }

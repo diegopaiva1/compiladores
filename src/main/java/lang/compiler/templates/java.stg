@@ -1,0 +1,83 @@
+group java;
+
+program(functions, data) ::= <<
+public class Main {
+  <data; separator = "\n\n">
+
+  public static void main(String args[]) {
+
+  }
+
+  <functions; separator = "\n\n">
+}
+>>
+
+function(name, params, cmd, returnType) ::= <<
+public static <returnType> <name>(<params; separator = ", ">) {
+  <cmd; separator = "\n">
+}
+>>
+
+return(value, list, size) ::= <<
+<if(list)>
+Object[] _returnList = new Object[<size>];
+<list; separator = "\n">
+<endif>
+
+return <value>;
+>>
+
+listElement(value, pos) ::= "_returnList[<pos>] = <value>;"
+
+assignment(lvalue, expr) ::= "<lvalue> = <expr>"
+
+lvalue(name) ::= "<name>"
+
+print(expr) ::= "System.out.println(<expr>)"
+
+literal(value) ::= "<value>"
+
+iterate(expr, cmd) ::= <<
+for (int i = 0; i \< <expr>; i++) {
+  <cmd>
+}
+>>
+
+if(expr, ifCmd, elseCmd) ::= <<
+if (<expr>) {
+  <ifCmd>
+}
+<if(elseCmd)>
+else {
+  <elseCmd>
+}
+<endif>
+>>
+
+assignableFunctionCall(id, args, index) ::= <<
+<id>(<args; separator = ", ">)[<index>]
+>>
+
+commandScope(cmds) ::= <<
+<cmds; separator = ";\n">;
+>>
+
+data(name, decls) ::= <<
+public class <name> {
+  <decls; separator = ";\n">;
+}
+>>
+
+decl(type, id) ::= "<type> <id>"
+
+type(name) ::= "<name>"
+
+binaryOperator(leftExpr, symbol, rightExpr) ::= "<leftExpr> <symbol> <rightExpr>"
+
+unaryOperator(symbol, expr) ::= "<symbol><expr>"
+
+new(type, size) ::= "new <type> <if(size)>[<size>]<endif>"
+
+balancedParenthesesExpression(expr) ::= "(<expr>)"
+
+

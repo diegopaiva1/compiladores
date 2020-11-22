@@ -11,10 +11,13 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public class ScopeVisitor extends AstVisitor {
-  private Program program;
+  private ScopeTable table;
+  private ErrorLogger logger;
   private Function currentFunction;
 
-  public ScopeVisitor() {
+  public ScopeVisitor(ErrorLogger logger) {
+    this.logger = logger;
+    this.table = new ScopeTable();
   }
 
   @Override
@@ -52,10 +55,10 @@ public class ScopeVisitor extends AstVisitor {
   @Override
   public Void visitAssignment(Assignment assignment) {
     String key = assignment.getLvalue().getIdentifier().getName();
-    Symbol symbol = program.getScopeTable().search(key);
+    Symbol symbol = table.search(key);
 
     if (symbol == null)
-      program.getScopeTable().put(key, new Symbol());
+      table.put(key, new Symbol());
 
     assignment.getExpression().accept(this);
     return null;
@@ -88,12 +91,12 @@ public class ScopeVisitor extends AstVisitor {
 
   @Override
   public Void visitCommandScope(CommandScope cmdScope) {
-    program.getScopeTable().push(new SymbolTable());
+    table.push(new SymbolTable());
 
     for (AbstractCommand cmd : cmdScope.getCommmands())
       cmd.accept(this);
 
-    program.getScopeTable().pop();
+    table.pop();
     return null;
   }
 
@@ -145,24 +148,24 @@ public class ScopeVisitor extends AstVisitor {
   @Override
   public Void visitFunction(Function f) {
     currentFunction = f;
-    program.getScopeTable().push(new SymbolTable());
+    table.push(new SymbolTable());
 
     for (Parameter param : f.getParameters())
-      program.getScopeTable().put(param.getId().getName(), new Symbol());
+      table.put(param.getId().getName(), new Symbol());
 
     for (AbstractCommand cmd : f.getCommands())
       cmd.accept(this);
 
-    program.getScopeTable().pop();
+    table.pop();
     return null;
   }
 
   @Override
   public Void visitIdentifier(Identifier id) {
-    Symbol symbol = program.getScopeTable().search(id.getName());
+    Symbol symbol = table.search(id.getName());
 
     if (symbol == null)
-      program.getLogger().addUndefinedLvalueError(currentFunction, id);
+      logger.addUndefinedLvalueError(currentFunction, id);
 
     return null;
   }
@@ -265,7 +268,6 @@ public class ScopeVisitor extends AstVisitor {
 
   @Override
   public Void visitProgram(Program program) {
-    this.program = program;
     int mainFunctionDefinitions = 0;
 
     for (Function f : program.getFunctionSet()) {
@@ -293,8 +295,8 @@ public class ScopeVisitor extends AstVisitor {
   public Void visitRead(Read readCmd) {
     String key = readCmd.getLvalue().getIdentifier().getName();
 
-    if (program.getScopeTable().search(key) == null)
-      program.getScopeTable().put(key, new Symbol());
+    if (table.search(key) == null)
+      table.put(key, new Symbol());
 
     readCmd.getLvalue().getIdentifier().accept(this);
     return null;
@@ -316,8 +318,8 @@ public class ScopeVisitor extends AstVisitor {
     for (AbstractLvalue lvalue : fCall.getLvalues()) {
       String key = lvalue.getIdentifier().getName();
 
-      if (program.getScopeTable().search(key) == null)
-        program.getScopeTable().put(key, new Symbol());
+      if (table.search(key) == null)
+        table.put(key, new Symbol());
     }
 
     return null;

@@ -6,10 +6,12 @@ package lang.compiler.ast;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
 
 import lang.compiler.ast.miscellaneous.Data;
 import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.visitors.InterpretorVisitor;
+import lang.compiler.visitors.JavaVisitor;
 import lang.compiler.visitors.ScopeVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
@@ -17,10 +19,8 @@ public class Program {
   private Set<Function> functionSet;
   private Set<Data> dataSet;
   private ErrorLogger logger;
-  private ScopeTable scopeTable;
 
   public Program() {
-    scopeTable = new ScopeTable();
     logger = new ErrorLogger();
     functionSet = new HashSet<>();
     dataSet = new HashSet<>();
@@ -31,10 +31,15 @@ public class Program {
   }
 
   public boolean good() {
-    new ScopeVisitor().visitProgram(this);
+    new ScopeVisitor(logger).visitProgram(this);
 
-    if (logger.isEmpty())
-      new TypeCheckVisitor(logger).visitProgram(this);
+    if (logger.isEmpty()) {
+      Map<Function, LocalEnvironment> map = new TypeCheckVisitor(logger).visitProgram(this);
+
+      if (logger.isEmpty()) {
+        new JavaVisitor(map).visitProgram(this);
+      }
+    }
 
     if (!logger.isEmpty()) {
       System.err.println(logger.toString());
@@ -60,20 +65,11 @@ public class Program {
     return dataSet;
   }
 
-
   public ErrorLogger getLogger() {
     return logger;
   }
 
   public void setLogger(ErrorLogger logger) {
     this.logger = logger;
-  }
-
-  public ScopeTable getScopeTable() {
-    return scopeTable;
-  }
-
-  public void setScopeTable(ScopeTable scopeTable) {
-    this.scopeTable = scopeTable;
   }
 }
