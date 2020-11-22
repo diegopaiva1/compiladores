@@ -4,10 +4,6 @@ program(functions, data) ::= <<
 public class Main {
   <data; separator = "\n\n">
 
-  public static void main(String args[]) {
-
-  }
-
   <functions; separator = "\n\n">
 }
 >>
@@ -21,13 +17,13 @@ public static <returnType> <name>(<params; separator = ", ">) {
 return(value, list, size) ::= <<
 <if(list)>
 Object[] _returnList = new Object[<size>];
-<list; separator = "\n">
+<list; separator = ";\n">;
 <endif>
 
-return <value>;
+return <value>
 >>
 
-listElement(value, pos) ::= "_returnList[<pos>] = <value>;"
+listElement(value, pos) ::= "_returnList[<pos>] = <value>"
 
 assignment(lvalue, expr) ::= "<lvalue> = <expr>"
 
@@ -50,8 +46,7 @@ if (<expr>) {
 <if(elseCmd)>
 else {
   <elseCmd>
-}
-<endif>
+}<endif>
 >>
 
 assignableFunctionCall(id, args, index) ::= <<
@@ -76,8 +71,6 @@ binaryOperator(leftExpr, symbol, rightExpr) ::= "<leftExpr> <symbol> <rightExpr>
 
 unaryOperator(symbol, expr) ::= "<symbol><expr>"
 
-new(type, size) ::= "new <type> <if(size)>[<size>]<endif>"
+new(type, size) ::= "new <type><if(size)>[<size>]<endif>"
 
 balancedParenthesesExpression(expr) ::= "(<expr>)"
-
-

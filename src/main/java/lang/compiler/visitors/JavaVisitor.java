@@ -183,15 +183,27 @@ public class JavaVisitor extends AstVisitor {
     else // f.getReturnsTypes().size() > 1
       template.add("returnType", "Object[]");
 
-    for (Parameter param : f.getParameters()) {
+    if (f.getId().getName().equals("main")) {
       ST declTemplate = groupTemplate.getInstanceOf("decl");
-      declTemplate.add("type", param.getType().accept(this));
-      declTemplate.add("id", param.getId().accept(this));
+      declTemplate.add("type", "String[]");
+      declTemplate.add("id", "args");
       template.add("params", declTemplate);
     }
+    else {
+      for (Parameter param : f.getParameters()) {
+        ST declTemplate = groupTemplate.getInstanceOf("decl");
+        declTemplate.add("type", param.getType().accept(this));
+        declTemplate.add("id", param.getId().accept(this));
+        template.add("params", declTemplate);
+      }
+    }
 
-    for (AbstractCommand cmd : f.getCommands())
-      template.add("cmd", cmd.accept(this));
+    for (AbstractCommand cmd : f.getCommands()) {
+      if (cmd instanceof If || cmd instanceof IfElse || cmd instanceof Iterate)
+        template.add("cmd", cmd.accept(this));
+      else
+        template.add("cmd", new ST("<cmd>;").add("cmd", cmd.accept(this)));
+    }
 
     return template;
   }
@@ -278,6 +290,13 @@ public class JavaVisitor extends AstVisitor {
 
     if (newCmd.getExpression() != null)
       template.add("size", newCmd.getExpression().accept(this));
+
+      //var = new int; -> int x;
+      //int[] var1 = new int[];
+      //var3 = new Ponto;
+      //var4 = new Ponto[];
+      //var5 = new Int[][][];
+      //int[][][] var1 = new int[][][1];
 
     return template;
   }

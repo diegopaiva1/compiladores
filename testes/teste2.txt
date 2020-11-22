@@ -1,10 +1,9 @@
 data Ponto {
-    x :: Int[];
-    y :: Int[];
+    x :: Int;
+    y :: Int;
 }
 
-main() : Int, Int {
-    x = new Int[][];
+main() {
     a = new Ponto;
     b = 2.0;
     c = 'c';
@@ -20,11 +19,18 @@ main() : Int, Int {
     print 3 - 3;
     print -3;
     print !true;
-    var = new Int;
     z1 = dummy(1, 2)[0];
     z2 = dummy(1, 2)[1];
-    dummy(1, 2)<s1, s2>;
-    return 4, 3;
+
+    var = new Int;
+    var1 = new Int[];
+    var3 = new Ponto;
+    var4 = new Ponto[];
+    x = new Int[][][];
+    x1 = new Int[][][4];
+
+    var2 = new Int[3];
+    var5 = new Ponto[4];
 }
 
 teste1(ponto :: Ponto, p :: Int, q :: Float) {
