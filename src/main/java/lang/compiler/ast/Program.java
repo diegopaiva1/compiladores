@@ -17,10 +17,10 @@ public class Program {
   private Set<Function> functionSet;
   private Set<Data> dataSet;
   private ErrorLogger logger;
-  private ScopeTable scopeTable;
+  private SymbolTable symbolTable;
 
   public Program() {
-    scopeTable = new ScopeTable();
+    symbolTable = new SymbolTable();
     logger = new ErrorLogger();
     functionSet = new HashSet<>();
     dataSet = new HashSet<>();
@@ -32,6 +32,7 @@ public class Program {
 
   public boolean good() {
     new ScopeVisitor().visitProgram(this);
+    System.out.println(symbolTable.toString());
 
     if (logger.isEmpty())
       new TypeCheckVisitor(logger).visitProgram(this);
@@ -60,20 +61,11 @@ public class Program {
     return dataSet;
   }
 
-
   public ErrorLogger getLogger() {
     return logger;
   }
 
-  public void setLogger(ErrorLogger logger) {
-    this.logger = logger;
-  }
-
-  public ScopeTable getScopeTable() {
-    return scopeTable;
-  }
-
-  public void setScopeTable(ScopeTable scopeTable) {
-    this.scopeTable = scopeTable;
+  public SymbolTable getSymbolTable() {
+    return symbolTable;
   }
 }

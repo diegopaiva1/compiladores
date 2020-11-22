@@ -1,65 +1,70 @@
-package lang.compiler.ast;
+// package lang.compiler.ast;
 
-import java.util.ArrayList;
-import java.util.List;
+// import java.util.ArrayList;
+// import java.util.List;
 
-public class ScopeTable {
-  private int scopeLevel;
-  private List<SymbolTable> scopes;
+// public class ScopeTable {
+//   private int scopeLevel;
+//   private List<SymbolTable> scopes;
 
-  public ScopeTable() {
-    scopeLevel = 0;
-    scopes = new ArrayList<>();
-    scopes.add(new SymbolTable());
-  }
+//   public ScopeTable() {
+//     scopeLevel = 0;
+//     scopes = new ArrayList<>();
+//     scopes.add(new SymbolTable());
+//   }
 
-  public int getScopeLevel() {
-    return scopeLevel;
-  }
+//   public ScopeTable(ScopeTable another) {
+//     this.scopeLevel = another.scopeLevel;
+//     this.scopes = another.scopes;
+//   }
 
-  public void put(String key, Symbol symbol) {
-    scopes.get(scopeLevel).put(key, symbol);
-  }
+//   public int getScopeLevel() {
+//     return scopeLevel;
+//   }
 
-  public void push(SymbolTable symbolTable) {
-    scopes.add(symbolTable);
-    scopeLevel++;
-  }
+//   public void put(String key, Symbol symbol) {
+//     scopes.get(scopeLevel).put(key, symbol);
+//   }
 
-  public void pop() throws RuntimeException {
-    if (scopeLevel == 0)
-      throw new RuntimeException("Attempted to pop level-0 scope");
+//   public void push(SymbolTable symbolTable) {
+//     scopes.add(symbolTable);
+//     scopeLevel++;
+//   }
 
-    scopes.remove(scopeLevel);
-    scopeLevel--;
-  }
+//   public void pop() throws RuntimeException {
+//     if (scopeLevel == 0)
+//       throw new RuntimeException("Attempted to pop level-0 scope");
 
-  public Symbol search(String key) {
-    int level = scopeLevel;
+//     scopes.remove(scopeLevel);
+//     scopeLevel--;
+//   }
 
-    while (level >= 0) {
-      Symbol symbol = scopes.get(level).lookup(key);
+//   public Symbol search(String key) {
+//     int level = scopeLevel;
 
-      if (symbol != null)
-        return symbol;
+//     while (level >= 0) {
+//       Symbol symbol = scopes.get(level).lookup(key);
 
-      level--;
-    }
+//       if (symbol != null)
+//         return symbol;
 
-    return null;
-  }
+//       level--;
+//     }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
+//     return null;
+//   }
 
-    for (int level = 0; level < scopeLevel; level++) {
-      for (int i = 0; i < level; i++)
-        sb.append("\t");
+//   @Override
+//   public String toString() {
+//     StringBuilder sb = new StringBuilder();
 
-      sb.append(scopes.get(level).toString());
-    }
+//     for (int level = 0; level < scopeLevel; level++) {
+//       for (int i = 0; i < level; i++)
+//         sb.append("\t");
 
-    return sb.toString();
-  }
-}
+//       sb.append(scopes.get(level).toString());
+//     }
+
+//     return sb.toString();
+//   }
+// }

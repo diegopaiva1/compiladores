@@ -1,9 +1,46 @@
+data Ponto {
+    x :: Float;
+    y :: Float;
+}
+
 main() {
     x = 3;
+    b = 4;
 
     {
-        y = 2;
+        c = 2;
+
+        {
+            d = 4;
+
+            {
+                e = 5;
+            }
+        }
     }
 
-    print y;
+    print a;
+}
+
+teste1() {
+    x = 2;
+
+    {
+        y = 3;
+
+        {
+            z = 4;
+        }
+    }
+}
+
+
+teste2() {
+    if (true) {
+        x = 4;
+        print x;
+    }
+    else {
+        print x;
+    }
 }
