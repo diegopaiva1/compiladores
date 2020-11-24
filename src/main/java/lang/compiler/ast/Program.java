@@ -5,6 +5,7 @@
 package lang.compiler.ast;
 
 import java.util.Set;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -12,15 +13,16 @@ import lang.compiler.ast.miscellaneous.Data;
 import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.visitors.InterpretorVisitor;
 import lang.compiler.visitors.JavaVisitor;
-import lang.compiler.visitors.ScopeVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
   private Set<Function> functionSet;
   private Set<Data> dataSet;
   private ErrorLogger logger;
+  private Map<Function, ScopeTable> env;
 
   public Program() {
+    env = new HashMap<>();
     logger = new ErrorLogger();
     functionSet = new HashSet<>();
     dataSet = new HashSet<>();
@@ -31,14 +33,11 @@ public class Program {
   }
 
   public boolean good() {
-    new ScopeVisitor(logger).visitProgram(this);
+    // new ScopeVisitor(logger).visitProgram(this);
+    new TypeCheckVisitor().visitProgram(this);
 
     if (logger.isEmpty()) {
-      Map<Function, LocalEnvironment> map = new TypeCheckVisitor(logger).visitProgram(this);
-
-      if (logger.isEmpty()) {
-        new JavaVisitor(map).visitProgram(this);
-      }
+      new JavaVisitor().visitProgram(this);
     }
 
     if (!logger.isEmpty()) {
@@ -71,5 +70,9 @@ public class Program {
 
   public void setLogger(ErrorLogger logger) {
     this.logger = logger;
+  }
+
+  public Map<Function, ScopeTable> getEnv() {
+    return env;
   }
 }

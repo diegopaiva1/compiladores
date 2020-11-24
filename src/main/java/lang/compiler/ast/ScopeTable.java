@@ -30,20 +30,16 @@ public class ScopeTable {
     if (scopeLevel == 0)
       throw new RuntimeException("Attempted to pop level-0 scope");
 
-    scopes.remove(scopeLevel);
+    //scopes.remove(scopeLevel);
     scopeLevel--;
   }
 
   public Symbol search(String key) {
-    int level = scopeLevel;
-
-    while (level >= 0) {
+    for (int level = scopeLevel; level >= 0; level--) {
       Symbol symbol = scopes.get(level).lookup(key);
 
       if (symbol != null)
         return symbol;
-
-      level--;
     }
 
     return null;

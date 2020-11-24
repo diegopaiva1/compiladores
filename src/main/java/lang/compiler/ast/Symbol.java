@@ -8,6 +8,10 @@ public class Symbol {
   public Symbol() {
   }
 
+  public Symbol(AbstractType type) {
+    this.type = type;
+  }
+
   public AbstractType getType() {
     return type;
   }

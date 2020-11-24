@@ -4,49 +4,10 @@ data Ponto {
 }
 
 main() {
-    a = new Ponto;
-    b = 2.0;
-    c = 'c';
-    d = true;
-    print 3 + 3;
-    print true && false;
-    print 3/3;
-    print 3 == 3;
-    print 3 < 3;
-    print ((3 % 3) * (4 + 2));
-    print 3 * 3;
-    print 3 != 3;
-    print 3 - 3;
-    print -3;
-    print !true;
-    z1 = dummy(1, 2)[0];
-    z2 = dummy(1, 2)[1];
-
-    var = new Int;
-    var1 = new Int[];
-    var3 = new Ponto;
-    var4 = new Ponto[];
-    x = new Int[][][];
-    x1 = new Int[][][4];
-
-    var2 = new Int[3];
-    var5 = new Ponto[4];
-}
-
-teste1(ponto :: Ponto, p :: Int, q :: Float) {
-    iterate (3) {
-        print 2;
-        print 3;
+    {
+        y = true;
     }
-
-    if (true) {
-        print 3;
+    {
+        y = 3;
     }
-    else {
-        print 4;
-    }
-}
-
-dummy(x :: Int, y :: Int) : Int, Int {
-    return x, y;
 }

@@ -17,11 +17,9 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public class JavaVisitor extends AstVisitor {
-  private Map<Function, LocalEnvironment> map;
   private STGroup groupTemplate;
 
-  public JavaVisitor(Map<Function, LocalEnvironment> map) {
-    this.map = map;
+  public JavaVisitor() {
     this.groupTemplate = new STGroupFile("src/main/java/lang/compiler/templates/java.stg");
   }
 
