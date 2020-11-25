@@ -203,7 +203,7 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitFloatLiteral(FloatLiteral f) {
-    return groupTemplate.getInstanceOf("literal").add("value", f.getValue());
+    return groupTemplate.getInstanceOf("literal").add("value", f.getValue() + "f");
   }
 
   @Override
