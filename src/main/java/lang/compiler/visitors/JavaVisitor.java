@@ -447,8 +447,50 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitStaticFunctionCall(StaticFunctionCall fCall) {
-    // TODO Auto-generated method stub
-    return null;
+    ST template = groupTemplate.getInstanceOf("staticFunctionCall");
+
+    // Java visitor will be executed after we ensured callee is valid
+    Function callee = null;
+
+    for (Function f : program.getFunctionSet()) {
+      if (f.getId().getName().equals(fCall.getId().getName())) {
+        if (fCall.getArgs().size() == f.getParameters().size()) {
+          boolean match = true;
+
+          // Check parameters compatibility
+          for (int i = 0; i < f.getParameters().size(); i++) {
+            AbstractType argType = (AbstractType) currentScope.search(fCall.getArgs().get(i).toString());
+            AbstractType parameterType = (AbstractType) f.getParameters().get(i).getType();
+
+            // Incompatible types
+            if (argType != null && !argType.match(parameterType))
+              match = false;
+          }
+
+          if (match)
+            callee = f;
+        }
+      }
+    }
+
+    for (int i = 0; i < fCall.getLvalues().size(); i++) {
+      AbstractLvalue lvalue = fCall.getLvalues().get(i);
+      ST assignmentTemplate = groupTemplate.getInstanceOf("assignment");
+      assignmentTemplate.add("lvalue", lvalue.accept(this));
+
+      ST assignableFunctionCallTemplate = groupTemplate.getInstanceOf("assignableFunctionCall");
+      assignableFunctionCallTemplate.add("type", callee.getReturnTypes().get(i).accept(this));
+      assignableFunctionCallTemplate.add("id", fCall.getId().accept(this));
+
+      for (AbstractExpression arg : fCall.getArgs())
+        assignableFunctionCallTemplate.add("args", arg);
+
+      assignableFunctionCallTemplate.add("index", i);
+      assignmentTemplate.add("expr", assignableFunctionCallTemplate);
+      template.add("assignments", assignmentTemplate);
+    }
+
+    return template;
   }
 
   @Override

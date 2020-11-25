@@ -29,6 +29,10 @@ listElement(value, pos) ::= "_returnList[<pos>] = <value>"
 
 assignment(lvalue, expr) ::= "<lvalue> = <expr>"
 
+staticFunctionCall(id, args, assignments) ::= <<
+<assignments; separator = "\n">
+>>
+
 lvalue(name) ::= "<name>"
 
 print(expr) ::= "System.out.println(<expr>)"
