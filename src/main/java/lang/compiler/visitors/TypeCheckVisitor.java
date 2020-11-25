@@ -16,6 +16,7 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public class TypeCheckVisitor extends AstVisitor {
+  private boolean hasReturnCmd;
   private Program program;
   private BoolType boolType;
   private CharType charType;
@@ -26,6 +27,7 @@ public class TypeCheckVisitor extends AstVisitor {
   private Scope currentScope;
 
   public TypeCheckVisitor() {
+    this.hasReturnCmd = false;
     this.boolType = new BoolType(0, 0);
     this.charType = new CharType(0, 0);
     this.errorType = new ErrorType(0, 0);
@@ -58,13 +60,10 @@ public class TypeCheckVisitor extends AstVisitor {
         "\t" + f.getLine() + ":" + f.getColumn() + ": Function \"main\" cannot contain parameters"
       );
 
-    boolean hasReturnCmd = false;
-
     for (AbstractCommand cmd : f.getCommands()) {
       Object result = cmd.accept(this);
 
       if (cmd instanceof Return) {
-        hasReturnCmd = true;
         List<AbstractType> returnTypes = (List<AbstractType>) result;
 
         if (returnTypes.size() == f.getReturnTypes().size()) {
@@ -540,6 +539,7 @@ public class TypeCheckVisitor extends AstVisitor {
 
   @Override
   public Object visitReturn(Return returnCmd) {
+    hasReturnCmd = true;
     List<AbstractType> returnTypes = new ArrayList<>();
 
     for (AbstractExpression expr : returnCmd.getExpressions())
