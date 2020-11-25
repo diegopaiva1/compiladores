@@ -23,7 +23,7 @@ public class LangParseAdaptor implements ParseAdaptor {
 
       if (langParser.getNumberOfSyntaxErrors() == 0) {
         // Convert parse tree into Program object
-        Program prog = new ProgramVisitor().visit(cst);
+        Program prog = new ProgramVisitor(path).visit(cst);
         return prog;
       }
     } catch (IOException e) {

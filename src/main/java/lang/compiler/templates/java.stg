@@ -1,9 +1,9 @@
 group java;
 
-program(functions, data) ::= <<
+program(className, functions, data) ::= <<
 import java.util.*;
 
-public class Main {
+public class <className> {
   <data; separator = "\n\n">
 
   <functions; separator = "\n\n">
@@ -55,7 +55,7 @@ else
 >>
 
 assignableFunctionCall(type, id, args, index) ::= <<
-<type> <id>(<args; separator = ", ">)<if(index)>[<index>]<endif>
+(<type>) <id>(<args; separator = ", ">)<if(index)>[<index>]<endif>
 >>
 
 commandScope(decls, cmds) ::= <<

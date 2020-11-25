@@ -15,14 +15,16 @@ import lang.compiler.visitors.JavaVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {
+  private String fileName;
   private Set<Function> functionSet;
   private Set<Data> dataSet;
   private ErrorLogger logger;
 
-  public Program() {
-    logger = new ErrorLogger();
-    functionSet = new HashSet<>();
-    dataSet = new HashSet<>();
+  public Program(String fileName) {
+    this.fileName = fileName;
+    this.logger = new ErrorLogger();
+    this.functionSet = new HashSet<>();
+    this.dataSet = new HashSet<>();
   }
 
   public void interpret() {
@@ -68,5 +70,9 @@ public class Program {
 
   public void setLogger(ErrorLogger logger) {
     this.logger = logger;
+  }
+
+  public String getFileName() {
+    return fileName;
   }
 }

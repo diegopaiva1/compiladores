@@ -8,6 +8,7 @@ import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+import org.apache.commons.lang3.StringUtils;
 
 import lang.compiler.ast.*;
 import lang.compiler.ast.commands.*;
@@ -20,6 +21,8 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public class JavaVisitor extends AstVisitor {
+  private Program program;
+  private Scope currentScope;
   private STGroup groupTemplate;
 
   public JavaVisitor() {
@@ -57,6 +60,33 @@ public class JavaVisitor extends AstVisitor {
   @Override
   public Object visitAssignableFunctionCall(AssignableFunctionCall fCall) {
     ST template = groupTemplate.getInstanceOf("assignableFunctionCall");
+
+    // Java visitor will be executed after we ensured callee is valid and index is a IntLiteral
+    Function callee = null;
+    int index = ((IntLiteral) fCall.getIndex()).getValue();
+
+    for (Function f : program.getFunctionSet()) {
+      if (f.getId().getName().equals(fCall.getId().getName())) {
+        if (fCall.getArgs().size() == f.getParameters().size()) {
+          boolean match = true;
+
+          // Check parameters compatibility
+          for (int i = 0; i < f.getParameters().size(); i++) {
+            AbstractType argType = (AbstractType) currentScope.search(fCall.getArgs().get(i).toString());
+            AbstractType parameterType = (AbstractType) f.getParameters().get(i).getType();
+
+            // Incompatible types
+            if (argType != null && !argType.match(parameterType))
+              match = false;
+          }
+
+          if (match)
+            callee = f;
+        }
+      }
+    }
+
+    template.add("type", callee.getReturnTypes().get(index).accept(this));
     template.add("id", fCall.getId().accept(this));
 
     for (AbstractExpression expr : fCall.getArgs())
@@ -103,6 +133,7 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitCommandScope(CommandScope cmdScope) {
+    currentScope = cmdScope.getScope();
     ST template = groupTemplate.getInstanceOf("commandScope");
 
     for (Map.Entry<String, AbstractType> decl : cmdScope.getScope().getSymbolTable().entrySet()) {
@@ -115,6 +146,7 @@ public class JavaVisitor extends AstVisitor {
     for (AbstractCommand cmd : cmdScope.getCommands())
       template.add("cmds", cmd.accept(this));
 
+    currentScope = currentScope.getFather();
     return template;
   }
 
@@ -181,6 +213,7 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitFunction(Function f) {
+    currentScope = f.getScope();
     ST template = groupTemplate.getInstanceOf("function");
     template.add("name", f.getId().getName());
 
@@ -363,7 +396,17 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitProgram(Program program) {
+    this.program = program;
     ST template = groupTemplate.getInstanceOf("program");
+    String className = program.getFileName();
+
+    if (className.contains("/"))
+      className = StringUtils.substringBetween(className, "/", ".");
+    else
+      className = className.substring(0, className.lastIndexOf('.'));
+
+    className = StringUtils.capitalize(className.toLowerCase());
+    template.add("className", className);
 
     for (Data d : program.getDataSet())
       template.add("data", d.accept(this));
@@ -371,7 +414,7 @@ public class JavaVisitor extends AstVisitor {
     for (Function f : program.getFunctionSet())
       template.add("functions", f.accept(this));
 
-    try (PrintStream out = new PrintStream(new FileOutputStream("target/generated-sources/code.java"))) {
+    try (PrintStream out = new PrintStream(new FileOutputStream("target/generated-sources/" + className + ".java"))) {
         out.print(template.render());
     }
     catch (FileNotFoundException e) {

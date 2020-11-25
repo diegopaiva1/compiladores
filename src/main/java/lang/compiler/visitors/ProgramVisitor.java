@@ -8,9 +8,15 @@ import lang.compiler.LangBaseVisitor;
 import lang.compiler.LangParser;
 
 public class ProgramVisitor extends LangBaseVisitor<Program> {
+  private String fileName;
+
+  public ProgramVisitor(String fileName) {
+    this.fileName = fileName;
+  }
+
   @Override
   public Program visitProgram(LangParser.ProgramContext ctx) {
-    Program prog = new Program();
+    Program prog = new Program(fileName);
     BuildAstVisitor visitor = new BuildAstVisitor();
 
     for (int i = 0; i < ctx.getChildCount() - 1 /* -1 to exclude EOF */; i++) {
