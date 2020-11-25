@@ -2,9 +2,11 @@ package lang.compiler.ast.commands;
 
 import java.util.List;
 
+import lang.compiler.ast.Scope;
 import lang.compiler.visitors.AstVisitor;
 
 public class CommandScope extends AbstractCommand {
+  private Scope scope;
   private List<AbstractCommand> cmds;
 
   public CommandScope(int line, int column, List<AbstractCommand> cmds) {
@@ -12,7 +14,7 @@ public class CommandScope extends AbstractCommand {
     this.cmds = cmds;
   }
 
-  public List<AbstractCommand> getCommmands() {
+  public List<AbstractCommand> getCommands() {
     return cmds;
   }
 
@@ -34,5 +36,13 @@ public class CommandScope extends AbstractCommand {
 
     sb.append("}\n");
     return sb.toString();
+  }
+
+  public Scope getScope() {
+    return scope;
+  }
+
+  public void setScope(Scope scope) {
+    this.scope = scope;
   }
 }

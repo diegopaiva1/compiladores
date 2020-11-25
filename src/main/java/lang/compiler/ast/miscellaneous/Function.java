@@ -4,12 +4,14 @@ import java.util.List;
 
 import lang.compiler.visitors.AstVisitor;
 import lang.compiler.ast.AbstractExpression;
+import lang.compiler.ast.Scope;
 import lang.compiler.ast.commands.AbstractCommand;
 import lang.compiler.ast.types.AbstractType;
 import lang.compiler.ast.lvalues.Identifier;
 
 public class Function extends AbstractExpression {
   private Identifier id;
+  private Scope scope;
   private List<Parameter> params;
   private List<AbstractType> returnTypes;
   private List<AbstractCommand> cmds;
@@ -18,6 +20,7 @@ public class Function extends AbstractExpression {
                   List<AbstractType> returnTypes, List<AbstractCommand> cmds) {
     super(line, column);
     this.id = id;
+    this.scope = new Scope(this, null);
     this.params = params;
     this.returnTypes = returnTypes;
     this.cmds = cmds;
@@ -41,6 +44,14 @@ public class Function extends AbstractExpression {
 
   public List<AbstractType> getReturnTypes() {
     return returnTypes;
+  }
+
+  public Scope getScope() {
+    return scope;
+  }
+
+  public void setScope(Scope scope) {
+    this.scope = scope;
   }
 
   public void setReturnTypes(List<AbstractType> returnTypes) {

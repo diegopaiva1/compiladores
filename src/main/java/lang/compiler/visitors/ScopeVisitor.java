@@ -93,7 +93,7 @@ public class ScopeVisitor extends AstVisitor {
   public Void visitCommandScope(CommandScope cmdScope) {
     table.push(new SymbolTable());
 
-    for (AbstractCommand cmd : cmdScope.getCommmands())
+    for (AbstractCommand cmd : cmdScope.getCommands())
       cmd.accept(this);
 
     table.pop();

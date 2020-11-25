@@ -31,13 +31,11 @@ public class Program {
   }
 
   public boolean good() {
-    new ScopeVisitor(logger).visitProgram(this);
-
     if (logger.isEmpty()) {
-      Map<Function, LocalEnvironment> map = new TypeCheckVisitor(logger).visitProgram(this);
+      new TypeCheckVisitor().visitProgram(this);
 
       if (logger.isEmpty()) {
-        new JavaVisitor(map).visitProgram(this);
+        new JavaVisitor().visitProgram(this);
       }
     }
 

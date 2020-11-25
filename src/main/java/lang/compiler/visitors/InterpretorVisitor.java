@@ -243,7 +243,7 @@ public class InterpretorVisitor extends AstVisitor {
   }
 
   public Object visitCommandScope(CommandScope cmdScope) {
-    for (AbstractCommand cmd : cmdScope.getCommmands()) {
+    for (AbstractCommand cmd : cmdScope.getCommands()) {
       Object result = cmd.accept(this);
 
       // The only command that returns a List is the 'Return' command

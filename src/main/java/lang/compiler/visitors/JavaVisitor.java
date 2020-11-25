@@ -17,11 +17,9 @@ import lang.compiler.ast.operators.unary.*;
 import lang.compiler.ast.types.*;
 
 public class JavaVisitor extends AstVisitor {
-  private Map<Function, LocalEnvironment> map;
   private STGroup groupTemplate;
 
-  public JavaVisitor(Map<Function, LocalEnvironment> map) {
-    this.map = map;
+  public JavaVisitor() {
     this.groupTemplate = new STGroupFile("src/main/java/lang/compiler/templates/java.stg");
   }
 
@@ -104,7 +102,14 @@ public class JavaVisitor extends AstVisitor {
   public Object visitCommandScope(CommandScope cmdScope) {
     ST template = groupTemplate.getInstanceOf("commandScope");
 
-    for (AbstractCommand cmd : cmdScope.getCommmands())
+    for (Map.Entry<String, AbstractType> decl : cmdScope.getScope().getSymbolTable().entrySet()) {
+      ST declTemplate = groupTemplate.getInstanceOf("decl");
+      declTemplate.add("type", decl.getValue().accept(this));
+      declTemplate.add("id", decl.getKey());
+      template.add("decls", declTemplate);
+    }
+
+    for (AbstractCommand cmd : cmdScope.getCommands())
       template.add("cmds", cmd.accept(this));
 
     return template;
@@ -198,11 +203,26 @@ public class JavaVisitor extends AstVisitor {
       }
     }
 
+    for (Map.Entry<String, AbstractType> decl : f.getScope().getSymbolTable().entrySet()) {
+      boolean isParam = false;
+
+      for (int i = 0; i < f.getParameters().size(); i++)
+        if (decl.getKey().equals(f.getParameters().get(i).getId().getName()))
+          isParam = true;
+
+      if (!isParam) {
+        ST declTemplate = groupTemplate.getInstanceOf("decl");
+        declTemplate.add("type", decl.getValue().accept(this));
+        declTemplate.add("id", decl.getKey());
+        template.add("decls", declTemplate);
+      }
+    }
+
     for (AbstractCommand cmd : f.getCommands()) {
       if (cmd instanceof If || cmd instanceof IfElse || cmd instanceof Iterate)
-        template.add("cmd", cmd.accept(this));
+        template.add("cmds", cmd.accept(this));
       else
-        template.add("cmd", new ST("<cmd>;").add("cmd", cmd.accept(this)));
+        template.add("cmds", new ST("<cmd>;").add("cmd", cmd.accept(this)));
     }
 
     return template;
@@ -350,8 +370,7 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitRead(Read readCmd) {
-    // TODO Auto-generated method stub
-    return null;
+    return groupTemplate.getInstanceOf("read").add("lvalue", readCmd.getLvalue().accept(this));
   }
 
   @Override
