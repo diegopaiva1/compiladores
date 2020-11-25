@@ -183,8 +183,6 @@ public class JavaVisitor extends AstVisitor {
 
     if (f.getReturnTypes().size() == 0)
       template.add("returnType", "void");
-    else if (f.getReturnTypes().size() == 1)
-      template.add("returnType", f.getReturnTypes().get(0).accept(this));
     else // f.getReturnsTypes().size() > 1
       template.add("returnType", "Object[]");
 
@@ -376,23 +374,17 @@ public class JavaVisitor extends AstVisitor {
   @Override
   public Object visitReturn(Return returnCmd) {
     ST template = groupTemplate.getInstanceOf("return");
+    template.add("size", returnCmd.getExpressions().size());
 
-    if (returnCmd.getExpressions().size() == 1) {
-      return template.add("value", returnCmd.getExpressions().get(0).accept(this));
+    for (int i = 0; i < returnCmd.getExpressions().size(); i++) {
+      ST listElementTemplate = groupTemplate.getInstanceOf("listElement");
+      listElementTemplate.add("pos", i);
+      listElementTemplate.add("value", returnCmd.getExpressions().get(i).accept(this));
+      template.add("list", listElementTemplate);
     }
-    else {
-      template.add("size", returnCmd.getExpressions().size());
 
-      for (int i = 0; i < returnCmd.getExpressions().size(); i++) {
-        ST listElementTemplate = groupTemplate.getInstanceOf("listElement");
-        listElementTemplate.add("pos", i);
-        listElementTemplate.add("value", returnCmd.getExpressions().get(i).accept(this));
-        template.add("list", listElementTemplate);
-      }
-
-      template.add("value", "_returnList");
-      return template;
-    }
+    template.add("value", "_returnList");
+    return template;
   }
 
   @Override

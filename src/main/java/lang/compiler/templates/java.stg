@@ -22,7 +22,6 @@ return(value, list, size) ::= <<
 Object[] _returnList = new Object[<size>];
 <list; separator = "\n">
 <endif>
-
 return <value>
 >>
 
@@ -56,7 +55,7 @@ else
 >>
 
 assignableFunctionCall(id, args, index) ::= <<
-<id>(<args; separator = ", ">)[<index>]
+<id>(<args; separator = ", ">)<if(index)>[<index>]<endif>
 >>
 
 commandScope(decls, cmds) ::= <<
