@@ -19,6 +19,7 @@ public class TypeCheckVisitor extends AstVisitor {
   private Program program;
   private BoolType boolType;
   private CharType charType;
+  private ErrorType errorType;
   private FloatType floatType;
   private IntType intType;
   private Map<String, Data> dataTypes;
@@ -27,6 +28,7 @@ public class TypeCheckVisitor extends AstVisitor {
   public TypeCheckVisitor() {
     this.boolType = new BoolType(0, 0);
     this.charType = new CharType(0, 0);
+    this.errorType = new ErrorType(0, 0);
     this.floatType = new FloatType(0, 0);
     this.intType = new IntType(0, 0);
     this.dataTypes = new HashMap<>();
@@ -96,7 +98,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return leftExprType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), add, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   public Object visitPrint(Print printCmd) {
@@ -128,7 +130,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return leftExprType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), and, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -145,7 +147,7 @@ public class TypeCheckVisitor extends AstVisitor {
       program.getLogger().addUndefinedIndexError(currentScope.getOwningFunction(), arrayAccess.getExpression());
     }
 
-    return null;
+    return errorType;
   }
 
   @Override
@@ -197,7 +199,7 @@ public class TypeCheckVisitor extends AstVisitor {
       program.getLogger().addInvalidFunctionCallError(currentScope.getOwningFunction(), fCall);
     }
 
-    return null;
+    return errorType;
   }
 
   @Override
@@ -307,7 +309,7 @@ public class TypeCheckVisitor extends AstVisitor {
       program.getLogger().addUndefinedLvalueError(currentScope.getOwningFunction(), dataIdentifierAccess.getLvalue());
     }
 
-    return null;
+    return errorType;
   }
 
   @Override
@@ -326,7 +328,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return leftExprType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), div, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -339,7 +341,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return boolType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), eq, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -351,10 +353,11 @@ public class TypeCheckVisitor extends AstVisitor {
   public Object visitIdentifier(Identifier id) {
     AbstractType type = currentScope.search(id.getName());
 
-    if (type == null)
-      program.getLogger().addUndefinedLvalueError(currentScope.getOwningFunction(), id);
+    if (type != null)
+      return type;
 
-    return type;
+    program.getLogger().addUndefinedLvalueError(currentScope.getOwningFunction(), id);
+    return errorType;
   }
 
   @Override
@@ -411,7 +414,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return boolType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), lt, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -425,7 +428,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return leftExprType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), mod, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -439,7 +442,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return leftExprType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), mult, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -451,7 +454,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return exprType;
 
     program.getLogger().addUnaryOperatorError(currentScope.getOwningFunction(), neg, exprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -476,7 +479,7 @@ public class TypeCheckVisitor extends AstVisitor {
       program.getLogger().addUndefinedArraySizeDeclarationError(currentScope.getOwningFunction(), newCmd.getExpression());
     }
 
-    return null;
+    return errorType;
   }
 
   @Override
@@ -488,7 +491,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return exprType;
 
     program.getLogger().addUnaryOperatorError(currentScope.getOwningFunction(), not, exprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -501,7 +504,7 @@ public class TypeCheckVisitor extends AstVisitor {
       return boolType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), neq, leftExprType, rightExprType);
-    return null;
+    return errorType;
   }
 
   @Override
@@ -607,6 +610,11 @@ public class TypeCheckVisitor extends AstVisitor {
       return leftExprType;
 
     program.getLogger().addBinaryOperatorError(currentScope.getOwningFunction(), sub, leftExprType, rightExprType);
+    return errorType;
+  }
+
+  @Override
+  public Object visitErrorType(ErrorType errorType) {
     return null;
   }
 }

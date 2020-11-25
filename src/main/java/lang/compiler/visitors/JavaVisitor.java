@@ -1,5 +1,8 @@
 package lang.compiler.visitors;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Map;
 
 import org.stringtemplate.v4.ST;
@@ -259,6 +262,12 @@ public class JavaVisitor extends AstVisitor {
   }
 
   @Override
+  public Object visitErrorType(ErrorType errorType) {
+    // This should never be reached!
+    return null;
+  }
+
+  @Override
   public Object visitIterate(Iterate iterateCmd) {
     ST template = groupTemplate.getInstanceOf("iterate");
     template.add("expr", iterateCmd.getExpression().accept(this));
@@ -362,7 +371,13 @@ public class JavaVisitor extends AstVisitor {
     for (Function f : program.getFunctionSet())
       template.add("functions", f.accept(this));
 
-    System.out.println(template.render());
+    try (PrintStream out = new PrintStream(new FileOutputStream("target/generated-sources/code.java"))) {
+        out.print(template.render());
+    }
+    catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+
     return null;
   }
 

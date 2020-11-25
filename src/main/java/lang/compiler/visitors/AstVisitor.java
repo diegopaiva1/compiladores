@@ -31,6 +31,8 @@ public abstract class AstVisitor {
 
   public abstract Object visitEqual(Equal eq);
 
+  public abstract Object visitErrorType(ErrorType errorType);
+
   public abstract Object visitLessThan(LessThan lt);
 
   public abstract Object visitModule(Module mod);

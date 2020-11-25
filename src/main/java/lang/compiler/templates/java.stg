@@ -54,8 +54,8 @@ else
 <endif>
 >>
 
-assignableFunctionCall(id, args, index) ::= <<
-<id>(<args; separator = ", ">)<if(index)>[<index>]<endif>
+assignableFunctionCall(type, id, args, index) ::= <<
+<type> <id>(<args; separator = ", ">)<if(index)>[<index>]<endif>
 >>
 
 commandScope(decls, cmds) ::= <<

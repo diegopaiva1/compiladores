@@ -12,7 +12,6 @@ import lang.compiler.ast.miscellaneous.Data;
 import lang.compiler.ast.miscellaneous.Function;
 import lang.compiler.visitors.InterpretorVisitor;
 import lang.compiler.visitors.JavaVisitor;
-import lang.compiler.visitors.ScopeVisitor;
 import lang.compiler.visitors.TypeCheckVisitor;
 
 public class Program {

@@ -394,6 +394,11 @@ public class InterpretorVisitor extends AstVisitor {
     return null;
   }
 
+  @Override
+  public Void visitErrorType(ErrorType errorType) {
+    return null;
+  }
+
   public Void visitDataType(DataType dataType) {
     return null;
   }
