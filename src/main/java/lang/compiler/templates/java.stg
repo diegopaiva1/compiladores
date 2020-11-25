@@ -12,7 +12,7 @@ public class <className> {
 
 function(name, params, decls, cmds, returnType) ::= <<
 public static <returnType> <name>(<params; separator = ", ">) {
-  <decls; separator = "\n">
+  <if(decls)><decls; separator = ";\n">;<endif>
   <cmds; separator = "\n">
 }
 >>
@@ -20,7 +20,7 @@ public static <returnType> <name>(<params; separator = ", ">) {
 return(value, list, size) ::= <<
 <if(list)>
 Object[] _returnList = new Object[<size>];
-<list; separator = "\n">
+<list; separator = ";\n">;
 <endif>
 return <value>
 >>
@@ -51,10 +51,10 @@ for (int i = 0; i \< <expr>; i++)
 
 if(expr, ifCmd, elseCmd) ::= <<
 if (<expr>)
-  <ifCmd>
+<ifCmd>
 <if(elseCmd)>
 else
-  <elseCmd>
+<elseCmd>
 <endif>
 >>
 
@@ -64,14 +64,14 @@ assignableFunctionCall(type, id, args, index) ::= <<
 
 commandScope(decls, cmds) ::= <<
 {
-  <decls; separator = "\n">
+  <if(decls)><decls; separator = ";\n">;<endif>
   <cmds; separator = "\n">
 }
 >>
 
 data(name, decls) ::= <<
 public class <name> {
-  <decls; separator = "\n">
+  <if(decls)><decls; separator = ";\n">;<endif>
 }
 >>
 
