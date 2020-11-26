@@ -4,41 +4,6 @@ data Ponto {
 }
 
 main() {
-    a = 3;
-
-    {
-        a = 4;
-
-        {
-            c = 2;
-            c = 3;
-        }
-
-        print a;
-    }
-
-    if (a < 3)
-        print true;
-    else
-        print false;
-
-    iterate (30)
-        a = a + 1;
-
-    fat(5)<a>;
-    f()<x,y,z,w>;
-    print fat(10)[0];
-}
-
-fat(x :: Int) : Int {
-    if (x < 1) {
-        return 1;
-    }
-    else {
-        return x * fat(x - 1)[0];
-    }
-}
-
-f() : Int, Float, Char, Bool {
-    return 1, 1.0, '1', true;
+read x;
+print x;
 }
