@@ -1,5 +1,7 @@
 package lang.compiler.ast.literals;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import lang.compiler.visitors.AstVisitor;
 
 public class CharLiteral extends AbstractLiteral<Character> {
@@ -14,6 +16,6 @@ public class CharLiteral extends AbstractLiteral<Character> {
 
   @Override
   public String toString() {
-    return "\'" + getValue() + "\'";
+    return "\'" +  StringEscapeUtils.escapeJava(getValue().toString()) + "\'";
   }
 }

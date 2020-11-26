@@ -17,17 +17,25 @@ main() {
         print a;
     }
 
-    if (a < 3)
+    if (a < 3) {
         print true;
-    else
+        print '\n';
+    }
+    else {
         print false;
+        print '\n';
+    }
 
     iterate (30)
         a = a + 1;
 
     fat(5)<a>;
     f()<x,y,z,w>;
+    z = 'a';
     print fat(10)[0];
+    print '\n';
+    print 'c';
+    print '\n';
 }
 
 fat(x :: Int) : Int {

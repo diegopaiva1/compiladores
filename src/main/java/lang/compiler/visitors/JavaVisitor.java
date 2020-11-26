@@ -139,7 +139,7 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitCharLiteral(CharLiteral c) {
-    return groupTemplate.getInstanceOf("literal").add("value", "\'" + c.getValue() + "\'");
+    return groupTemplate.getInstanceOf("literal").add("value", c.toString());
   }
 
   @Override
