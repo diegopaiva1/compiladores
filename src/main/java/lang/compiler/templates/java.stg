@@ -35,12 +35,9 @@ staticFunctionCall(id, args, assignments) ::= <<
 
 lvalue(name) ::= "<name>"
 
-print(expr) ::= "System.out.println(<expr>)"
+print(expr) ::= "System.out.print(<expr>)"
 
-read(lvalue) ::= <<
-Scanner scanner = new Scanner(System.in);
-<lvalue> = scanner.nextInt()
->>
+read(lvalue) ::= "<lvalue> = new Scanner(System.in).nextInt()"
 
 literal(value) ::= "<value>"
 

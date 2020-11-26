@@ -3,6 +3,7 @@ package lang.compiler;
 import org.stringtemplate.v4.ST;
 
 import lang.compiler.parser.*;
+import lang.compiler.visitors.JavaVisitor;
 import lang.compiler.ast.Program;
 
 public class App {
@@ -76,10 +77,14 @@ public class App {
           System.exit(1);
         }
       }
-      else if (args[0].equals("-pp")) {
-        ST hello = new ST("Hello, <name>");
-        hello.add("name", "World");
-        System.out.println(hello.render());
+      else if (args[0].equals("-g")) {
+        if (prog.good()) {
+          new JavaVisitor().visitProgram(prog);
+        }
+        else {
+          System.err.println("Aborting due to type error(s)");
+          System.exit(1);
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();

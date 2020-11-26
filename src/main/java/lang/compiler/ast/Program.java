@@ -32,13 +32,8 @@ public class Program {
   }
 
   public boolean good() {
-    if (logger.isEmpty()) {
+    if (logger.isEmpty())
       new TypeCheckVisitor().visitProgram(this);
-
-      if (logger.isEmpty()) {
-        new JavaVisitor().visitProgram(this);
-      }
-    }
 
     if (!logger.isEmpty()) {
       System.err.println(logger.toString());
