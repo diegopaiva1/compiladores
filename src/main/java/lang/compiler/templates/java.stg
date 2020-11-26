@@ -42,16 +42,19 @@ read(lvalue) ::= "<lvalue> = new Scanner(System.in).nextInt()"
 literal(value) ::= "<value>"
 
 iterate(expr, cmd) ::= <<
-for (int i = 0; i \< <expr>; i++)
+for (int i = 0; i \< <expr>; i++) {
   <cmd>
+}
 >>
 
 if(expr, ifCmd, elseCmd) ::= <<
-if (<expr>)
+if (<expr>) {
 <ifCmd>
+}
 <if(elseCmd)>
-else
+else {
 <elseCmd>
+}
 <endif>
 >>
 

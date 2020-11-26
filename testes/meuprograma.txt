@@ -39,12 +39,10 @@ main() {
 }
 
 fat(x :: Int) : Int {
-    if (x < 1) {
+    if (x == 0)
         return 1;
-    }
-    else {
-        return x * fat(x - 1)[0];
-    }
+
+    return x * fat(x - 1)[0];
 }
 
 f() : Int, Float, Char, Bool {
