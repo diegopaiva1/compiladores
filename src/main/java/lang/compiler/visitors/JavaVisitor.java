@@ -100,7 +100,10 @@ public class JavaVisitor extends AstVisitor {
   public Object visitAssignment(Assignment assignment) {
     if (!(assignment.getExpression() instanceof New) ||
     (assignment.getExpression() instanceof New &&
-    ((New) assignment.getExpression()).getType() instanceof ArrayType)) {
+    ((New) assignment.getExpression()).getType() instanceof ArrayType &&
+    !(((ArrayType) ((New) assignment.getExpression()).getType()).getType() instanceof ArrayType) &&
+    ((New) assignment.getExpression()).getExpression() != null
+    )) {
       ST template = groupTemplate.getInstanceOf("assignment");
       template.add("lvalue", assignment.getLvalue().accept(this));
       template.add("expr", assignment.getExpression().accept(this));
@@ -114,7 +117,7 @@ public class JavaVisitor extends AstVisitor {
       return template;
     }
     else
-      return groupTemplate.getInstanceOf("comment").add("comment", "new command replaced by declaration");
+      return groupTemplate.getInstanceOf("comment").add("comment", "new command unnecessary: " + assignment.getExpression().toString());
   }
 
   @Override
