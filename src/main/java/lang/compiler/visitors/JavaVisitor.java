@@ -143,8 +143,12 @@ public class JavaVisitor extends AstVisitor {
       template.add("decls", declTemplate);
     }
 
-    for (AbstractCommand cmd : cmdScope.getCommands())
-      template.add("cmds", cmd.accept(this));
+    for (AbstractCommand cmd : cmdScope.getCommands()) {
+      if (cmd instanceof If || cmd instanceof IfElse || cmd instanceof Iterate || cmd instanceof CommandScope)
+        template.add("cmds", cmd.accept(this));
+      else
+        template.add("cmds", new ST("<cmd>;").add("cmd", cmd.accept(this)));
+    }
 
     currentScope = currentScope.getFather();
     return template;
@@ -253,7 +257,7 @@ public class JavaVisitor extends AstVisitor {
     }
 
     for (AbstractCommand cmd : f.getCommands()) {
-      if (cmd instanceof If || cmd instanceof IfElse || cmd instanceof Iterate)
+      if (cmd instanceof If || cmd instanceof IfElse || cmd instanceof Iterate || cmd instanceof CommandScope)
         template.add("cmds", cmd.accept(this));
       else
         template.add("cmds", new ST("<cmd>;").add("cmd", cmd.accept(this)));
