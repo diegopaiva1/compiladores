@@ -335,7 +335,13 @@ public class JavaVisitor extends AstVisitor {
   public Object visitIterate(Iterate iterateCmd) {
     ST template = groupTemplate.getInstanceOf("iterate");
     template.add("expr", iterateCmd.getExpression().accept(this));
-    template.add("cmd", iterateCmd.getCommand().accept(this));
+
+    if(iterateCmd.getCommand() instanceof CommandScope)
+      template.add("cmd", iterateCmd.getCommand().accept(this));
+    else
+      template.add("cmd", ((ST) iterateCmd.getCommand().accept(this)).render() + ";");
+
+
     return template;
   }
 
