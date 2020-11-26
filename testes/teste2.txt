@@ -39,12 +39,10 @@ teste1(ponto :: Ponto, p :: Int, q :: Float) {
         print 3;
     }
 
-    if (true) {
+    if (true)
         print 3;
-    }
-    else {
+    else
         print 4;
-    }
 }
 
 dummy(x :: Int, y :: Int) : Int, Int {

@@ -98,10 +98,23 @@ public class JavaVisitor extends AstVisitor {
 
   @Override
   public Object visitAssignment(Assignment assignment) {
-    ST template = groupTemplate.getInstanceOf("assignment");
-    template.add("lvalue", assignment.getLvalue().accept(this));
-    template.add("expr", assignment.getExpression().accept(this));
-    return template;
+    if (!(assignment.getExpression() instanceof New) ||
+    (assignment.getExpression() instanceof New &&
+    ((New) assignment.getExpression()).getType() instanceof ArrayType)) {
+      ST template = groupTemplate.getInstanceOf("assignment");
+      template.add("lvalue", assignment.getLvalue().accept(this));
+      template.add("expr", assignment.getExpression().accept(this));
+      return template;
+    }
+    else if (assignment.getExpression() instanceof New &&
+    ((New) assignment.getExpression()).getType() instanceof DataType) {
+      ST template = groupTemplate.getInstanceOf("assignment");
+      template.add("lvalue", assignment.getLvalue().accept(this));
+      template.add("expr", ((ST) assignment.getExpression().accept(this)).render() + "()");
+      return template;
+    }
+    else
+      return groupTemplate.getInstanceOf("comment").add("comment", "new command replaced by declaration");
   }
 
   @Override
@@ -275,7 +288,12 @@ public class JavaVisitor extends AstVisitor {
   public Object visitIf(If ifCmd) {
     ST template = groupTemplate.getInstanceOf("if");
     template.add("expr", ifCmd.getExpression().accept(this));
-    template.add("ifCmd", ifCmd.getScopeCommand().accept(this));
+
+    if(ifCmd.getScopeCommand() instanceof CommandScope)
+      template.add("ifCmd", ifCmd.getScopeCommand().accept(this));
+    else
+      template.add("ifCmd", ((ST) ifCmd.getScopeCommand().accept(this)).render() + ";");
+
     return template;
   }
 
@@ -283,8 +301,17 @@ public class JavaVisitor extends AstVisitor {
   public Object visitIfElse(IfElse ifElseCmd) {
     ST template = groupTemplate.getInstanceOf("if");
     template.add("expr", ifElseCmd.getExpression().accept(this));
-    template.add("ifCmd", ifElseCmd.getIfScopeCommand().accept(this));
-    template.add("elseCmd", ifElseCmd.getElseScopeCommand().accept(this));
+
+    if(ifElseCmd.getIfScopeCommand() instanceof CommandScope)
+      template.add("ifCmd", ifElseCmd.getIfScopeCommand().accept(this));
+    else
+      template.add("ifCmd", ((ST) ifElseCmd.getIfScopeCommand().accept(this)).render() + ";");
+
+    if(ifElseCmd.getElseScopeCommand() instanceof CommandScope)
+      template.add("elseCmd", ifElseCmd.getElseScopeCommand().accept(this));
+    else
+      template.add("elseCmd", ((ST) ifElseCmd.getElseScopeCommand().accept(this)).render() + ";");
+
     return template;
   }
 
@@ -350,17 +377,13 @@ public class JavaVisitor extends AstVisitor {
   @Override
   public Object visitNew(New newCmd) {
     ST template = groupTemplate.getInstanceOf("new");
-    template.add("type", newCmd.getType().accept(this));
 
-    if (newCmd.getExpression() != null)
+    if (newCmd.getExpression() != null) {
       template.add("size", newCmd.getExpression().accept(this));
-
-      //var = new int; -> int x;
-      //int[] var1 = new int[];
-      //var3 = new Ponto;
-      //var4 = new Ponto[];
-      //var5 = new Int[][][];
-      //int[][][] var1 = new int[][][1];
+      template.add("type", ((ArrayType) newCmd.getType()).getType().accept(this));
+    }
+    else
+      template.add("type", newCmd.getType().accept(this));
 
     return template;
   }

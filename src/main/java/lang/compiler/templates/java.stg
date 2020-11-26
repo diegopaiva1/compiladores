@@ -86,3 +86,5 @@ unaryOperator(symbol, expr) ::= "<symbol><expr>"
 new(type, size) ::= "new <type><if(size)>[<size>]<endif>"
 
 balancedParenthesesExpression(expr) ::= "(<expr>)"
+
+comment(comment) ::= "//<comment>"

@@ -305,10 +305,18 @@ public class BuildAstVisitor extends LangBaseVisitor<AbstractExpression> {
 
   @Override
   public AbstractExpression visitInstantiation(LangParser.InstantiationContext ctx) {
-    AbstractType type = (AbstractType) visit(ctx.type());
-    AbstractExpression expr = ctx.exp() != null ? visit(ctx.exp()) : null;
     int line = ctx.getStart().getLine();
     int column = ctx.getStart().getCharPositionInLine() + 1;
+    AbstractType type;
+    AbstractExpression expr = null;
+
+    if (ctx.exp() != null) {
+      type = new ArrayType(line, column, (AbstractType) visit(ctx.type()));
+      expr = visit(ctx.exp());
+    }
+    else
+      type = (AbstractType) visit(ctx.type());
+
     return new New(line, column, type, expr);
   }
 
